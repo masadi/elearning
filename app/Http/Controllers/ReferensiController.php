@@ -153,4 +153,24 @@ class ReferensiController extends Controller
         }
         return $data;
     }
+    public function save_update_ptk(){
+        $find = Ptk::find(request()->item['ptk_id']);
+        $find->nama = request()->item['nama'];
+        if($find->save()){
+            $data = [
+                'color' => 'success',
+                'icon' => 'tabler-circle-check',
+                'title' => 'Success!',
+                'text' => 'Data PTK berhasil diperbaharui!',
+            ];
+        } else {
+            $data = [
+                'color' => 'error',
+                'icon' => 'tabler-xbox-x',
+                'title' => 'Failed!',
+                'text' => 'Data PTK gagal diperbaharui! Silahkan coba beberapa saat lagi.',
+            ];
+        }
+        return $data;
+    }
 }

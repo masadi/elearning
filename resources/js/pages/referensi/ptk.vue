@@ -1,5 +1,4 @@
 <script setup>
-import AddNewPtk from '@/views/referensi/ptk/AddNewPtk.vue'
 const notif = ref({
   icon: null,
   title: null,
@@ -90,13 +89,42 @@ const confirmDelete = async (val) => {
         fetchData()
       }
     })
-    fetchData()
   }
+}
+const isDetilPtkVisible = ref(false)
+const isEditPtkVisible = ref(false)
+const detilPtk = ref()
+const detilPtkData = async(val) => {
+  isDetilPtkVisible.value = true
+  detilPtk.value = val
+}
+const editData = async(val) => {
+  isEditPtkVisible.value = true
+  detilPtk.value = val
 }
 watch(isAlertVisible, () => {
   if (!isAlertVisible.value)
   fetchData()
 })
+const updatePtk = async userData => {
+  await $api('/referensi/store', {
+    method: 'POST',
+    body: {
+      data: 'update-ptk',
+      item: userData,
+    },
+    onResponse({ request, response, options }) {
+      let getData = response._data
+      notif.value = getData
+      isAlertVisible.value = true
+      isEditPtkVisible.value = false
+    }
+  })
+}
+/*watch(isDetilPtkVisible, () => {
+  if (!isDetilPtkVisible.value)
+  detilPtk.value = null
+})*/
 </script>
 
 <template>
@@ -182,42 +210,13 @@ watch(isAlertVisible, () => {
             <VIcon icon="tabler-trash" />
           </IconBtn>
 
-          <IconBtn>
+          <IconBtn @click="detilPtkData(item)">
             <VIcon icon="tabler-eye" />
           </IconBtn>
+          <IconBtn @click="editData(item)">
+            <VIcon icon="tabler-pencil" />
+          </IconBtn>
 
-          <VBtn
-            icon
-            variant="text"
-            color="medium-emphasis"
-          >
-            <VIcon icon="tabler-dots-vertical" />
-            <VMenu activator="parent">
-              <VList>
-                <VListItem :to="{ name: 'apps-user-view-id', params: { id: item.ptk_id } }">
-                  <template #prepend>
-                    <VIcon icon="tabler-eye" />
-                  </template>
-
-                  <VListItemTitle>View</VListItemTitle>
-                </VListItem>
-
-                <VListItem link>
-                  <template #prepend>
-                    <VIcon icon="tabler-pencil" />
-                  </template>
-                  <VListItemTitle>Edit</VListItemTitle>
-                </VListItem>
-
-                <VListItem @click="deleteData(item.ptk_id)">
-                  <template #prepend>
-                    <VIcon icon="tabler-trash" />
-                  </template>
-                  <VListItemTitle>Delete</VListItemTitle>
-                </VListItem>
-              </VList>
-            </VMenu>
-          </VBtn>
         </template>
 
         <template #bottom>
@@ -233,6 +232,8 @@ watch(isAlertVisible, () => {
 
     <!-- 👉 Add New User -->
     <AddPtkDialog v-model:is-dialog-visible="isAddNewPtkVisible" @notif="handleNotif" v-model:sekolah="sekolah" />
+    <PtkDetilDialog v-model:is-dialog-visible="isDetilPtkVisible" v-model:detilPtk="detilPtk" />
+    <PtkEditDialog v-model:is-dialog-visible="isEditPtkVisible" v-model:detil-ptk="detilPtk" @submit="updatePtk" />
     <ShowAlert :color="notif.color" :icon="notif.icon" :title="notif.title" :text="notif.text" :disable-time-out="false" v-model:isSnackbarVisible="isAlertVisible" v-if="notif.color"></ShowAlert>
     <ConfirmDialog
         v-model:isDialogVisible="isConfirmDialogVisible"
