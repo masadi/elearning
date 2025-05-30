@@ -26,17 +26,24 @@ const dialogModelValueUpdate = val => {
 
 const detilPtk = ref(structuredClone(toRaw(props.detilPtk)))
 watch(props, () => {
-  detilPtk.value = structuredClone(toRaw(props.detilPtk))  
+  detilPtk.value = structuredClone(toRaw(props.detilPtk))
+  detilPtk.value.avatar = null
 })
+const isFormValid = ref(false)
+const refForm = ref()
 const formSubmit = () => {
-  emit('submit', detilPtk.value)
+  refForm.value?.validate().then(async({ valid }) => {
+    if (valid) {
+      emit('submit', detilPtk.value)
+    }
+  })
 }
 </script>
 
 <template>
   <!-- 👉 upgrade plan -->
   <VDialog
-    :width="$vuetify.display.smAndDown ? 'auto' : 800"
+    :width="$vuetify.display.smAndDown ? 'auto' : 500"
     :model-value="props.isDialogVisible"
     scrollable
     content-class="scrollable-dialog"
@@ -44,25 +51,50 @@ const formSubmit = () => {
   >
     <!-- Dialog close btn -->
     <DialogCloseBtn @click="dialogModelValueUpdate(false)" />
-    <VCard class="pa-2 pa-sm-10" :title="`Edit Data ${detilPtk.nama}`">
+    <VCard :title="`Edit Data ${detilPtk.nama}`">
       <VCardText>
-        <VForm @submit.prevent="() => {}">
+        <VForm ref="refForm" v-model="isFormValid" @submit.prevent="formSubmit">
           <VRow>
             <VCol cols="12">
-              <VRow>
-                <VCol cols="12" md="3" class="d-flex align-items-center">
-                  <label class="v-label text-body-2 text-high-emphasis" for="app-text-field-nama">Nama Lengkap</label>
-                </VCol>
-                <VCol cols="12" md="9">
-                      <!--VFileInput accept="image/*" v-model="list.value" :id="list.id" :label="list.title" v-if="list.file"/-->
-                    <AppTextField id="nama" v-model="detilPtk.nama" :rules="[requiredValidator]">
-                      <template #label>Nama Lengkap</template>
-                    </AppTextField>
-                  </VCol>
-              </VRow>
+              <AppTextField id="nama" v-model="detilPtk.nama" :rules="[requiredValidator]">
+                <template #label>Nama Lengkap</template>
+              </AppTextField>
             </VCol>
-            <VCol offset-md="3" cols="12" md="9" class="d-flex gap-4">
-              <VBtn type="submit" @click="formSubmit">Submit</VBtn>
+            <VCol cols="12">
+              <AppTextField id="nik" v-model="detilPtk.nik" :rules="[requiredValidator]">
+                <template #label>NIK</template>
+              </AppTextField>
+            </VCol>
+            <VCol cols="12">
+              <AppTextField id="email" v-model="detilPtk.email" :rules="[requiredValidator, emailValidator]">
+                <template #label>Email</template>
+              </AppTextField>
+            </VCol>
+            <VCol cols="12">
+              <AppTextField id="jenis_kelamin" v-model="detilPtk.jenis_kelamin" :rules="[requiredValidator]">
+                <template #label>Jenis Kelamin</template>
+              </AppTextField>
+            </VCol>
+            <VCol cols="12">
+              <AppTextField id="tempat_lahir" v-model="detilPtk.tempat_lahir" :rules="[requiredValidator]">
+                <template #label>Tempat Lahir</template>
+              </AppTextField>
+            </VCol>
+            <VCol cols="12">
+              <AppTextField id="tanggal_lahir" v-model="detilPtk.tanggal_lahir" :rules="[requiredValidator, dateValidator]">
+                <template #label>Tanggal Lahir</template>
+              </AppTextField>
+            </VCol>
+            <VCol cols="12">
+              <AppTextField id="nuptk" v-model="detilPtk.nuptk">
+                <template #label>NUPTK</template>
+              </AppTextField>
+            </VCol>
+            <VCol cols="12">
+              <VFileInput accept="image/*" v-model="detilPtk.avatar" id="avatar" label="Foto Profil" />
+            </VCol>
+            <VCol cols="12" class="d-flex gap-4">
+              <VBtn type="submit">Submit</VBtn>
             </VCol>
           </VRow>
         </VForm>

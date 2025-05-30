@@ -107,12 +107,15 @@ watch(isAlertVisible, () => {
   fetchData()
 })
 const updatePtk = async userData => {
+  console.log(userData);
+  const postData = new FormData();
+  postData.append('data', 'update-ptk');
+  for (const [key, value] of Object.entries(userData)) {
+    postData.append(key, (value) ? value : '');
+  }
   await $api('/referensi/store', {
     method: 'POST',
-    body: {
-      data: 'update-ptk',
-      item: userData,
-    },
+    body: postData,
     onResponse({ request, response, options }) {
       let getData = response._data
       notif.value = getData
@@ -121,10 +124,6 @@ const updatePtk = async userData => {
     }
   })
 }
-/*watch(isDetilPtkVisible, () => {
-  if (!isDetilPtkVisible.value)
-  detilPtk.value = null
-})*/
 </script>
 
 <template>

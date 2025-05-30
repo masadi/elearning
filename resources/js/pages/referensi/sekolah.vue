@@ -17,7 +17,6 @@ const onSubmit = () => {
       lists.value.forEach(e => {
         postData.append(e.id, (e.value) ? e.value : '');
       });
-      console.log(postData);
       await $api('/referensi/store', {
         method: 'POST',
         body: postData,
