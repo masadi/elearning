@@ -16,7 +16,7 @@ import { themeConfig } from '@themeConfig'
     </span>
     <!-- 👉 Footer: right content -->
     <span class="d-md-flex gap-x-4 d-none">
-      Dev By <a href="https://impactsotf.id" target="noopener noreferrer" class="text-primary">IMPACTSOFT INTEGRA SOLUSI</a>
+      Versi 1.0.0
     </span>
   </div>
 </template>

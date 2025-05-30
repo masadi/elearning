@@ -4,6 +4,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\SettingController;
+use App\Http\Controllers\ReferensiController;
+use App\Http\Controllers\TableController;
 
 Route::group(['prefix' => 'auth'], function () {
     Route::post('login', [AuthController::class, 'login']);
@@ -20,5 +22,14 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
         Route::get('profile', [SettingController::class, 'profile']);
         Route::post('profile', [SettingController::class, 'profile']);
         Route::delete('/destroy/{data}/{id}', [SettingController::class, 'destroy']);
+    });
+    Route::group(['prefix' => 'referensi'], function () {
+        Route::get('/', [ReferensiController::class, 'index']);
+        Route::post('store', [ReferensiController::class, 'store']);
+        Route::post('import', [ReferensiController::class, 'import']);
+        Route::delete('/destroy/{data}/{id}', [ReferensiController::class, 'destroy']);
+    });
+    Route::group(['prefix' => 'table'], function () {
+        Route::get('/', [TableController::class, 'index']);
     });
 });
