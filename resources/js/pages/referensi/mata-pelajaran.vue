@@ -1,4 +1,10 @@
 <script setup>
+definePage({
+  meta: {
+    action: 'read',
+    subject: 'referensi-mata-pelajaran-read',
+  },
+})
 const notif = ref({
   icon: null,
   title: null,

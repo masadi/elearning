@@ -1,4 +1,10 @@
 <script setup>
+definePage({
+  meta: {
+    action: 'read',
+    subject: 'referensi-sekolah-read',
+  },
+})
 import ShowAlert from '@/components/ShowAlert.vue';
 const isFormValid = ref(false)
 const refForm = ref()

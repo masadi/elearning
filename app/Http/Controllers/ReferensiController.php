@@ -9,6 +9,7 @@ use App\Models\Ptk;
 use App\Models\MataPelajaran;
 use App\Models\RombonganBelajar;
 use App\Models\Pembelajaran;
+use App\Models\MateriAjar;
 use Carbon\Carbon;
 
 class ReferensiController extends Controller
@@ -24,12 +25,21 @@ class ReferensiController extends Controller
             })->get();
         }
         if(request()->data == 'rombel'){
-            $data = RombonganBelajar::whereHas('sekolah', function($query){
+            $data = RombonganBelajar::with('walas')->whereHas('sekolah', function($query){
                 $query->where('user_id', auth()->user()->id);
+            })->when(request()->tingkat, function($query){
+                $query->where('tingkat', request()->tingkat);
             })->get();
         }
         if(request()->data == 'mapel'){
             $data = MataPelajaran::orderBy('id')->get();
+        }
+        if(request()->data == 'pembelajaran'){
+            $data = Pembelajaran::with('ptk')->whereHas('rombongan_belajar.sekolah', function($query){
+                $query->where('user_id', auth()->user()->id);
+            })->when(request()->rombongan_belajar_id, function($query){
+                $query->where('rombongan_belajar_id', request()->rombongan_belajar_id);
+            })->get();
         }
         return response()->json($data);
     }
@@ -54,6 +64,9 @@ class ReferensiController extends Controller
         }
         if($data == 'mapel'){
             $find = MataPelajaran::find($id);
+        }
+        if($data == 'materi-ajar'){
+            $find = MateriAjar::find($id);
         }
         if($find){
             if($find->delete()){
@@ -333,6 +346,64 @@ class ReferensiController extends Controller
                 'icon' => 'tabler-circle-check',
                 'title' => 'Success!',
                 'text' => 'Data Pembelajaran berhasil disimpan!',
+            ];
+        } else {
+            $data = [
+                'color' => 'error',
+                'icon' => 'tabler-xbox-x',
+                'title' => 'Failed!',
+                'text' => 'Tidak ada data disimpan!',
+                'request' => request()->all(),
+            ];
+        }
+        return $data;
+    }
+    public function save_materi_ajar(){
+        $find = new MateriAjar;
+        $find->pembelajaran_id = request()->pembelajaran_id;
+        $find->judul = request()->judul;
+        $find->deskripsi = request()->deskripsi;
+        if($find->save()){
+            $data = [
+                'color' => 'success',
+                'icon' => 'tabler-circle-check',
+                'title' => 'Success!',
+                'text' => 'Data Materi Ajar berhasil disimpan!',
+            ];
+        } else {
+            $data = [
+                'color' => 'error',
+                'icon' => 'tabler-xbox-x',
+                'title' => 'Failed!',
+                'text' => 'Tidak ada data disimpan!',
+                'request' => request()->all(),
+            ];
+        }
+        return $data;
+    }
+    public function show(){
+        $data = [];
+        if(request()->data == 'materi-ajar'){
+            $materi = MateriAjar::with(['pembelajaran.rombongan_belajar'])->find(request()->id);
+            $data = [
+                'materi' => $materi,
+                'rombel' => RombonganBelajar::whereTingkat($materi->pembelajaran->rombongan_belajar->tingkat)->orderBy('nama')->get(),
+                'pembelajaran' => Pembelajaran::where('rombongan_belajar_id', $materi->pembelajaran->rombongan_belajar->rombongan_belajar_id)->orderBy('nama_mata_pelajaran')->get(),
+            ];
+        }
+        return response()->json($data);
+    }
+    public function save_update_materi_ajar(){
+        $find = MateriAjar::find(request()->materi_ajar_id);
+        $find->pembelajaran_id = request()->pembelajaran_id;
+        $find->judul = request()->judul;
+        $find->deskripsi = request()->deskripsi;
+        if($find->save()){
+            $data = [
+                'color' => 'success',
+                'icon' => 'tabler-circle-check',
+                'title' => 'Success!',
+                'text' => 'Data Materi Ajar berhasil diperbaharui!',
             ];
         } else {
             $data = [

@@ -1,4 +1,10 @@
 <script setup>
+definePage({
+  meta: {
+    action: 'read',
+    subject: 'setting-profile-read',
+  },
+})
 import { useGenerateImageVariant } from '@core/composable/useGenerateImageVariant'
 import miscMaskDark from '@images/pages/misc-mask-dark.png'
 import miscMaskLight from '@images/pages/misc-mask-light.png'

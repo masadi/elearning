@@ -38,17 +38,26 @@ class AuthController extends Controller
         $pengguna = $request->user();
         $tokenResult = $pengguna->createToken('Personal Access Token');
         $token = $tokenResult->plainTextToken;
-        return response()->json([
+        $collection = [];
+        foreach($pengguna->allPermissions(['description as action', 'name as subject']) as $perm){
+            $collection[] = [
+                'action' => $perm->action,
+                'subject' => $perm->subject,
+            ];
+        }
+        $data = [
             'accessToken' =>$token,
             'userData' => $pengguna,
             'token_type' => 'Bearer',
-            'userAbilityRules' => [
+            'permission' => [
                 [
                     'action' => 'manage',
                     'subject' => 'all',
                 ]
             ],
-        ]);
+            'userAbilityRules' => $collection,
+        ];
+        return response()->json($data);
     }
     public function logout(Request $request)
     {

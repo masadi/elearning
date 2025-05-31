@@ -31,9 +31,14 @@ class Akses extends Command
     {
         $permissions = [
             'dashboard', 
-            'setting-users-roles', 
-            'permissions', 
-            'profile', 
+            'setting-users-roles',
+            'setting-permissions', 
+            'setting-profile',
+            'referensi-sekolah',
+            'referensi-ptk',
+            'referensi-rombel',
+            'referensi-mata-pelajaran',
+            'materi-ajar',
         ];
         $admin = Role::where('name', 'administrator')->first();
         $user = User::where('email', config('app.email'))->first();

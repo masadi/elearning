@@ -1,4 +1,10 @@
 <script setup>
+definePage({
+  meta: {
+    action: 'read',
+    subject: 'referensi-rombel-read',
+  },
+})
 const notif = ref({
   icon: null,
   title: null,

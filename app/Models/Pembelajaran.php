@@ -13,4 +13,13 @@ class Pembelajaran extends Model
     protected $table = 'pembelajaran';
 	protected $primaryKey = 'pembelajaran_id';
     public $guarded = [];
+    
+    public function rombongan_belajar()
+    {
+        return $this->belongsTo(RombonganBelajar::class, 'rombongan_belajar_id', 'rombongan_belajar_id');
+    }
+    public function ptk()
+    {
+        return $this->belongsTo(Ptk::class, 'ptk_id', 'ptk_id');
+    }
 }

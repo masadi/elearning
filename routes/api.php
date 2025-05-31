@@ -28,6 +28,7 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
         Route::post('store', [ReferensiController::class, 'store']);
         Route::post('import', [ReferensiController::class, 'import']);
         Route::delete('/destroy/{data}/{id}', [ReferensiController::class, 'destroy']);
+        Route::get('/show', [ReferensiController::class, 'show']);
     });
     Route::group(['prefix' => 'table'], function () {
         Route::get('/', [TableController::class, 'index']);

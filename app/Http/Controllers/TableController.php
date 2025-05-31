@@ -7,6 +7,7 @@ use App\Models\Sekolah;
 use App\Models\Ptk;
 use App\Models\MataPelajaran;
 use App\Models\RombonganBelajar;
+use App\Models\MateriAjar;
 
 class TableController extends Controller
 {
@@ -62,6 +63,24 @@ class TableController extends Controller
                 $query->where($this->wherePtk());
             })->paginate(request()->per_page),
             'sekolah' => Sekolah::where('user_id', auth()->user()->id)->first(),
+        ];
+        return response()->json($data);
+    }
+    public function get_materi_ajar(){
+        $data = [
+            'lists' => MateriAjar::withWhereHas('pembelajaran', function($query){
+                $query->withWhereHas('rombongan_belajar', function($query){
+                    $query->where($this->wherePtk());
+                });
+            })->orderBy(request()->sortBy, request()->orderBy)
+            ->when(request()->q, function($query) {
+                $query->where('judul', 'LIKE', '%' . request()->q . '%');
+                $query->whereHas('pembelajaran', function($query){
+                    $query->whereHas('rombongan_belajar', function($query){
+                        $query->where($this->wherePtk());
+                    });
+                });
+            })->paginate(request()->per_page),
         ];
         return response()->json($data);
     }

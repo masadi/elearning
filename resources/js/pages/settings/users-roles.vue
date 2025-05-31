@@ -1,4 +1,10 @@
 <script setup>
+definePage({
+  meta: {
+    action: 'read',
+    subject: 'setting-users-roles-read',
+  },
+})
 import RoleCards from '@/views/apps/roles/RoleCards.vue';
 import UserList from '@/views/apps/roles/UserList.vue';
 const roles = ref([])

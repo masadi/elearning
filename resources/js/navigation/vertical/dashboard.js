@@ -25,8 +25,10 @@ export default [
   },
   */
   {
-    title: 'Dashboard',
+    title: 'Beranda',
     to: { name: 'root' },
     icon: { icon: 'tabler-smart-home' },
+    action: 'read',
+    subject: 'dashboard-read',
   },
 ]
