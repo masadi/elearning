@@ -23,7 +23,6 @@ declare module 'vue-router/auto-routes' {
     'login': RouteRecordInfo<'login', '/login', Record<never, never>, Record<never, never>>,
     'materi-ajar': RouteRecordInfo<'materi-ajar', '/materi-ajar', Record<never, never>, Record<never, never>>,
     'referensi-mata-pelajaran': RouteRecordInfo<'referensi-mata-pelajaran', '/referensi/mata-pelajaran', Record<never, never>, Record<never, never>>,
-    'referensi-pembelajaran': RouteRecordInfo<'referensi-pembelajaran', '/referensi/pembelajaran', Record<never, never>, Record<never, never>>,
     'referensi-ptk': RouteRecordInfo<'referensi-ptk', '/referensi/ptk', Record<never, never>, Record<never, never>>,
     'referensi-rombel': RouteRecordInfo<'referensi-rombel', '/referensi/rombel', Record<never, never>, Record<never, never>>,
     'referensi-sekolah': RouteRecordInfo<'referensi-sekolah', '/referensi/sekolah', Record<never, never>, Record<never, never>>,

@@ -6,6 +6,9 @@ use Illuminate\Http\Request;
 use Rap2hpoutre\FastExcel\FastExcel;
 use App\Models\Sekolah;
 use App\Models\Ptk;
+use App\Models\MataPelajaran;
+use App\Models\RombonganBelajar;
+use App\Models\Pembelajaran;
 use Carbon\Carbon;
 
 class ReferensiController extends Controller
@@ -14,6 +17,19 @@ class ReferensiController extends Controller
         $data = [];
         if(request()->data == 'sekolah'){
             $data = Sekolah::where('user_id', auth()->user()->id)->first();
+        }
+        if(request()->data == 'ptk'){
+            $data = Ptk::whereHas('sekolah', function($query){
+                $query->where('user_id', auth()->user()->id);
+            })->get();
+        }
+        if(request()->data == 'rombel'){
+            $data = RombonganBelajar::whereHas('sekolah', function($query){
+                $query->where('user_id', auth()->user()->id);
+            })->get();
+        }
+        if(request()->data == 'mapel'){
+            $data = MataPelajaran::orderBy('id')->get();
         }
         return response()->json($data);
     }
@@ -35,6 +51,9 @@ class ReferensiController extends Controller
         $find = NULL;
         if($data == 'ptk'){
             $find = Ptk::find($id);
+        }
+        if($data == 'mapel'){
+            $find = MataPelajaran::find($id);
         }
         if($find){
             if($find->delete()){
@@ -181,6 +200,147 @@ class ReferensiController extends Controller
                 'icon' => 'tabler-xbox-x',
                 'title' => 'Failed!',
                 'text' => 'Data PTK gagal diperbaharui! Silahkan coba beberapa saat lagi.',
+            ];
+        }
+        return $data;
+    }
+    public function save_update_mapel(){
+        $find = MataPelajaran::find(request()->id);
+        $find->nama = request()->nama;
+        $find->alias = request()->alias;
+        if($find->save()){
+            $data = [
+                'color' => 'success',
+                'icon' => 'tabler-circle-check',
+                'title' => 'Success!',
+                'text' => 'Data Mata Pelajaran berhasil diperbaharui!',
+            ];
+        } else {
+            $data = [
+                'color' => 'error',
+                'icon' => 'tabler-xbox-x',
+                'title' => 'Failed!',
+                'text' => 'Data Mata Pelajaran gagal diperbaharui! Silahkan coba beberapa saat lagi.',
+            ];
+        }
+        return $data;
+    }
+    public function save_rombel(){
+        $insert = 0;   
+        foreach(request()->nama as $key => $nama){
+            $insert++;
+            RombonganBelajar::create([
+                'sekolah_id' => request()->sekolah_id,
+                'nama' => $nama,
+                'ptk_id' => request()->ptk_id[$key],
+                'tingkat' => request()->tingkat[$key],
+                'semester_id' => 20251,
+            ]);
+        }
+        if($insert){
+            $data = [
+                'color' => 'success',
+                'icon' => 'tabler-circle-check',
+                'title' => 'Success!',
+                'text' => 'Data Rombongan Belajar berhasil disimpan!',
+            ];
+        } else {
+            $data = [
+                'color' => 'error',
+                'icon' => 'tabler-xbox-x',
+                'title' => 'Failed!',
+                'text' => 'Tidak ada data disimpan!',
+                'request' => request()->all(),
+            ];
+        }
+        return $data;
+    }
+    public function save_mapel(){
+        $insert = 0;
+        foreach(request()->nama as $key => $nama){
+            $insert++;
+            MataPelajaran::create([
+                'nama' => $nama,
+                'alias' => request()->alias[$key]
+            ]);
+        }
+        if($insert){
+            $data = [
+                'color' => 'success',
+                'icon' => 'tabler-circle-check',
+                'title' => 'Success!',
+                'text' => 'Data Mata Pelajaran berhasil disimpan!',
+            ];
+        } else {
+            $data = [
+                'color' => 'error',
+                'icon' => 'tabler-xbox-x',
+                'title' => 'Failed!',
+                'text' => 'Tidak ada data disimpan!',
+                'request' => request()->all(),
+            ];
+        }
+        return $data;
+    }
+    public function save_pembelajaran(){
+        $insert = 0;
+        foreach(request()->ptk_id as $key => $ptk_id){
+            $insert++;
+            Pembelajaran::create([
+                'ptk_id' => $ptk_id,
+                'rombongan_belajar_id' => request()->rombongan_belajar_id[$key],
+                'mata_pelajaran_id' => request()->mata_pelajaran_id,
+                'nama_mata_pelajaran' => request()->nama_mata_pelajaran,
+            ]);
+        }
+        if($insert){
+            $data = [
+                'color' => 'success',
+                'icon' => 'tabler-circle-check',
+                'title' => 'Success!',
+                'text' => 'Data Pembelajaran berhasil disimpan!',
+            ];
+        } else {
+            $data = [
+                'color' => 'error',
+                'icon' => 'tabler-xbox-x',
+                'title' => 'Failed!',
+                'text' => 'Tidak ada data disimpan!',
+                'request' => request()->all(),
+            ];
+        }
+        return $data;
+    }
+    public function save_update_rombel(){
+        $find = RombonganBelajar::find(request()->rombongan_belajar_id);
+        $find->nama = request()->nama;
+        $find->ptk_id = request()->wali_id;
+        $find->tingkat = request()->tingkat;
+        $find->save();
+        $insert = 0;
+        foreach(request()->ptk_id as $key => $ptk_id){
+            $insert++;
+            Pembelajaran::create([
+                'ptk_id' => $ptk_id,
+                'rombongan_belajar_id' => request()->rombongan_belajar_id,
+                'mata_pelajaran_id' => request()->mata_pelajaran_id[$key],
+                'nama_mata_pelajaran' => request()->nama_mata_pelajaran[$key],
+            ]);
+        }
+        if($insert){
+            $data = [
+                'color' => 'success',
+                'icon' => 'tabler-circle-check',
+                'title' => 'Success!',
+                'text' => 'Data Pembelajaran berhasil disimpan!',
+            ];
+        } else {
+            $data = [
+                'color' => 'error',
+                'icon' => 'tabler-xbox-x',
+                'title' => 'Failed!',
+                'text' => 'Tidak ada data disimpan!',
+                'request' => request()->all(),
             ];
         }
         return $data;

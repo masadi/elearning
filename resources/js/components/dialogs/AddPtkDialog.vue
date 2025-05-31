@@ -19,20 +19,26 @@ const emit = defineEmits([
 ])
 
 const fileExcel = ref('')
+const isFormValid = ref(false)
+const refForm = ref()
 const onSubmit = async() => {
-  await $api('/referensi/store', {
-    method: 'POST',
-    body: {
-      data: 'import-ptk',
-      sekolah_id: props.sekolah.sekolah_id,
-      item: imported_data.value,
-    },
-    onResponse({ request, response, options }) {
-      let getData = response._data
-      emit('update:isDialogVisible', false)
-      emit('notif', getData)
-      imported_data.value = []
-      fileExcel.value = ''
+  refForm.value?.validate().then(async({ valid }) => {
+    if (valid) {
+      await $api('/referensi/store', {
+        method: 'POST',
+        body: {
+          data: 'import-ptk',
+          sekolah_id: props.sekolah.sekolah_id,
+          item: imported_data.value,
+        },
+        onResponse({ request, response, options }) {
+          let getData = response._data
+          emit('update:isDialogVisible', false)
+          emit('notif', getData)
+          imported_data.value = []
+          fileExcel.value = ''
+        }
+      })
     }
   })
 }
@@ -86,7 +92,7 @@ const importData = async(val) => {
         </VToolbar>
       </div>
       <VCardText>
-        <VForm ref="refPermissionForm">
+        <VForm ref="refForm" v-model="isFormValid" @submit.prevent="onSubmit">
           <VFileInput accept=".xlsx" v-model="fileExcel" label="Import Excel" @update:modelValue="importData"/>
           <VTable class="permission-table text-no-wrap mb-6 mt-4">
             <thead>
@@ -108,7 +114,9 @@ const importData = async(val) => {
                     {{ value }}
                   </template>
                   <template v-else>
-                    <AppTextField v-model="item[key]" placeholder="Placeholder Text" />
+                    <AppTextField v-model="item[key]" :rules="[requiredValidator, emailValidator]" v-if="key == 'email'" />
+                    <AppTextField v-model="item[key]" :rules="[requiredValidator]" v-else-if="key != 'nuptk'" />
+                    <AppTextField v-model="item[key]" v-else />
                   </template>
                 </td>
               </tr>

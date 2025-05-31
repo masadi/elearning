@@ -3,6 +3,9 @@
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
+use App\Models\RombonganBelajar;
+use App\Models\Ptk;
+use App\Models\MataPelajaran;
 
 return new class extends Migration
 {
@@ -15,6 +18,7 @@ return new class extends Migration
             $table->uuid('pembelajaran_id');
             $table->uuid('rombongan_belajar_id');
             $table->uuid('ptk_id');
+            $table->foreignIdFor(MataPelajaran::class);
 			$table->string('nama_mata_pelajaran');
             $table->timestamps();
             $table->softDeletes();

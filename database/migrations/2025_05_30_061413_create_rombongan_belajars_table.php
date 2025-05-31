@@ -17,7 +17,7 @@ return new class extends Migration
             $table->uuid('ptk_id');
             $table->string('semester_id', 5);
 			$table->string('nama');
-            $table->decimal('tingkat', 1, 0);
+            $table->decimal('tingkat', 2, 0);
             $table->timestamps();
             $table->softDeletes();
             $table->primary('rombongan_belajar_id');

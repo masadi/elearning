@@ -66,8 +66,8 @@ if(getData.value.color){
     notif.value = getData.value
     isAlertVisible.value = true
 }
-const items = computed(() => getData.value.ptk.data)
-const total_item = computed(() => getData.value.ptk.total)
+const items = computed(() => getData.value.lists.data)
+const total_item = computed(() => getData.value.lists.total)
 const sekolah = computed(() => getData.value.sekolah)
 const isAddNewPtkVisible = ref(false)
 
@@ -151,7 +151,7 @@ const updatePtk = async userData => {
           <!-- 👉 Search  -->
           <AppTextField
             v-model="searchQuery"
-            placeholder="Search User"
+            placeholder="Cari..."
             style="inline-size: 15.625rem;"
           />
           <VBtn @click="isAddNewPtkVisible = true" v-if="sekolah">Tambah <VIcon end icon="tabler-cloud-upload" /></VBtn>
@@ -242,13 +242,3 @@ const updatePtk = async userData => {
       />
   </section>
 </template>
-
-<style lang="scss">
-.text-capitalize {
-  text-transform: capitalize;
-}
-
-.user-list-name:not(:hover) {
-  color: rgba(var(--v-theme-on-background), var(--v-medium-emphasis-opacity));
-}
-</style>

@@ -154,7 +154,7 @@ const deleteUser = async id => {
           <!-- 👉 Search  -->
           <AppTextField
             v-model="searchQuery"
-            placeholder="Search User"
+            placeholder="Cari..."
             style="inline-size: 15.625rem;"
           />
 

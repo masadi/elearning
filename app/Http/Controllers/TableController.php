@@ -5,6 +5,8 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Sekolah;
 use App\Models\Ptk;
+use App\Models\MataPelajaran;
+use App\Models\RombonganBelajar;
 
 class TableController extends Controller
 {
@@ -31,11 +33,32 @@ class TableController extends Controller
     }
     public function get_ptk(){
         $data = [
-            'ptk' => Ptk::where($this->wherePtk())->orderBy(request()->sortBy, request()->orderBy)
+            'lists' => Ptk::where($this->wherePtk())->orderBy(request()->sortBy, request()->orderBy)
             ->when(request()->q, function($query) {
                 $query->where('nama', 'LIKE', '%' . request()->q . '%');
                 $query->where($this->wherePtk());
                 $query->orWhere('email', 'LIKE', '%' . request()->q . '%');
+                $query->where($this->wherePtk());
+            })->paginate(request()->per_page),
+            'sekolah' => Sekolah::where('user_id', auth()->user()->id)->first(),
+        ];
+        return response()->json($data);
+    }
+    public function get_mapel(){
+        $data = [
+            'lists' => MataPelajaran::orderBy(request()->sortBy, request()->orderBy)
+            ->when(request()->q, function($query) {
+                $query->where('nama', 'LIKE', '%' . request()->q . '%');
+                $query->orWhere('alias', 'LIKE', '%' . request()->q . '%');
+            })->paginate(request()->per_page),
+        ];
+        return response()->json($data);
+    }
+    public function get_rombel(){
+        $data = [
+            'lists' => RombonganBelajar::with('walas')->where($this->wherePtk())->orderBy(request()->sortBy, request()->orderBy)
+            ->when(request()->q, function($query) {
+                $query->where('nama', 'LIKE', '%' . request()->q . '%');
                 $query->where($this->wherePtk());
             })->paginate(request()->per_page),
             'sekolah' => Sekolah::where('user_id', auth()->user()->id)->first(),
