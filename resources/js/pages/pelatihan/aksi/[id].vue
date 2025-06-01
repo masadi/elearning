@@ -29,15 +29,15 @@ const currentTab = ref('item-0')
     <VCardText>
       <VWindow v-model="currentTab">
         <VWindowItem value="item-0">
-          <span class="text-justify" v-html="data.deskripsi"></span>
+          <span class="text-rata" v-html="data.deskripsi"></span>
           <template v-if="data.dokumen.length">
             <VAlert color="primary" icon="tabler-file-info">DOKUMEN</VAlert>
             <ListDokumen :dokumen="data.dokumen" />
           </template>
         </VWindowItem>
         <VWindowItem v-for="sesi in data.sesi" :value="`item-${sesi.urut}`">
-          <h3 class="my-r">{{ sesi.judul }}</h3>
-          <span class="text-justify" v-html="sesi.deskripsi"></span>
+          <h4 class="text-h4 mb-2">{{ sesi.judul }}</h4>
+          <span class="text-rata" v-html="sesi.deskripsi"></span>
           <template v-if="sesi.dokumen.length">
             <VAlert color="primary" icon="tabler-file-info">DOKUMEN SESI {{ sesi.urut }}</VAlert>
             <ListDokumen :dokumen="sesi.dokumen" />
@@ -45,8 +45,8 @@ const currentTab = ref('item-0')
           <template v-if="sesi.materi.length">
             <VAlert color="primary" icon="tabler-book">MATERI INISIASI</VAlert>
             <template v-for="materi in sesi.materi">
-              <h3 class="my-4">{{ materi.judul }}</h3>
-              <span class="text-justify" v-html="materi.deskripsi"></span>
+              <h4 class="text-h4 mb-2">{{ materi.judul }}</h4>
+              <span class="text-rata" v-html="materi.deskripsi"></span>
               <template v-if="materi.dokumen.length">
                 <VAlert color="warning" icon="tabler-file-info">Dokumen Materi ({{ materi.judul }})</VAlert>
                 <ListDokumen :dokumen="materi.dokumen" />
@@ -58,3 +58,6 @@ const currentTab = ref('item-0')
     </VCardText>
   </VCard>
 </template>
+<style lang="scss">
+.text-rata {text-align: justify; line-height: 1.6rem;}
+</style>
