@@ -1,0 +1,1 @@
+import{ar as o,as as u,k as m}from"./main-CJqJ5jgX.js";const l=(s,t,n,i,e=!1)=>{const a=o(),{global:r}=u();return m(()=>r.name.value==="light"?a.skin==="bordered"&&e?n:s:r.name.value==="dark"?a.skin==="bordered"&&e?i:t:s)},k="/build/assets/misc-mask-dark-D4eSvDKH.png",f="/build/assets/misc-mask-light-7GUBPWb3.png";export{f as a,k as m,l as u};

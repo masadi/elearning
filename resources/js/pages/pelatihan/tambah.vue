@@ -28,9 +28,11 @@ const dokumen = ref([{
 const nextDokumenId = ref(2)
 const isFormValid = ref(false)
 const refForm = ref()
+const isBusy = ref(false)
 const onSubmit = async() => {
   refForm.value?.validate().then(async({ valid }) => {
     if (valid) {
+      isBusy.value = true
       const postData = new FormData();
       postData.append('data', 'pelatihan');
       for (const [key, value] of Object.entries(inputData.value)) {
@@ -47,6 +49,7 @@ const onSubmit = async() => {
           let getData = response._data
           notif.value = getData
           isAlertVisible.value = true
+          isBusy.value = false
         }
       })
     }
@@ -100,7 +103,7 @@ const delForm = (index) => {
         </VRow>
         <VRow justify="space-between">
           <VCol cols="4">
-            <VBtn type="submit">Submit</VBtn>
+            <VBtn type="submit" :loading="isBusy" :disabled="isBusy">Submit</VBtn>
           </VCol>
           <VCol cols="4" class="text-right">
             <VBtn color="info" @click="addForm">Tambah Form Dokumen <VIcon end icon="tabler-copy" /></VBtn>
