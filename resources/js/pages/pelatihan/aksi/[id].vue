@@ -39,7 +39,7 @@ const currentTab = ref('item-0')
           <h3 class="my-r">{{ sesi.judul }}</h3>
           <span class="text-justify" v-html="sesi.deskripsi"></span>
           <template v-if="sesi.dokumen.length">
-            <VAlert color="primary" icon="tabler-file-info">DOKUMEN SESI ({{ sesi.judul }})</VAlert>
+            <VAlert color="primary" icon="tabler-file-info">DOKUMEN SESI ({{ sesi.urut }})</VAlert>
             <ListDokumen :dokumen="sesi.dokumen" />
           </template>
           <template v-if="sesi.materi.length">
