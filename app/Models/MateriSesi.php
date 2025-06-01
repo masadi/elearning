@@ -13,10 +13,10 @@ class MateriSesi extends Model
     public $guarded = [];
     public function sesi()
     {
-        return $this->belongsTo(SesiLatihan::class, 'sesi_latihan_id', 'sesi_latihan_id');
+        return $this->belongsTo(SesiLatihan::class, 'sesi_latihan_id', 'sesi_latihan_id')->orderBy('created_at');
     }
     public function dokumen()
     {
-        return $this->hasMany(Dokumen::class, 'table_id', 'materi_sesi_id');
+        return $this->hasMany(Dokumen::class, 'table_id', 'materi_sesi_id')->orderBy('created_at');
     }
 }

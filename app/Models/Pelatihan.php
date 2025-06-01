@@ -18,6 +18,6 @@ class Pelatihan extends Model
     }
     public function dokumen()
     {
-        return $this->hasMany(Dokumen::class, 'table_id', 'pelatihan_id');
+        return $this->hasMany(Dokumen::class, 'table_id', 'pelatihan_id')->orderBy('created_at');
     }
 }

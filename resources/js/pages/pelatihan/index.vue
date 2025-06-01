@@ -96,7 +96,6 @@ const confirmDelete = async (val) => {
   }
 }
 const mulaiLatihan = id => {
-  console.log(id)
   router.push({ name: 'pelatihan-aksi-id', params: {id: id} })
 }
 const sesiLatihan = async(val) => {

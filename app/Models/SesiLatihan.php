@@ -17,10 +17,10 @@ class SesiLatihan extends Model
     }
     public function dokumen()
     {
-        return $this->hasMany(Dokumen::class, 'table_id', 'sesi_latihan_id');
+        return $this->hasMany(Dokumen::class, 'table_id', 'sesi_latihan_id')->orderBy('created_at');
     }
     public function materi()
     {
-        return $this->hasMany(MateriSesi::class, 'sesi_latihan_id', 'sesi_latihan_id');
+        return $this->hasMany(MateriSesi::class, 'sesi_latihan_id', 'sesi_latihan_id')->orderBy('created_at');
     }
 }

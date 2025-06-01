@@ -8,7 +8,9 @@ use App\Models\Pelatihan;
 class PelatihanController extends Controller
 {
     public function index(){
-        $data = Pelatihan::with(['sesi'])->find(request()->id);
+        $data = Pelatihan::with(['dokumen', 'sesi' => function($query){
+            $query->with(['materi.dokumen', 'dokumen']);
+        }])->find(request()->id);
         return response()->json($data);
     }
 }
