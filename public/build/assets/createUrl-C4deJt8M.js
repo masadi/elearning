@@ -1,1 +1,0 @@
-import{s as f}from"./index-BxkgbwWS.js";import{m as b,ba as e}from"./main-Cil2oFi6.js";const s=(c,r)=>b(()=>{if(!(r!=null&&r.query))return e(c);const a=e(c),m=e(r==null?void 0:r.query),u=Object.fromEntries(Object.entries(m).map(([t,y])=>[t,e(y)]));return`${a}${u?`?${f(u)}`:""}`});export{s as c};
