@@ -16,4 +16,8 @@ class Pelatihan extends Model
     {
         return $this->hasMany(SesiLatihan::class, 'pelatihan_id', 'pelatihan_id')->orderBy('urut');
     }
+    public function dokumen()
+    {
+        return $this->hasMany(Dokumen::class, 'table_id', 'pelatihan_id');
+    }
 }

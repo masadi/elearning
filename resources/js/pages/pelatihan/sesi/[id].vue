@@ -6,167 +6,228 @@ definePage({
     navActiveLink: 'pelatihan',
   },
 })
-import { QuillEditor } from '@vueup/vue-quill';
-import '@vueup/vue-quill/dist/vue-quill.snow.css';
-const router = useRouter()
-const route = useRoute()
-const {
-  data: getData,
-  execute: fetchData,
-} = await useApi(createUrl('/referensi/show', {
-  query: {
-    data: 'sesi',
-    sesi_latihan_id: route.params.id,
-  },
-}))
-const sesi_latihan = computed(() => getData.value)
 const notif = ref({
   icon: null,
   title: null,
   text: null,
   color: null,
 })
-const isBusy = ref(false)
 const isAlertVisible = ref(false)
-const isSnackbarClicked = ref(false)
-const inputData = ref({
-  sesi_latihan_id: sesi_latihan.value.sesi_latihan_id,
-  judul: sesi_latihan.value.judul,
-  urut: sesi_latihan.value.urut,
-  deskripsi: sesi_latihan.value.deskripsi,
-})
-const dokumen = ref([{
-  id: 1,
-  berkas: null,
-  nama: null,
-}])
-const nextDokumenId = ref(2)
-const dokId = ref()
-const isConfirmDialogVisible = ref(false)
-const isFormValid = ref(false)
-const refForm = ref()
-const onSubmit = async() => {
-  refForm.value?.validate().then(async({ valid }) => {
-    if (valid) {
-      isBusy.value = true
-      const postData = new FormData();
-      postData.append('data', 'sesi');
-      for (const [key, value] of Object.entries(inputData.value)) {
-        postData.append(key, (value) ? value : '');
-      }
-      dokumen.value.forEach(e => {
-        postData.append('nama[]', (e.nama) ? e.nama : '');
-        postData.append('berkas[]', (e.berkas) ? e.berkas : '');
-      });
-      await $api('/referensi/store', {
-        method: 'POST',
-        body: postData,
-        onResponse({ request, response, options }) {
-          let getData = response._data
-          notif.value = getData
-          isAlertVisible.value = true
-          isBusy.value = false
-        }
-      })
-    }
-  })
-}
-watch(isSnackbarClicked, () => {
-  if(isSnackbarClicked.value){
-    if(dokId.value){
-      dokId.value = null
-    } else {
-      router.push({ name: 'pelatihan-sesi-pelatihan_id', params: {pelatihan_id: sesi_latihan.value.pelatihan_id} })
-    }
+// 👉 Store
+const searchQuery = ref('')
+// Data table options
+const itemsPerPage = ref(10)
+const page = ref(1)
+const sortBy = ref('created_at')
+const orderBy = ref('DESC')
+
+const updateOptions = options => {
+  if(options.sortBy.length){
+    sortBy.value = options.sortBy[0]?.key
+    orderBy.value = options.sortBy[0]?.order
   }
-})
-const addForm = () => {
-  dokumen.value.push({
-    id: nextDokumenId.value += nextDokumenId.value,
-  })
 }
-const delForm = (index) => {
-  dokumen.value.splice(index, 1)
+
+// Headers
+const headers = [
+  {
+    title: 'judul',
+    key: 'judul',
+    sortable: false,
+  },
+  {
+    title: 'jml dokumen',
+    key: 'dokumen_count',
+    align: 'center',
+    sortable: false,
+  },
+  {
+    title: 'jml materi',
+    key: 'materi_count',
+    align: 'center',
+    sortable: false,
+  },
+  {
+    title: 'jml tugas',
+    key: 'tugas_count',
+    align: 'center',
+    sortable: false,
+  },
+  {
+    title: 'jml tes',
+    key: 'ujian_count',
+    align: 'center',
+    sortable: false,
+  },
+  {
+    title: 'Actions',
+    key: 'actions',
+    align: 'center',
+    sortable: false,
+  },
+]
+const router = useRouter()
+const route = useRoute()
+const {
+  data: getData,
+  execute: fetchData,
+} = await useApi(createUrl('/table', {
+  query: {
+    data: 'sesi',
+    pelatihan_id: route.params.id,
+    q: searchQuery,
+    itemsPerPage,
+    page,
+    sortBy,
+    orderBy,
+  },
+}))
+if(getData.value.color){
+    notif.value = getData.value
+    isAlertVisible.value = true
 }
-const delDok = async(id) => {
-  dokId.value = id
+const items = computed(() => getData.value.lists.data)
+const total_item = computed(() => getData.value.lists.total)
+const isAddNewData = () => {
+  router.push({ name: 'pelatihan-sesi-tambah-id', params: {pelatihan_id: route.params.id} })
+}
+
+const deletedId = ref()
+const isConfirmDialogVisible = ref()
+const deleteData = async id => {
+  deletedId.value = id
   isConfirmDialogVisible.value = true
 }
 const confirmDelete = async (val) => {
   if(val){
-    await $api(`/referensi/destroy/dokumen/${ dokId.value }`, { 
+    await $api(`/referensi/destroy/sesi/${ deletedId.value }`, { 
       method: 'DELETE',
       onResponse({ request, response, options }) {
         let getData = response._data
         notif.value = getData
         isAlertVisible.value = true
+        deletedId.value = null
         fetchData()
       }
     })
   }
 }
+const materiSesi = async(val) => {
+  router.push({ name: 'pelatihan-sesi-materi-id', params: {id: val.sesi_latihan_id} })
+}
+const ujianSesi = async(val) => {
+  console.log('ujianSesi', val);
+}
+const tugasSesi = async(val) => {
+  console.log('tugasSesi', val);
+}
+const editData = async(val) => {
+  router.push({ name: 'pelatihan-sesi-edit-id', params: {id: val} })
+}
+watch(isAlertVisible, () => {
+  if (!isAlertVisible.value)
+  fetchData()
+})
 </script>
 
 <template>
-  <VCard :title="`Edit Sesi Pelatihan ${sesi_latihan.judul}`">
-    <VForm ref="refForm" v-model="isFormValid" @submit.prevent="onSubmit">
-      <VCardText class="pb-12">
-        <VRow>
-          <VCol cols="12">
-            <AppTextField v-model="inputData.judul" :rules="[requiredValidator]">
-              <template #label>Judul Sesi</template>
-            </AppTextField>
-          </VCol>
-          <VCol cols="12">
-            <label for="">Deskripsi Sesi</label>
-            <QuillEditor theme="snow" toolbar="full" v-model:content="inputData.deskripsi" contentType="html" :rules="[requiredValidator]" />
-          </VCol>
-        </VRow>
+  <section>
+    <VCard>
+      <VCardText class="d-flex flex-wrap gap-4">
+        <div class="d-flex gap-2 align-center">
+          <AppSelect
+            :model-value="itemsPerPage"
+            :items="[
+              { value: 10, title: '10' },
+              { value: 25, title: '25' },
+              { value: 50, title: '50' },
+              { value: 100, title: '100' },
+              { value: -1, title: 'All' },
+            ]"
+            style="inline-size: 5.5rem;"
+            @update:model-value="itemsPerPage = parseInt($event, 10)"
+          />
+        </div>
+
+        <VSpacer />
+
+        <div class="d-flex align-center flex-wrap gap-4">
+          <!-- 👉 Search  -->
+          <AppTextField
+            v-model="searchQuery"
+            placeholder="Cari..."
+            style="inline-size: 15.625rem;"
+          />
+          <VBtn @click="isAddNewData">Tambah <VIcon end icon="tabler-plus" /></VBtn>
+        </div>
       </VCardText>
-      <VCardText class="mt-16">
-        <VRow v-for="(dok, index) in sesi_latihan.dokumen" :id="dok.id" :key="dok.id">
-          <VCol md="6">
-            {{ dok.nama }}
-          </VCol>
-          <VCol md="4">
-            <a :href="`/storage/berkas/${dok.path}`" target="_blank">
-              <VTooltip activator="parent" location="top">Lihat Dokumen</VTooltip>
-              <VIcon :icon="`tabler-file-type-${dok.extension.replace('xlsx', 'xls')}`" /> Lihat Dokumen
-            </a>
-          </VCol>
-          <VCol md="2">
-            <VBtn block color="error" @click="delDok(dok.dokumen_id)"><VIcon icon="tabler-x" /> Hapus</VBtn>
-          </VCol>
-        </VRow>
-        <VRow v-for="(dok, index) in dokumen" :id="dok.id" :key="dok.id">
-          <VCol md="6">
-            <AppTextField id="nama" v-model="dok.nama">
-              <template #label>Nama Dokumen</template>
-            </AppTextField>
-          </VCol>
-          <VCol md="4">
-            <VFileInput v-model="dok.berkas" label="Berkas Dokumen" />
-          </VCol>
-          <VCol md="2">
-            <VBtn block color="warning" @click="delForm(index)"><VIcon icon="tabler-x" /> Hapus</VBtn>
-          </VCol>
-        </VRow>
-        <VRow justify="space-between">
-          <VCol cols="4">
-            <VBtn type="submit" :loading="isBusy" :disabled="isBusy">Submit</VBtn>
-          </VCol>
-          <VCol cols="4" class="text-right">
-            <VBtn color="info" @click="addForm">Tambah Form Dokumen <VIcon end icon="tabler-copy" /></VBtn>
-          </VCol>
-        </VRow>
-      </VCardText>
-    </VForm>
-    <ShowAlert :color="notif.color" :icon="notif.icon" :title="notif.title" :text="notif.text" :disable-time-out="false" v-model:isSnackbarVisible="isAlertVisible" v-model:isSnackbarClicked="isSnackbarClicked"></ShowAlert>
+
+      <VDivider />
+      <!-- SECTION datatable -->
+      <VDataTableServer
+        v-model:items-per-page="itemsPerPage"
+        v-model:page="page"
+        :items-per-page-options="[
+          { value: 10, title: '10' },
+          { value: 20, title: '20' },
+          { value: 50, title: '50' },
+          { value: -1, title: '$vuetify.dataFooter.itemsPerPageAll' },
+        ]"
+        :items="items"
+        :items-length="total_item"
+        :headers="headers"
+        class="text-no-wrap"
+        @update:options="updateOptions"
+      >
+        <template #item.mapel="{ item }">
+          {{ item.pembelajaran?.nama_mata_pelajaran }}
+        </template>
+
+        <template #item.rombel="{ item }">
+          {{ item.pembelajaran?.rombongan_belajar?.nama }}
+        </template>
+        
+        <!-- Actions -->
+        <template #item.actions="{ item }">
+          <IconBtn @click="materiSesi(item)">
+            <VTooltip activator="parent" location="top">Materi</VTooltip>
+            <VIcon icon="tabler-file-export" />
+          </IconBtn>
+          <IconBtn @click="tugasSesi(item)">
+            <VTooltip activator="parent" location="top">Tugas</VTooltip>
+            <VIcon icon="tabler-user-check" />
+          </IconBtn>
+          <IconBtn @click="ujianSesi(item)">
+            <VTooltip activator="parent" location="top">Tes Formatif</VTooltip>
+            <VIcon icon="tabler-clock-search" />
+          </IconBtn>
+          <IconBtn @click="editData(item.sesi_latihan_id)">
+            <VTooltip activator="parent" location="top">Edit Sesi Latihan</VTooltip>
+            <VIcon icon="tabler-pencil" />
+          </IconBtn>
+          <IconBtn @click="deleteData(item.sesi_latihan_id)">
+            <VTooltip activator="parent" location="top">Hapus Sesi Latihan</VTooltip>
+            <VIcon icon="tabler-trash" />
+          </IconBtn>
+
+        </template>
+
+        <template #bottom>
+          <TablePagination
+            v-model:page="page"
+            :items-per-page="itemsPerPage"
+            :total-items="total_item"
+          />
+        </template>
+      </VDataTableServer>
+      <!-- SECTION -->
+    </VCard>
+    <ShowAlert :color="notif.color" :icon="notif.icon" :title="notif.title" :text="notif.text" :disable-time-out="false" v-model:isSnackbarVisible="isAlertVisible" v-if="notif.color"></ShowAlert>
     <ConfirmDialog
         v-model:isDialogVisible="isConfirmDialogVisible"
         confirmation-question="Apakah Anda yakin ingin menghapus data ini?"
         :show-notif="false"
         @confirm="confirmDelete"
       />
-  </VCard>
+  </section>
 </template>

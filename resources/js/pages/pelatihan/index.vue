@@ -40,6 +40,11 @@ const headers = [
     sortable: false,
   },
   {
+    title: 'jml dokumen',
+    key: 'dokumen_count',
+    sortable: false,
+  },
+  {
     title: 'Actions',
     key: 'actions',
     align: 'center',
@@ -95,7 +100,7 @@ const mulaiLatihan = id => {
   router.push({ name: 'pelatihan-aksi-id', params: {id: id} })
 }
 const sesiLatihan = async(val) => {
-  router.push({ name: 'pelatihan-sesi-pelatihan_id', params: {pelatihan_id: val.pelatihan_id} })
+  router.push({ name: 'pelatihan-sesi-id', params: {id: val.pelatihan_id} })
 }
 const editData = async(val) => {
   router.push(`/pelatihan/${val}`)

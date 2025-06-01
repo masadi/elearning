@@ -16,7 +16,7 @@ const {
 } = await useApi(createUrl('/referensi/show', {
   query: {
     data: 'sesi',
-    pelatihan_id: route.params.pelatihan_id,
+    pelatihan_id: route.params.id,
   },
 }))
 const pelatihan = computed(() => getData.value)
@@ -42,9 +42,11 @@ const dokumen = ref([{
 const nextDokumenId = ref(2)
 const isFormValid = ref(false)
 const refForm = ref()
+const isBusy = ref(false)
 const onSubmit = async() => {
   refForm.value?.validate().then(async({ valid }) => {
     if (valid) {
+      isBusy.value = true
       const postData = new FormData();
       postData.append('data', 'sesi');
       for (const [key, value] of Object.entries(inputData.value)) {
@@ -61,6 +63,7 @@ const onSubmit = async() => {
           let getData = response._data
           notif.value = getData
           isAlertVisible.value = true
+          isBusy.value = false
         }
       })
     }
@@ -68,8 +71,7 @@ const onSubmit = async() => {
 }
 watch(isSnackbarClicked, () => {
   if(isSnackbarClicked.value){
-    router.push({ name: 'pelatihan-sesi-pelatihan_id', params: {pelatihan_id: route.params.pelatihan_id} })
-    //router.push({ name: 'pelatihan' })
+    router.push({ name: 'pelatihan-sesi-id', params: {id: route.params.id} })
   }
 })
 const addForm = () => {
@@ -114,7 +116,7 @@ const delForm = (index) => {
         </VRow>
         <VRow justify="space-between">
           <VCol cols="4">
-            <VBtn type="submit">Submit</VBtn>
+            <VBtn type="submit" :loading="isBusy" :disabled="isBusy">Submit</VBtn>
           </VCol>
           <VCol cols="4" class="text-right">
             <VBtn color="info" @click="addForm">Tambah Form Dokumen <VIcon end icon="tabler-copy" /></VBtn>

@@ -29,10 +29,10 @@ const currentTab = ref('item-0')
     <VCardText>
       <VWindow v-model="currentTab">
         <VWindowItem value="item-0">
-          <span v-html="data.deskripsi"></span>
+          <span class="text-justify" v-html="data.deskripsi"></span>
         </VWindowItem>
         <VWindowItem v-for="sesi in data.sesi" :value="`item-${sesi.urut}`">
-          <span v-html="sesi.deskripsi"></span>
+          <span class="text-justify" v-html="sesi.deskripsi"></span>
         </VWindowItem>
       </VWindow>
     </VCardText>

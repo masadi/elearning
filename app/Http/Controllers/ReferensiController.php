@@ -12,6 +12,7 @@ use App\Models\Pembelajaran;
 use App\Models\MateriAjar;
 use App\Models\Pelatihan;
 use App\Models\SesiLatihan;
+use App\Models\MateriSesi;
 use App\Models\Dokumen;
 use Carbon\Carbon;
 
@@ -77,26 +78,29 @@ class ReferensiController extends Controller
         if($data == 'sesi'){
             $find = SesiLatihan::find($id);
         }
+        if($data == 'materi-sesi'){
+            $find = MateriSesi::find($id);
+        }
         if($data == 'dokumen'){
             $find = Dokumen::find($id);
         }
         if($find){
             if($find->delete()){
-                if($data == 'sesi'){
+                if(in_array($data, ['pelatihan', 'sesi', 'materi-sesi'])){
                     Dokumen::where('table_id', $id)->delete();
                 }
                 $data = [
                     'color' => 'success',
                     'icon' => 'tabler-circle-check',
                     'title' => 'Success!',
-                    'text' => 'Data '.strtoupper(request()->data).' berhasil dihapus!',
+                    'text' => 'Data '.aksi(request()->data).' berhasil dihapus!',
                 ];
             } else {
                 $data = [
                     'color' => 'error',
                     'icon' => 'tabler-xbox-x',
                     'title' => 'Gagal!',
-                    'text' => 'Data '.strtoupper(request()->data).' gagal dihapus! Silahkan coba beberapa saat lagi.',
+                    'text' => 'Data '.aksi(request()->data).' gagal dihapus! Silahkan coba beberapa saat lagi.',
                 ];
             }
         } else {
@@ -104,7 +108,7 @@ class ReferensiController extends Controller
                 'color' => 'error',
                 'icon' => 'tabler-xbox-x',
                 'title' => 'Failed!',
-                'text' => 'Data '.strtoupper(request()->data).' tidak ditemukan!',
+                'text' => 'Data '.aksi(request()->data).' tidak ditemukan!',
             ];
         }
         return response()->json($data);
@@ -407,13 +411,20 @@ class ReferensiController extends Controller
             ];
         }
         if(request()->data == 'pelatihan'){
-            $data = Pelatihan::find(request()->id);
+            $data = Pelatihan::with('dokumen')->find(request()->id);
         }
         if(request()->data == 'sesi'){
             if(request()->pelatihan_id){
                 $data = Pelatihan::withCount('sesi')->find(request()->pelatihan_id);
             } else {
                 $data = SesiLatihan::with('dokumen')->find(request()->sesi_latihan_id);
+            }
+        }
+        if(request()->data == 'materi-sesi'){
+            if(request()->sesi_latihan_id){
+                $data = SesiLatihan::find(request()->sesi_latihan_id);
+            } else {
+                $data = MateriSesi::with('dokumen')->find(request()->materi_sesi_id);
             }
         }
         return response()->json($data);
@@ -508,6 +519,46 @@ class ReferensiController extends Controller
                 'icon' => 'tabler-circle-check',
                 'title' => 'Success!',
                 'text' => 'Data Sesi Latihan berhasil disimpan!',
+            ];
+        } else {
+            $data = [
+                'color' => 'error',
+                'icon' => 'tabler-xbox-x',
+                'title' => 'Failed!',
+                'text' => 'Tidak ada data disimpan!',
+                'request' => request()->all(),
+            ];
+        }
+        return $data;
+    }
+    public function save_materi_sesi(){
+        $find = new MateriSesi;
+        if(request()->materi_sesi_id){
+            $find = $find->find(request()->materi_sesi_id);
+        } else {
+            $find->sesi_latihan_id = request()->sesi_latihan_id;
+        }
+        $find->judul = request()->judul;
+        $find->deskripsi = request()->deskripsi;
+        if($find->save()){
+            foreach(request()->nama as $i => $nama){
+                if(request()->berkas[$i]){
+                    $nama = ($nama) ? $nama : request()->berkas[$i]->getClientOriginalName();
+                    $path = request()->berkas[$i]->store('berkas', 'public');
+                    Dokumen::create([
+                        'nama' => $nama,
+                        'table_name' => 'materi-sesi',
+                        'table_id' => $find->materi_sesi_id,
+                        'extension' => request()->berkas[$i]->extension(),
+                        'path' => basename($path),
+                    ]);
+                }
+            }
+            $data = [
+                'color' => 'success',
+                'icon' => 'tabler-circle-check',
+                'title' => 'Success!',
+                'text' => 'Data Materi Sesi berhasil disimpan!',
             ];
         } else {
             $data = [

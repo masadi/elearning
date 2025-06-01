@@ -19,4 +19,8 @@ class SesiLatihan extends Model
     {
         return $this->hasMany(Dokumen::class, 'table_id', 'sesi_latihan_id');
     }
+    public function materi()
+    {
+        return $this->hasMany(MateriSesi::class, 'sesi_latihan_id', 'sesi_latihan_id');
+    }
 }
