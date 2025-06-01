@@ -7,6 +7,7 @@ definePage({
 })
 import UserList from '@/views/apps/roles/UserList.vue';
 import Aplikasi from '@/views/dashboards/Aplikasi.vue';
+import Pelatihan from '@/views/dashboards/Pelatihan.vue';
 import Statistik from '@/views/dashboards/Statistik.vue';
 const statistik = ref([])
 const aplikasi = ref([])
@@ -37,6 +38,9 @@ const getAplikasi = val => {
           <UserList @statistik="getStatistik" @aplikasi="getAplikasi" />
         </VCol>
       </VRow>
+    </template>
+    <template v-else>
+      <Pelatihan />
     </template>
   </section>
 </template>

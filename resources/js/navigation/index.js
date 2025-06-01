@@ -45,19 +45,12 @@ export default [
       },
     ],
   },
-  /*{
-    title: 'Materi Ajar',
-    to: 'materi-ajar',
-    icon: { icon: 'tabler-checklist' },
-    action: 'read',
-    subject: 'materi-ajar-read',
-  },*/
   {
     title: 'Pelatihan',
     to: 'pelatihan',
     icon: { icon: 'tabler-checklist' },
-    action: 'read',
-    subject: 'pelatihan-read',
+    action: 'create',
+    subject: 'pelatihan-create',
   },
     {
         title: 'Profile',
