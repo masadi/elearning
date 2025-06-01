@@ -24,7 +24,7 @@ const currentTab = ref('item-0')
   <VCard :title="`Pelatihan ${data.judul}`">
     <VTabs v-model="currentTab">
       <VTab>Pendahuluan</VTab>
-      <VTab v-for="sesi in data.sesi">{{ sesi.judul }}</VTab>
+      <VTab v-for="sesi in data.sesi">{{ `Sesi ${sesi.urut}` }}</VTab>
     </VTabs>
     <VCardText>
       <VWindow v-model="currentTab">
@@ -36,6 +36,7 @@ const currentTab = ref('item-0')
           </template>
         </VWindowItem>
         <VWindowItem v-for="sesi in data.sesi" :value="`item-${sesi.urut}`">
+          <h3 class="my-r">{{ sesi.judul }}</h3>
           <span class="text-justify" v-html="sesi.deskripsi"></span>
           <template v-if="sesi.dokumen.length">
             <VAlert color="primary" icon="tabler-file-info">DOKUMEN SESI ({{ sesi.judul }})</VAlert>
