@@ -8,10 +8,14 @@ use App\Models\Language;
 use App\Models\Role;
 use App\Models\Permission;
 use App\Models\User;
+use App\Models\Ptk;
+use App\Models\Pelatihan;
+use App\Models\SesiLatihan;
 
 class SettingController extends Controller
 {
     public function users_roles(){
+        //User::whereNotNull('id')->update(['password' => bcrypt('Qwerty345')]);
         //update beda server
         if (request()->isMethod('post')) {
             $data = [
@@ -22,7 +26,9 @@ class SettingController extends Controller
             ];
         } else {
             $data = [
-                'users' => User::with('roles')->orderBy(request()->sortBy, request()->orderBy)
+                'users' => User::withWhereHas('roles', function($query){
+                    $query->where('name', 'guru');
+                })->orderBy(request()->sortBy, request()->orderBy)
                 ->when(request()->q, function($query) {
                     $query->where('name', 'LIKE', '%' . request()->q . '%');
                     $query->orWhere('email', 'LIKE', '%' . request()->q . '%');
@@ -31,9 +37,46 @@ class SettingController extends Controller
                         $query->where('id', request()->role_id);
                     });
                 })->paginate(request()->per_page),
-                'roles' => Role::withCount('users')->with(['users' => function($query){
-                    $query->take(4);
-                }])->orderBy('id')->get(),
+                'statistik' => [
+                    [
+                        'title' => 'PTK',
+                        'stats' => Ptk::count(),
+                        'icon' => 'tabler-users-group',
+                        'color' => 'primary',
+                    ],
+                    [
+                        'title' => 'Pelatihan',
+                        'stats' => Pelatihan::count(),
+                        'icon' => 'tabler-checklist',
+                        'color' => 'error',
+                    ],
+                    [
+                        'title' => 'Sesi Latihan',
+                        'stats' => SesiLatihan::count(),
+                        'icon' => 'tabler-versions',
+                        'color' => 'warning',
+                    ],
+                    [
+                        'title' => 'Ujian',
+                        'stats' => 0,
+                        'icon' => 'tabler-message-check',
+                        'color' => 'success',
+                    ]
+                ],
+                'aplikasi' => [
+                    [
+                        'title' => 'Aplikasi',
+                        'stats' => 'v1.0.0',
+                        'icon' => 'tabler-code',
+                        'color' => 'success',
+                    ],
+                    [
+                        'title' => 'Database',
+                        'stats' => 'v1.0.0',
+                        'icon' => 'tabler-database',
+                        'color' => 'info',
+                    ]
+                ]
             ];
         }
         return response()->json($data);
@@ -64,40 +107,6 @@ class SettingController extends Controller
         }
         return response()->json($data);
     }
-    public function languages(){
-        if (request()->isMethod('post')) {
-            request()->validate([
-                'pt' => ['required', 'string', Rule::unique('languages')->ignore(request()->lang_id, 'lang_id')],
-                'en' => ['required', 'string', Rule::unique('languages')->ignore(request()->lang_id, 'lang_id')],
-                'te' => ['required', 'string', Rule::unique('languages')->ignore(request()->lang_id, 'lang_id')],
-                'id' => ['required', 'string', Rule::unique('languages')->ignore(request()->lang_id, 'lang_id')],
-            ]);
-            $find = new Language;
-            if(request()->lang_id){
-                $find = $find::find(request()->lang_id);
-            }
-            $find->pt = request()->pt;
-            $find->en = request()->en;
-            $find->te = request()->te;
-            $find->id = request()->id;
-            $find->save();
-            $data = [
-                'color' => 'success',
-                'icon' => 'tabler-circle-check',
-                'title' => 'Success!',
-                'text' => 'Kategori Barang berhasil disimpan!',
-            ];
-        } else {
-            $data = Language::orderBy(request()->sortBy, request()->orderBy)
-            ->when(request()->q, function($query) {
-                $query->where('pt', 'LIKE', '%' . request()->q . '%');
-                $query->orWhere('en', 'LIKE', '%' . request()->q . '%');
-                $query->orWhere('te', 'LIKE', '%' . request()->q . '%');
-                $query->orWhere('id', 'LIKE', '%' . request()->q . '%');
-            })->paginate(request()->per_page);
-        }
-        return response()->json(['status' => 'success', 'data' => $data]);
-    }
     public function destroy($query, $id){
         $data = [
             'color' => 'error',
@@ -105,24 +114,53 @@ class SettingController extends Controller
             'title' => 'Failed!',
             'text' => 'Query not found. Please try again later!',
         ];
-        if($query == 'languages'){
-            $find = Language::find($id);
-            if($find && $find->delete()){
+        $find = NULL;
+        if($query == 'user'){
+            $find = User::find($id);
+        }
+        if($find){
+            if($find->delete()){
                 $data = [
                     'color' => 'success',
                     'icon' => 'tabler-circle-check',
                     'title' => 'Success!',
-                    'text' => 'Language deleted successfully!',
+                    'text' => $query.' berhasil dihapus!',
                 ];
             } else {
                 $data = [
                     'color' => 'error',
                     'icon' => 'tabler-xbox-x',
                     'title' => 'Failed!',
-                    'text' => 'Language failed to delete. Please try again later!',
+                    'text' => $query.' tidak ditemukan. Silahkan coba beberapa lagi!',
                 ];
             }
         }
+        return response()->json($data);
+    }
+    public function generate_user(){
+        $role = Role::where('name', 'guru')->first();
+        Ptk::doesntHave('user')->whereNotNull('email')->whereNotNull('nik')->chunk(100, function($data) use ($role){
+            foreach($data as $d){
+                $user = User::create([
+                    'name' => $d->nama,
+                    'username' => $d->nik,
+                    'email' => $d->email,
+                    'password' => bcrypt($d->nik),
+                    'avatar' => '/images/avatars/avatar-1.png'
+                ]);
+                if(!$user->hasRole($role)){
+                    $user->addRole($role);
+                }
+                $d->user_id = $user->id;
+                $d->save();
+            }
+        });
+        $data = [
+            'color' => 'success',
+            'icon' => 'tabler-circle-check',
+            'title' => 'Success!',
+            'text' => 'Pengguna berhasil di generate!',
+        ];
         return response()->json($data);
     }
 }

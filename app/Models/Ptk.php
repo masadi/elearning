@@ -25,4 +25,8 @@ class Ptk extends Model
             get: fn ($value) => ($value) ? '/storage/'.$value : NULL,
         );
     }
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
 }

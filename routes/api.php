@@ -6,6 +6,7 @@ use App\Http\Controllers\AuthController;
 use App\Http\Controllers\SettingController;
 use App\Http\Controllers\ReferensiController;
 use App\Http\Controllers\TableController;
+use App\Http\Controllers\PelatihanController;
 
 Route::group(['prefix' => 'auth'], function () {
     Route::post('login', [AuthController::class, 'login']);
@@ -22,6 +23,7 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
         Route::get('profile', [SettingController::class, 'profile']);
         Route::post('profile', [SettingController::class, 'profile']);
         Route::delete('/destroy/{data}/{id}', [SettingController::class, 'destroy']);
+        Route::get('generate-user', [SettingController::class, 'generate_user']);
     });
     Route::group(['prefix' => 'referensi'], function () {
         Route::get('/', [ReferensiController::class, 'index']);
@@ -32,5 +34,8 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
     });
     Route::group(['prefix' => 'table'], function () {
         Route::get('/', [TableController::class, 'index']);
+    });
+    Route::group(['prefix' => 'pelatihan'], function () {
+        Route::get('/', [PelatihanController::class, 'index']);
     });
 });

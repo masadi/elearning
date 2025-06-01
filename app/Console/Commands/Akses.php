@@ -30,16 +30,16 @@ class Akses extends Command
     public function handle()
     {
         $permissions = [
-            'dashboard', 
-            'setting-users-roles',
-            'setting-permissions', 
-            'setting-profile',
-            'referensi-sekolah',
-            'referensi-ptk',
-            'referensi-rombel',
-            'referensi-mata-pelajaran',
+            'dashboard' => ['administrator', 'guru'], 
+            //'setting-users-roles',
+            //'setting-permissions', 
+            'referensi-sekolah' => ['administrator'],
+            'referensi-ptk' => ['administrator'],
+            'referensi-rombel' => ['administrator'],
+            'referensi-mata-pelajaran' => ['administrator'],
             //'materi-ajar',
-            'pelatihan',
+            'pelatihan' => ['administrator', 'guru'],
+            'profile' => ['administrator', 'guru'],
         ];
         $admin = Role::where('name', 'administrator')->first();
         $user = User::where('email', config('app.email'))->first();
@@ -48,7 +48,7 @@ class Akses extends Command
         }
         $akses = ['create', 'read', 'update', 'delete'];
         $not_in = [];
-        foreach($permissions as $permission){
+        foreach($permissions as $permission => $roles){
             foreach($akses as $a){
                 $not_in[] = $permission.'-'.$a;
                 $new = Permission::updateOrCreate(
@@ -61,8 +61,11 @@ class Akses extends Command
                     ]
                 );
                 $this->info($permission.'-'.$a);//throw $th;
-                if(!$admin->hasPermission($permission.'-'.$a)){
-                    $admin->givePermission($new);
+                foreach($roles as $role){
+                    $r = Role::where('name', $role)->first();
+                    if(!$r->hasPermission($permission.'-'.$a)){
+                        $r->givePermission($new);
+                    }
                 }
             }
         }

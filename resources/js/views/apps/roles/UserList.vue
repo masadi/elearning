@@ -1,10 +1,15 @@
 <script setup>
-import AddNewUserDrawer from '@/views/apps/user/list/AddNewUserDrawer.vue'
-
+const notif = ref({
+  icon: null,
+  title: null,
+  text: null,
+  color: null,
+})
+const isAlertVisible = ref(false)
 // 👉 Store
 const searchQuery = ref('')
 const selectedRole = ref()
-const emit = defineEmits(['roles'])
+const emit = defineEmits(['statistik', 'aplikasi'])
 // Data table options
 const itemsPerPage = ref(10)
 const page = ref(1)
@@ -63,8 +68,10 @@ const {
 }))
 const users = computed(() => usersData.value.users.data)
 const totalUsers = computed(() => usersData.value.users.total)
-const roles = computed(() => usersData.value.roles)
-emit('roles', roles.value)
+const statistik = computed(() => usersData.value.statistik)
+const aplikasi = computed(() => usersData.value.aplikasi)
+emit('statistik', statistik.value)
+emit('aplikasi', aplikasi.value)
 // 👉 search filters
 
 const resolveUserRoleVariant = role => {
@@ -106,24 +113,38 @@ const resolveUserRoleVariant = role => {
   }
 }
 
-const isAddNewUserDrawerVisible = ref(false)
-
-const addNewUser = async userData => {
-  await $api('/apps/users', {
-    method: 'POST',
-    body: userData,
-  })
-
-  // refetch User
-  fetchUsers()
-}
-
+const isConfirmDialogVisible = ref()
+const deletedId = ref()
 const deleteUser = async id => {
-  await $api(`/apps/users/${ id }`, { method: 'DELETE' })
-
-  // refetch User
-  fetchUsers()
+  deletedId.value = id
+  isConfirmDialogVisible.value = true
 }
+
+const confirmDelete = async() => {
+  await $api(`/settings/destroy/user/${ deletedId.value }`, { 
+    method: 'DELETE',
+    onResponse({ request, response, options }) {
+      let getData = response._data
+      notif.value = getData
+      isAlertVisible.value = true
+      //isEditPtkVisible.value = false
+    }
+  })
+}
+const generateUser = async() => {
+  await $api(`/settings/generate-user`, { 
+    onResponse({ request, response, options }) {
+      let getData = response._data
+      notif.value = getData
+      isAlertVisible.value = true
+      //isEditPtkVisible.value = false
+    }
+  })
+}
+watch(isAlertVisible, () => {
+  if (!isAlertVisible.value)
+  fetchUsers()
+})
 </script>
 
 <template>
@@ -158,17 +179,7 @@ const deleteUser = async id => {
             style="inline-size: 15.625rem;"
           />
 
-          <!-- 👉 Add user button -->
-          <AppSelect
-            v-model="selectedRole"
-            placeholder="Select Role"
-            :items="roles"
-            item-title="display_name"
-            item-value="id"
-            clearable
-            clear-icon="tabler-x"
-            style="inline-size: 10rem;"
-          />
+          <VBtn @click="generateUser">Generate User</VBtn>
         </div>
       </VCardText>
 
@@ -273,12 +284,18 @@ const deleteUser = async id => {
       </VDataTableServer>
       <!-- SECTION -->
     </VCard>
-
+    <ShowAlert :color="notif.color" :icon="notif.icon" :title="notif.title" :text="notif.text" :disable-time-out="false" v-model:isSnackbarVisible="isAlertVisible" v-if="notif.color"></ShowAlert>
+    <ConfirmDialog
+      v-model:isDialogVisible="isConfirmDialogVisible"
+      confirmation-question="Apakah Anda yakin ingin menghapus data ini?"
+      :show-notif="false"
+      @confirm="confirmDelete"
+    />
     <!-- 👉 Add New User -->
-    <AddNewUserDrawer
+    <!--AddNewUserDrawer
       v-model:isDrawerOpen="isAddNewUserDrawerVisible"
       @user-data="addNewUser"
-    />
+    /-->
   </section>
 </template>
 

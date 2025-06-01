@@ -33,7 +33,7 @@ const userProfileList = [
     icon: 'tabler-user',
     title: 'Profile',
     to: {
-      name: 'settings-profile',
+      name: 'profile',
     },
   },
   { type: 'divider' },

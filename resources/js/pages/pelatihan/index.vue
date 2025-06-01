@@ -90,6 +90,10 @@ const confirmDelete = async (val) => {
     })
   }
 }
+const mulaiLatihan = id => {
+  console.log(id)
+  router.push({ name: 'pelatihan-aksi-id', params: {id: id} })
+}
 const sesiLatihan = async(val) => {
   router.push({ name: 'pelatihan-sesi-pelatihan_id', params: {pelatihan_id: val.pelatihan_id} })
 }
@@ -130,7 +134,7 @@ watch(isAlertVisible, () => {
             placeholder="Cari..."
             style="inline-size: 15.625rem;"
           />
-          <VBtn @click="isAddNewData">Tambah <VIcon end icon="tabler-plus" /></VBtn>
+          <VBtn @click="isAddNewData" v-if="$can('read', 'referensi-sekolah-read')">Tambah <VIcon end icon="tabler-plus" /></VBtn>
         </div>
       </VCardText>
 
@@ -161,19 +165,23 @@ watch(isAlertVisible, () => {
         
         <!-- Actions -->
         <template #item.actions="{ item }">
-          <IconBtn @click="sesiLatihan(item)">
-            <VTooltip activator="parent" location="top">Sesi Latihan</VTooltip>
-            <VIcon icon="tabler-versions" />
-          </IconBtn>
-          <IconBtn @click="editData(item.pelatihan_id)">
-            <VTooltip activator="parent" location="top">Edit Data</VTooltip>
-            <VIcon icon="tabler-pencil" />
-          </IconBtn>
-          <IconBtn @click="deleteData(item.pelatihan_id)">
-            <VTooltip activator="parent" location="top">Hapus Data</VTooltip>
-            <VIcon icon="tabler-trash" />
-          </IconBtn>
-
+          <template v-if="$can('read', 'referensi-sekolah-read')">
+            <IconBtn @click="sesiLatihan(item)">
+              <VTooltip activator="parent" location="top">Sesi Latihan</VTooltip>
+              <VIcon icon="tabler-versions" />
+            </IconBtn>
+            <IconBtn @click="editData(item.pelatihan_id)">
+              <VTooltip activator="parent" location="top">Edit Data</VTooltip>
+              <VIcon icon="tabler-pencil" />
+            </IconBtn>
+            <IconBtn @click="deleteData(item.pelatihan_id)">
+              <VTooltip activator="parent" location="top">Hapus Data</VTooltip>
+              <VIcon icon="tabler-trash" />
+            </IconBtn>
+          </template>
+          <template v-else>
+            <VBtn color="success" size="small" @click="mulaiLatihan(item.pelatihan_id)">Mulai <VIcon icon="tabler-chevrons-right" /></VBtn>
+          </template>
         </template>
 
         <template #bottom>
