@@ -1,9 +1,10 @@
 <script setup>
-import navItems from '@/navigation/horizontal'
+import navItems from '@/navigation'
 import { themeConfig } from '@themeConfig'
 
 // Components
 import Footer from '@/layouts/components/Footer.vue'
+import NavbarLayoutSwitcher from '@/layouts/components/NavbarLayoutSwitcher.vue'
 import NavbarThemeSwitcher from '@/layouts/components/NavbarThemeSwitcher.vue'
 import UserProfile from '@/layouts/components/UserProfile.vue'
 import NavBarI18n from '@core/components/I18n.vue'
@@ -31,7 +32,7 @@ import { VNodeRenderer } from '@layouts/components/VNodeRenderer'
         v-if="themeConfig.app.i18n.enable && themeConfig.app.i18n.langConfig?.length"
         :languages="themeConfig.app.i18n.langConfig"
       />
-
+      <NavbarLayoutSwitcher />
       <NavbarThemeSwitcher class="me-2" />
       <UserProfile />
     </template>

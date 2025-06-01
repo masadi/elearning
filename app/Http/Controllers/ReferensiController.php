@@ -10,6 +10,9 @@ use App\Models\MataPelajaran;
 use App\Models\RombonganBelajar;
 use App\Models\Pembelajaran;
 use App\Models\MateriAjar;
+use App\Models\Pelatihan;
+use App\Models\SesiLatihan;
+use App\Models\Dokumen;
 use Carbon\Carbon;
 
 class ReferensiController extends Controller
@@ -68,8 +71,20 @@ class ReferensiController extends Controller
         if($data == 'materi-ajar'){
             $find = MateriAjar::find($id);
         }
+        if($data == 'pelatihan'){
+            $find = Pelatihan::find($id);
+        }
+        if($data == 'sesi'){
+            $find = SesiLatihan::find($id);
+        }
+        if($data == 'dokumen'){
+            $find = Dokumen::find($id);
+        }
         if($find){
             if($find->delete()){
+                if($data == 'sesi'){
+                    Dokumen::where('table_id', $id)->delete();
+                }
                 $data = [
                     'color' => 'success',
                     'icon' => 'tabler-circle-check',
@@ -391,6 +406,16 @@ class ReferensiController extends Controller
                 'pembelajaran' => Pembelajaran::where('rombongan_belajar_id', $materi->pembelajaran->rombongan_belajar->rombongan_belajar_id)->orderBy('nama_mata_pelajaran')->get(),
             ];
         }
+        if(request()->data == 'pelatihan'){
+            $data = Pelatihan::find(request()->id);
+        }
+        if(request()->data == 'sesi'){
+            if(request()->pelatihan_id){
+                $data = Pelatihan::withCount('sesi')->find(request()->pelatihan_id);
+            } else {
+                $data = SesiLatihan::with('dokumen')->find(request()->sesi_latihan_id);
+            }
+        }
         return response()->json($data);
     }
     public function save_update_materi_ajar(){
@@ -404,6 +429,85 @@ class ReferensiController extends Controller
                 'icon' => 'tabler-circle-check',
                 'title' => 'Success!',
                 'text' => 'Data Materi Ajar berhasil diperbaharui!',
+            ];
+        } else {
+            $data = [
+                'color' => 'error',
+                'icon' => 'tabler-xbox-x',
+                'title' => 'Failed!',
+                'text' => 'Tidak ada data disimpan!',
+                'request' => request()->all(),
+            ];
+        }
+        return $data;
+    }
+    public function save_pelatihan(){
+        $find = new Pelatihan;
+        if(request()->pelatihan_id){
+            $find = $find->find(request()->pelatihan_id);
+        }
+        $find->judul = request()->judul;
+        $find->deskripsi = request()->deskripsi;
+        if($find->save()){
+            foreach(request()->nama as $i => $nama){
+                if(request()->berkas[$i]){
+                    $nama = ($nama) ? $nama : request()->berkas[$i]->getClientOriginalName();
+                    $path = request()->berkas[$i]->store('berkas', 'public');
+                    Dokumen::create([
+                        'nama' => $nama,
+                        'table_name' => 'pelatihan',
+                        'table_id' => $find->pelatihan_id,
+                        'extension' => request()->berkas[$i]->extension(),
+                        'path' => basename($path),
+                    ]);
+                }
+            }
+            $data = [
+                'color' => 'success',
+                'icon' => 'tabler-circle-check',
+                'title' => 'Success!',
+                'text' => 'Data Pelatihan berhasil disimpan!',
+            ];
+        } else {
+            $data = [
+                'color' => 'error',
+                'icon' => 'tabler-xbox-x',
+                'title' => 'Failed!',
+                'text' => 'Tidak ada data disimpan!',
+                'request' => request()->all(),
+            ];
+        }
+        return $data;
+    }
+    public function save_sesi(){
+        $find = new SesiLatihan;
+        if(request()->sesi_latihan_id){
+            $find = $find->find(request()->sesi_latihan_id);
+        } else {
+            $find->pelatihan_id = request()->pelatihan_id;
+        }
+        $find->urut = request()->urut;
+        $find->judul = request()->judul;
+        $find->deskripsi = request()->deskripsi;
+        if($find->save()){
+            foreach(request()->nama as $i => $nama){
+                if(request()->berkas[$i]){
+                    $nama = ($nama) ? $nama : request()->berkas[$i]->getClientOriginalName();
+                    $path = request()->berkas[$i]->store('berkas', 'public');
+                    Dokumen::create([
+                        'nama' => $nama,
+                        'table_name' => 'sesi',
+                        'table_id' => $find->sesi_latihan_id,
+                        'extension' => request()->berkas[$i]->extension(),
+                        'path' => basename($path),
+                    ]);
+                }
+            }
+            $data = [
+                'color' => 'success',
+                'icon' => 'tabler-circle-check',
+                'title' => 'Success!',
+                'text' => 'Data Sesi Latihan berhasil disimpan!',
             ];
         } else {
             $data = [

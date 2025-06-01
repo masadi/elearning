@@ -1,8 +1,9 @@
-import { setupLayouts } from 'virtual:generated-layouts'
-import { createRouter, createWebHistory } from 'vue-router/auto'
-import { setupGuards } from './guards'
+import { setupLayouts } from 'virtual:generated-layouts';
+import { createRouter, createWebHistory } from 'vue-router/auto';
+import { setupGuards } from './guards';
 
 function recursiveLayouts(route) {
+  //console.log(route);
   if (route.children) {
     for (let i = 0; i < route.children.length; i++)
       route.children[i] = recursiveLayouts(route.children[i])
@@ -25,8 +26,9 @@ const router = createRouter({
     ...[...pages].map(route => recursiveLayouts(route)),
   ],
 })
+
 setupGuards(router)
-export { router }
+export { router };
 export default function (app) {
   app.use(router)
 }

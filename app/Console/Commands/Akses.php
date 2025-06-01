@@ -38,7 +38,8 @@ class Akses extends Command
             'referensi-ptk',
             'referensi-rombel',
             'referensi-mata-pelajaran',
-            'materi-ajar',
+            //'materi-ajar',
+            'pelatihan',
         ];
         $admin = Role::where('name', 'administrator')->first();
         $user = User::where('email', config('app.email'))->first();

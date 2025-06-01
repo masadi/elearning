@@ -8,6 +8,8 @@ use App\Models\Ptk;
 use App\Models\MataPelajaran;
 use App\Models\RombonganBelajar;
 use App\Models\MateriAjar;
+use App\Models\Pelatihan;
+use App\Models\SesiLatihan;
 
 class TableController extends Controller
 {
@@ -80,6 +82,26 @@ class TableController extends Controller
                         $query->where($this->wherePtk());
                     });
                 });
+            })->paginate(request()->per_page),
+        ];
+        return response()->json($data);
+    }
+    public function get_pelatihan(){
+        $data = [
+            'lists' => Pelatihan::withCount('sesi')->orderBy(request()->sortBy, request()->orderBy)
+            ->when(request()->q, function($query) {
+                $query->where('judul', 'LIKE', '%' . request()->q . '%');
+            })->paginate(request()->per_page),
+        ];
+        return response()->json($data);
+    }
+    public function get_sesi(){
+        $data = [
+            'lists' => SesiLatihan::withCount(['dokumen'])->withWhereHas('pelatihan', function($query){
+                $query->where('pelatihan_id', request()->pelatihan_id);
+            })->orderBy(request()->sortBy, request()->orderBy)
+            ->when(request()->q, function($query) {
+                $query->where('judul', 'LIKE', '%' . request()->q . '%');
             })->paginate(request()->per_page),
         ];
         return response()->json($data);

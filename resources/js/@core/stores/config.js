@@ -1,7 +1,7 @@
-import { storeToRefs } from 'pinia'
-import { useTheme } from 'vuetify'
 import { cookieRef, useLayoutConfigStore } from '@layouts/stores/config'
 import { themeConfig } from '@themeConfig'
+import { storeToRefs } from 'pinia'
+import { useTheme } from 'vuetify'
 
 // SECTION Store
 export const useConfigStore = defineStore('config', () => {
@@ -15,7 +15,9 @@ export const useConfigStore = defineStore('config', () => {
   }, { immediate: true })
 
   const theme = cookieRef('theme', themeConfig.app.theme)
-
+  const layout = cookieRef('layout', themeConfig.app.contentLayoutNav)
+  
+  
   // 👉 isVerticalNavSemiDark
   const isVerticalNavSemiDark = cookieRef('isVerticalNavSemiDark', themeConfig.verticalNav.isVerticalNavSemiDark)
 
@@ -27,6 +29,7 @@ export const useConfigStore = defineStore('config', () => {
   
   return {
     theme,
+    layout,
     isVerticalNavSemiDark,
     skin,
 
@@ -47,6 +50,7 @@ export const initConfigStore = () => {
   const userPreferredColorScheme = usePreferredColorScheme()
   const vuetifyTheme = useTheme()
   const configStore = useConfigStore()
+  const router = useRouter()
 
   watch([() => configStore.theme, userPreferredColorScheme], () => {
     vuetifyTheme.global.name.value = configStore.theme === 'system'
@@ -54,6 +58,10 @@ export const initConfigStore = () => {
         ? 'dark'
         : 'light'
       : configStore.theme
+  })
+  watch(() => configStore.layout, () => {
+    useCookie('layout').value = configStore.layout
+    router.go({ name: router.currentRoute.name })
   })
   onMounted(() => {
     if (configStore.theme === 'system')

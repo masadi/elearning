@@ -46,6 +46,7 @@ declare module 'vue' {
     EnableOneTimePasswordDialog: typeof import('./resources/js/components/dialogs/EnableOneTimePasswordDialog.vue')['default']
     ErrorHeader: typeof import('./resources/js/components/ErrorHeader.vue')['default']
     I18n: typeof import('./resources/js/@core/components/I18n.vue')['default']
+    LayoutSwitcher: typeof import('./resources/js/@core/components/LayoutSwitcher.vue')['default']
     MapelAddDialog: typeof import('./resources/js/components/dialogs/MapelAddDialog.vue')['default']
     MapelDetilDialog: typeof import('./resources/js/components/dialogs/MapelDetilDialog.vue')['default']
     MapelEditDialog: typeof import('./resources/js/components/dialogs/MapelEditDialog.vue')['default']

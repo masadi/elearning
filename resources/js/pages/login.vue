@@ -53,8 +53,8 @@ const login = async () => {
     useCookie('userData').value = userData
     useCookie('accessToken').value = accessToken
     await nextTick(() => {
-      window.location.replace('/')
-      //router.replace(route.query.to ? String(route.query.to) : '/')
+      //window.location.replace('/')
+      router.replace(route.query.to ? String(route.query.to) : '/')
     })
   } catch (err) {
     console.error(err)
