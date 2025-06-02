@@ -23,6 +23,10 @@ class SesiLatihan extends Model
     {
         return $this->hasMany(MateriSesi::class, 'sesi_latihan_id', 'sesi_latihan_id')->orderBy('created_at');
     }
+    public function tugas()
+    {
+        return $this->hasMany(TugasSesi::class, 'sesi_latihan_id', 'sesi_latihan_id')->orderBy('created_at');
+    }
     public function hadir()
     {
         return $this->hasOne(Hadir::class, 'sesi_latihan_id', 'sesi_latihan_id');

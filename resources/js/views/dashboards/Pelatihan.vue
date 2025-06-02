@@ -31,11 +31,13 @@ const headers = [
   {
     title: 'jml sesi',
     key: 'sesi_count',
+    align: 'center',
     sortable: false,
   },
   {
-    title: 'jml dokumen',
-    key: 'dokumen_count',
+    title: 'jml materi',
+    key: 'materi_count',
+    align: 'center',
     sortable: false,
   },
   {

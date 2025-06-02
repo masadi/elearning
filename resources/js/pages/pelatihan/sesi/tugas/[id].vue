@@ -1,8 +1,9 @@
 <script setup>
 definePage({
   meta: {
-    action: 'read',
-    subject: 'pelatihan-read',
+    action: 'create',
+    subject: 'pelatihan-create',
+    navActiveLink: 'pelatihan',
   },
 })
 const notif = ref({
@@ -35,14 +36,8 @@ const headers = [
     sortable: false,
   },
   {
-    title: 'jml sesi',
-    key: 'sesi_count',
-    align: 'center',
-    sortable: false,
-  },
-  {
-    title: 'jml materi',
-    key: 'materi_count',
+    title: 'jml dokumen',
+    key: 'dokumen_count',
     align: 'center',
     sortable: false,
   },
@@ -53,12 +48,15 @@ const headers = [
     sortable: false,
   },
 ]
+const router = useRouter()
+const route = useRoute()
 const {
   data: getData,
   execute: fetchData,
 } = await useApi(createUrl('/table', {
   query: {
-    data: 'pelatihan',
+    data: 'tugas-sesi',
+    sesi_latihan_id: route.params.id,
     q: searchQuery,
     itemsPerPage,
     page,
@@ -72,9 +70,8 @@ if(getData.value.color){
 }
 const items = computed(() => getData.value.lists.data)
 const total_item = computed(() => getData.value.lists.total)
-const router = useRouter()
 const isAddNewData = () => {
-  router.push({ name: 'pelatihan-tambah' })
+  router.push({ name: 'pelatihan-sesi-tugas-tambah-id', params: {id: route.params.id} })
 }
 
 const deletedId = ref()
@@ -85,7 +82,7 @@ const deleteData = async id => {
 }
 const confirmDelete = async (val) => {
   if(val){
-    await $api(`/referensi/destroy/pelatihan/${ deletedId.value }`, { 
+    await $api(`/referensi/destroy/tugas/${ deletedId.value }`, { 
       method: 'DELETE',
       onResponse({ request, response, options }) {
         let getData = response._data
@@ -97,14 +94,8 @@ const confirmDelete = async (val) => {
     })
   }
 }
-const mulaiLatihan = id => {
-  router.push({ name: 'pelatihan-aksi-id', params: {id: id} })
-}
-const sesiLatihan = async(val) => {
-  router.push({ name: 'pelatihan-sesi-id', params: {id: val.pelatihan_id} })
-}
 const editData = async(val) => {
-  router.push(`/pelatihan/${val}`)
+  router.push({ name: 'pelatihan-sesi-tugas-edit-id', params: {id: val} })
 }
 watch(isAlertVisible, () => {
   if (!isAlertVisible.value)
@@ -140,7 +131,7 @@ watch(isAlertVisible, () => {
             placeholder="Cari..."
             style="inline-size: 15.625rem;"
           />
-          <VBtn @click="isAddNewData" v-if="$can('read', 'referensi-sekolah-read')">Tambah <VIcon end icon="tabler-plus" /></VBtn>
+          <VBtn @click="isAddNewData">Tambah <VIcon end icon="tabler-plus" /></VBtn>
         </div>
       </VCardText>
 
@@ -161,33 +152,17 @@ watch(isAlertVisible, () => {
         class="text-no-wrap"
         @update:options="updateOptions"
       >
-        <template #item.mapel="{ item }">
-          {{ item.pembelajaran?.nama_mata_pelajaran }}
-        </template>
-
-        <template #item.rombel="{ item }">
-          {{ item.pembelajaran?.rombongan_belajar?.nama }}
-        </template>
-        
         <!-- Actions -->
         <template #item.actions="{ item }">
-          <template v-if="$can('read', 'referensi-sekolah-read')">
-            <IconBtn @click="sesiLatihan(item)">
-              <VTooltip activator="parent" location="top">Sesi Latihan</VTooltip>
-              <VIcon icon="tabler-versions" />
-            </IconBtn>
-            <IconBtn @click="editData(item.pelatihan_id)">
-              <VTooltip activator="parent" location="top">Edit Data</VTooltip>
-              <VIcon icon="tabler-pencil" />
-            </IconBtn>
-            <IconBtn @click="deleteData(item.pelatihan_id)">
-              <VTooltip activator="parent" location="top">Hapus Data</VTooltip>
-              <VIcon icon="tabler-trash" />
-            </IconBtn>
-          </template>
-          <template v-else>
-            <VBtn color="success" size="small" @click="mulaiLatihan(item.pelatihan_id)">Mulai <VIcon icon="tabler-chevrons-right" /></VBtn>
-          </template>
+          <IconBtn @click="editData(item.tugas_sesi_id)">
+            <VTooltip activator="parent" location="top">Edit Tugas</VTooltip>
+            <VIcon icon="tabler-pencil" />
+          </IconBtn>
+          <IconBtn @click="deleteData(item.tugas_sesi_id)">
+            <VTooltip activator="parent" location="top">Hapus Tugas</VTooltip>
+            <VIcon icon="tabler-trash" />
+          </IconBtn>
+
         </template>
 
         <template #bottom>

@@ -9,8 +9,8 @@ use App\Models\Hadir;
 class PelatihanController extends Controller
 {
     public function index(){
-        $data = Pelatihan::with(['dokumen', 'sesi' => function($query){
-            $query->with(['materi.dokumen', 'dokumen', 'hadir' => function($query){
+        $data = Pelatihan::with(['sesi' => function($query){
+            $query->with(['materi.dokumen', 'tugas.dokumen', 'hadir' => function($query){
                 $query->where('user_id', auth()->user()->id);
             }]);
         }])->find(request()->id);

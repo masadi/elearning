@@ -11,6 +11,7 @@ use App\Models\MateriAjar;
 use App\Models\Pelatihan;
 use App\Models\SesiLatihan;
 use App\Models\MateriSesi;
+use App\Models\TugasSesi;
 
 class TableController extends Controller
 {
@@ -89,7 +90,7 @@ class TableController extends Controller
     }
     public function get_pelatihan(){
         $data = [
-            'lists' => Pelatihan::withCount(['sesi', 'dokumen'])->orderBy(request()->sortBy, request()->orderBy)
+            'lists' => Pelatihan::withCount(['sesi', 'materi'])->orderBy(request()->sortBy, request()->orderBy)
             ->when(request()->q, function($query) {
                 $query->where('judul', 'LIKE', '%' . request()->q . '%');
             })->paginate(request()->per_page),
@@ -110,6 +111,18 @@ class TableController extends Controller
     public function get_materi_sesi(){
         $data = [
             'lists' => MateriSesi::withCount(['dokumen'])->withWhereHas('sesi', function($query){
+                $query->where('sesi_latihan_id', request()->sesi_latihan_id);
+            })->orderBy(request()->sortBy, request()->orderBy)
+            ->when(request()->q, function($query) {
+                $query->where('judul', 'LIKE', '%' . request()->q . '%');
+            })->paginate(request()->per_page),
+            'data' => SesiLatihan::find(request()->sesi_latihan_id),
+        ];
+        return response()->json($data);
+    }
+    public function get_tugas_sesi(){
+        $data = [
+            'lists' => TugasSesi::withCount(['dokumen'])->withWhereHas('sesi', function($query){
                 $query->where('sesi_latihan_id', request()->sesi_latihan_id);
             })->orderBy(request()->sortBy, request()->orderBy)
             ->when(request()->q, function($query) {

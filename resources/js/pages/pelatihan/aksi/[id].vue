@@ -87,6 +87,17 @@ const submitAbsen = async() => {
               </template>
             </template>
           </template>
+          <template v-if="sesi.tugas.length">
+            <VAlert color="warning" icon="tabler-pencil">TUGAS</VAlert>
+            <template v-for="tugas in sesi.tugas">
+              <h4 class="text-h4 mb-2">{{ tugas.judul }}</h4>
+              <span class="text-rata" v-html="tugas.deskripsi"></span>
+              <template v-if="tugas.dokumen.length">
+                <VAlert color="warning" icon="tabler-file-info">Dokumen Tugas ({{ tugas.judul }})</VAlert>
+                <ListDokumen :dokumen="tugas.dokumen" />
+              </template>
+            </template>
+          </template>
         </VWindowItem>
       </VWindow>
     </VCardText>

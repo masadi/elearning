@@ -36,12 +36,6 @@ const headers = [
     sortable: false,
   },
   {
-    title: 'jml dokumen',
-    key: 'dokumen_count',
-    align: 'center',
-    sortable: false,
-  },
-  {
     title: 'jml materi',
     key: 'materi_count',
     align: 'center',
@@ -119,7 +113,7 @@ const ujianSesi = async(val) => {
   console.log('ujianSesi', val);
 }
 const tugasSesi = async(val) => {
-  console.log('tugasSesi', val);
+  router.push({ name: 'pelatihan-sesi-tugas-id', params: {id: val.sesi_latihan_id} })
 }
 const editData = async(val) => {
   router.push({ name: 'pelatihan-sesi-edit-id', params: {id: val} })
@@ -179,14 +173,6 @@ watch(isAlertVisible, () => {
         class="text-no-wrap"
         @update:options="updateOptions"
       >
-        <template #item.mapel="{ item }">
-          {{ item.pembelajaran?.nama_mata_pelajaran }}
-        </template>
-
-        <template #item.rombel="{ item }">
-          {{ item.pembelajaran?.rombongan_belajar?.nama }}
-        </template>
-        
         <!-- Actions -->
         <template #item.actions="{ item }">
           <IconBtn @click="materiSesi(item)">

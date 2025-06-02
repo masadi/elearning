@@ -16,6 +16,16 @@ class Pelatihan extends Model
     {
         return $this->hasMany(SesiLatihan::class, 'pelatihan_id', 'pelatihan_id')->orderBy('urut');
     }
+    public function materi(){
+        return $this->hasManyThrough(
+            MateriSesi::class,
+            SesiLatihan::class,
+            'pelatihan_id', // Foreign key on the environments table...
+            'sesi_latihan_id', // Foreign key on the deployments table...
+            'pelatihan_id', // Local key on the projects table...
+            'sesi_latihan_id' // Local key on the environments table...
+        );
+    }
     public function dokumen()
     {
         return $this->hasMany(Dokumen::class, 'table_id', 'pelatihan_id')->orderBy('created_at');

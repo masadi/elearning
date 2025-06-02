@@ -13,6 +13,8 @@ use App\Models\MateriAjar;
 use App\Models\Pelatihan;
 use App\Models\SesiLatihan;
 use App\Models\MateriSesi;
+use App\Models\TugasSesi;
+use App\Models\UjianSesi;
 use App\Models\Dokumen;
 use Carbon\Carbon;
 
@@ -427,6 +429,13 @@ class ReferensiController extends Controller
                 $data = MateriSesi::with('dokumen')->find(request()->materi_sesi_id);
             }
         }
+        if(request()->data == 'tugas-sesi'){
+            if(request()->sesi_latihan_id){
+                $data = SesiLatihan::find(request()->sesi_latihan_id);
+            } else {
+                $data = TugasSesi::with('dokumen')->find(request()->tugas_sesi_id);
+            }
+        }
         return response()->json($data);
     }
     public function save_update_materi_ajar(){
@@ -533,6 +542,46 @@ class ReferensiController extends Controller
                 'icon' => 'tabler-circle-check',
                 'title' => 'Success!',
                 'text' => 'Data Materi Sesi berhasil disimpan!',
+            ];
+        } else {
+            $data = [
+                'color' => 'error',
+                'icon' => 'tabler-xbox-x',
+                'title' => 'Failed!',
+                'text' => 'Tidak ada data disimpan!',
+                'request' => request()->all(),
+            ];
+        }
+        return $data;
+    }
+    public function save_tugas_sesi(){
+        $find = new TugasSesi;
+        if(request()->tugas_sesi_id){
+            $find = $find->find(request()->tugas_sesi_id);
+        } else {
+            $find->sesi_latihan_id = request()->sesi_latihan_id;
+        }
+        $find->judul = request()->judul;
+        $find->deskripsi = request()->deskripsi;
+        if($find->save()){
+            foreach(request()->nama as $i => $nama){
+                if(request()->berkas[$i]){
+                    $nama = ($nama) ? $nama : request()->berkas[$i]->getClientOriginalName();
+                    $path = request()->berkas[$i]->store('berkas', 'public');
+                    Dokumen::create([
+                        'nama' => $nama,
+                        'table_name' => 'tugas-sesi',
+                        'table_id' => $find->tugas_sesi_id,
+                        'extension' => request()->berkas[$i]->extension(),
+                        'path' => basename($path),
+                    ]);
+                }
+            }
+            $data = [
+                'color' => 'success',
+                'icon' => 'tabler-circle-check',
+                'title' => 'Success!',
+                'text' => 'Data Tugas Sesi berhasil disimpan!',
             ];
         } else {
             $data = [
