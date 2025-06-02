@@ -19,28 +19,57 @@ const {
 const data = computed(() => detilData.value)
 const currentTab = ref('item-0')
 const isDialogVisible = ref(false)
-const idLatihan = ref(null)
+const isUnggahTugas = ref(false)
+const idSesi = ref(null)
 const showAbsen = sesi_latihan_id => {
   isDialogVisible.value = true
-  idLatihan.value = sesi_latihan_id
+  idSesi.value = sesi_latihan_id
+}
+const judul_sesi = ref()
+const unggahTugas = sesi_latihan_id => {
+  isUnggahTugas.value = true
+  idSesi.value = sesi_latihan_id
+  const findSesi = data.value.sesi.find(item => item.sesi_latihan_id === sesi_latihan_id);
+  judul_sesi.value = findSesi?.judul;
+  
 }
 const absen = (val) => {
-  const firstMatchingObject = data.value.sesi.find(item => item.sesi_latihan_id === val && item.hadir && parseInt(item.hadir.hadir) === 1);
-  return (firstMatchingObject) ? 'success' : 'secondary'
+  const findSesi = data.value.sesi.find(item => item.sesi_latihan_id === val && item.hadir && parseInt(item.hadir.hadir) === 1);
+  return (findSesi) ? 'success' : 'secondary'
+}
+const cekTugas = (val) => {
+  const findSesi = data.value.sesi.find(item => item.sesi_latihan_id === val && item.dokumen_tugas);
+  return (findSesi) ? true : false
 }
 const radioGroup = ref()
 const submitAbsen = async() => {
   await $api('/pelatihan/absen', {
     method: 'POST',
     body: {
-      sesi_latihan_id: idLatihan.value,
+      sesi_latihan_id: idSesi.value,
       hadir: radioGroup.value
     },
     onResponse({ request, response, options }) {
       fetchData()
-      idLatihan.value = null
+      idSesi.value = null
       isDialogVisible.value = false
       radioGroup.value = false
+    }
+  })
+}
+const fileTugas = ref()
+const submitTugas = async() => {
+  const postData = new FormData();
+  postData.append('sesi_latihan_id', idSesi.value);
+  postData.append('file_tugas', fileTugas.value);
+  await $api('/pelatihan/unggah', {
+    method: 'POST',
+    body: postData,
+    onResponse({ request, response, options }) {
+      fetchData()
+      isUnggahTugas.value = false
+      idSesi.value = null
+      judul_sesi.value = null
     }
   })
 }
@@ -88,7 +117,16 @@ const submitAbsen = async() => {
             </template>
           </template>
           <template v-if="sesi.tugas.length">
-            <VAlert color="warning" icon="tabler-pencil">TUGAS</VAlert>
+            <VAlert color="warning" icon="tabler-pencil">
+              <v-row justify="space-between">
+                  <v-col cols="4">
+                    TUGAS
+                  </v-col>
+                  <v-col cols="4" class="text-right pe-8">
+                    <VBtn :disabled="cekTugas(sesi.sesi_latihan_id)" size="small" @click="unggahTugas(sesi.sesi_latihan_id)">Unggah Tugas <VIcon end icon="tabler-cloud-upload" /></VBtn>
+                  </v-col>
+                </v-row>
+            </VAlert>
             <template v-for="tugas in sesi.tugas">
               <h4 class="text-h4 mb-2">{{ tugas.judul }}</h4>
               <span class="text-rata" v-html="tugas.deskripsi"></span>
@@ -112,6 +150,19 @@ const submitAbsen = async() => {
         </VCardText>
         <VCardText class="d-flex justify-start gap-3 flex-wrap">
           <VBtn @click="submitAbsen">
+            Submit
+          </VBtn>
+        </VCardText>
+      </VCard>
+    </VDialog>
+    <VDialog v-model="isUnggahTugas" persistent class="v-dialog-sm">
+      <VCard :title="`Unggah Tugas ${judul_sesi}`">
+        <VCardText>
+          <p>Unggah tugas dibatasi hanya 1 (satu) kali! Pastikan berkas yang akan di unggah telah diperiksa.</p>
+          <VFileInput v-model="fileTugas" label="Unggah Berkas" />
+        </VCardText>
+        <VCardText class="d-flex justify-start gap-3 flex-wrap">
+          <VBtn @click="submitTugas">
             Submit
           </VBtn>
         </VCardText>

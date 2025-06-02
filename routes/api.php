@@ -38,5 +38,6 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
     Route::group(['prefix' => 'pelatihan'], function () {
         Route::get('/', [PelatihanController::class, 'index']);
         Route::post('absen', [PelatihanController::class, 'absen']);
+        Route::post('unggah', [PelatihanController::class, 'unggah']);
     });
 });

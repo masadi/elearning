@@ -31,4 +31,8 @@ class SesiLatihan extends Model
     {
         return $this->hasOne(Hadir::class, 'sesi_latihan_id', 'sesi_latihan_id');
     }
+    public function dokumen_tugas()
+    {
+        return $this->hasOne(DokumenTugas::class, 'sesi_latihan_id', 'sesi_latihan_id');
+    }
 }
