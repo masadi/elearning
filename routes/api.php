@@ -39,5 +39,7 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
         Route::get('/', [PelatihanController::class, 'index']);
         Route::post('absen', [PelatihanController::class, 'absen']);
         Route::post('unggah', [PelatihanController::class, 'unggah']);
+        Route::post('get-soal', [PelatihanController::class, 'get_soal']);
+        Route::post('tes-selesai', [PelatihanController::class, 'tes_selesai']);
     });
 });

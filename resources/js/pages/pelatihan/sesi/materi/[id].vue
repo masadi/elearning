@@ -70,6 +70,7 @@ if(getData.value.color){
 }
 const items = computed(() => getData.value.lists.data)
 const total_item = computed(() => getData.value.lists.total)
+const sesiLatihan = computed(() => getData.value.data)
 const isAddNewData = () => {
   router.push({ name: 'pelatihan-sesi-materi-tambah-id', params: {id: route.params.id} })
 }
@@ -105,7 +106,7 @@ watch(isAlertVisible, () => {
 
 <template>
   <section>
-    <VCard>
+    <VCard :title="`Data Materi (${sesiLatihan.judul})`">
       <VCardText class="d-flex flex-wrap gap-4">
         <div class="d-flex gap-2 align-center">
           <AppSelect

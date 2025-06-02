@@ -49,7 +49,7 @@ const headers = [
   },
   {
     title: 'jml tes',
-    key: 'ujian_count',
+    key: 'tes_count',
     align: 'center',
     sortable: false,
   },
@@ -82,6 +82,7 @@ if(getData.value.color){
 }
 const items = computed(() => getData.value.lists.data)
 const total_item = computed(() => getData.value.lists.total)
+const dataPelatihan = computed(() => getData.value.data)
 const isAddNewData = () => {
   router.push({ name: 'pelatihan-sesi-tambah-id', params: {pelatihan_id: route.params.id} })
 }
@@ -109,11 +110,11 @@ const confirmDelete = async (val) => {
 const materiSesi = async(val) => {
   router.push({ name: 'pelatihan-sesi-materi-id', params: {id: val.sesi_latihan_id} })
 }
-const ujianSesi = async(val) => {
-  console.log('ujianSesi', val);
-}
 const tugasSesi = async(val) => {
   router.push({ name: 'pelatihan-sesi-tugas-id', params: {id: val.sesi_latihan_id} })
+}
+const ujianSesi = async(val) => {
+  router.push({ name: 'pelatihan-sesi-tes-formatif-id', params: {id: val.sesi_latihan_id} })
 }
 const editData = async(val) => {
   router.push({ name: 'pelatihan-sesi-edit-id', params: {id: val} })
@@ -126,7 +127,7 @@ watch(isAlertVisible, () => {
 
 <template>
   <section>
-    <VCard>
+    <VCard :title="`Data Sesi (${dataPelatihan.judul})`">
       <VCardText class="d-flex flex-wrap gap-4">
         <div class="d-flex gap-2 align-center">
           <AppSelect

@@ -16,6 +16,8 @@ use App\Models\MateriSesi;
 use App\Models\TugasSesi;
 use App\Models\UjianSesi;
 use App\Models\Dokumen;
+use App\Models\TesFormatif;
+use App\Models\Jawaban;
 use Carbon\Carbon;
 
 class ReferensiController extends Controller
@@ -85,6 +87,9 @@ class ReferensiController extends Controller
         }
         if($data == 'dokumen'){
             $find = Dokumen::find($id);
+        }
+        if($data == 'tes-formatif'){
+            $find = TesFormatif::find($id);
         }
         if($find){
             if($find->delete()){
@@ -436,6 +441,11 @@ class ReferensiController extends Controller
                 $data = TugasSesi::with('dokumen')->find(request()->tugas_sesi_id);
             }
         }
+        if(request()->data == 'tes-formatif'){
+            $data = TesFormatif::with(['jawaban' => function($query){
+                $query->orderBy('opsi');
+            }])->find(request()->id);
+        }
         return response()->json($data);
     }
     public function save_update_materi_ajar(){
@@ -590,6 +600,53 @@ class ReferensiController extends Controller
                 'title' => 'Failed!',
                 'text' => 'Tidak ada data disimpan!',
                 'request' => request()->all(),
+            ];
+        }
+        return $data;
+    }
+    public function save_tes_sesi(){
+        $insert = 0;
+        $input = json_decode(request()->input, TRUE);
+        if(request()->tes_id){
+            $tes = TesFormatif::find(request()->tes_id);
+            $tes->deskripsi = $input['deskripsi'];
+            $tes->save();
+            foreach($input['jawaban'] as $jawaban){
+                $insert++;
+                $answer = Jawaban::find($jawaban['jawaban_id']);
+                $answer->opsi = $jawaban['opsi'];
+                $answer->deskripsi = $jawaban['deskripsi'];
+                $answer->benar = $jawaban['benar'];
+                $answer->save();
+            }
+        } else {
+            $tes = TesFormatif::create([
+                'sesi_latihan_id' => $input['sesi_latihan_id'],
+                'deskripsi' => $input['deskripsi'],
+            ]);
+            foreach($input['jawaban'] as $jawaban){
+                $insert++;
+                Jawaban::create([
+                    'tes_id' => $tes->tes_id,
+                    'opsi' => $jawaban['opsi'],
+                    'deskripsi' => $jawaban['deskripsi'],
+                    'benar' => $jawaban['benar'],
+                ]);
+            }
+        }
+        if($insert){
+            $data = [
+                'color' => 'success',
+                'icon' => 'tabler-circle-check',
+                'title' => 'Success!',
+                'text' => 'Data Tes Formatif berhasil disimpan!',
+            ];
+        } else {
+            $data = [
+                'color' => 'error',
+                'icon' => 'tabler-xbox-x',
+                'title' => 'Failed!',
+                'text' => 'Tidak ada data disimpan!',
             ];
         }
         return $data;

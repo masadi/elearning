@@ -47,6 +47,18 @@ const headers = [
     sortable: false,
   },
   {
+    title: 'jml tugas',
+    key: 'tugas_count',
+    align: 'center',
+    sortable: false,
+  },
+  {
+    title: 'jml tes',
+    key: 'tes_count',
+    align: 'center',
+    sortable: false,
+  },
+  {
     title: 'Actions',
     key: 'actions',
     align: 'center',
@@ -114,7 +126,7 @@ watch(isAlertVisible, () => {
 
 <template>
   <section>
-    <VCard>
+    <VCard title="Data Pelatihan">
       <VCardText class="d-flex flex-wrap gap-4">
         <div class="d-flex gap-2 align-center">
           <AppSelect

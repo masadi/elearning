@@ -27,6 +27,10 @@ class SesiLatihan extends Model
     {
         return $this->hasMany(TugasSesi::class, 'sesi_latihan_id', 'sesi_latihan_id')->orderBy('created_at');
     }
+    public function tes()
+    {
+        return $this->hasMany(TesFormatif::class, 'sesi_latihan_id', 'sesi_latihan_id')->orderBy('created_at');
+    }
     public function hadir()
     {
         return $this->hasOne(Hadir::class, 'sesi_latihan_id', 'sesi_latihan_id');
@@ -34,5 +38,9 @@ class SesiLatihan extends Model
     public function dokumen_tugas()
     {
         return $this->hasOne(DokumenTugas::class, 'sesi_latihan_id', 'sesi_latihan_id');
+    }
+    public function user_tes()
+    {
+        return $this->hasOne(UserTes::class, 'sesi_latihan_id', 'sesi_latihan_id');
     }
 }

@@ -6,6 +6,9 @@ use Illuminate\Http\Request;
 use App\Models\Pelatihan;
 use App\Models\Hadir;
 use App\Models\DokumenTugas;
+use App\Models\TesFormatif;
+use App\Models\UserTes;
+use App\Models\UserJawaban;
 
 class PelatihanController extends Controller
 {
@@ -14,6 +17,10 @@ class PelatihanController extends Controller
             $query->with([
                 'materi.dokumen', 
                 'tugas.dokumen', 
+                'tes',
+                'user_tes' => function($query){
+                    $query->where('user_id', auth()->user()->id);
+                },
                 'hadir' => function($query){
                     $query->where('user_id', auth()->user()->id);
                 },
@@ -22,6 +29,32 @@ class PelatihanController extends Controller
                 }
             ]);
         }])->find(request()->id);
+        return response()->json($data);
+    }
+    public function get_soal(){
+        $data = TesFormatif::with(['jawaban', 'user_jawaban' => function($query){
+            $query->where('user_id', auth()->user()->id);
+        }])->find(request()->tes_id);
+        if(request()->jawaban_id){
+            UserJawaban::updateOrCreate(
+                [
+                    'tes_id' => request()->tes_id_jawaban,
+                    'user_id' => auth()->user()->id,
+                ],
+                [
+                    'jawaban_id' => request()->jawaban_id,
+                ]
+            );
+        } else {
+            UserTes::firstOrCreate([
+                'sesi_latihan_id' => $data->sesi_latihan_id,
+                'user_id' => auth()->user()->id,
+            ]);
+        }
+        return response()->json($data);
+    }
+    public function tes_selesai(){
+        $data = UserTes::where('sesi_latihan_id', request()->sesi_latihan_id)->update(['status' => 1]);
         return response()->json($data);
     }
     public function absen(){

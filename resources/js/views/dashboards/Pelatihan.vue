@@ -41,6 +41,18 @@ const headers = [
     sortable: false,
   },
   {
+    title: 'jml tugas',
+    key: 'tugas_count',
+    align: 'center',
+    sortable: false,
+  },
+  {
+    title: 'jml tes',
+    key: 'tes_count',
+    align: 'center',
+    sortable: false,
+  },
+  {
     title: 'Actions',
     key: 'actions',
     align: 'center',

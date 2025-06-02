@@ -7,7 +7,14 @@ definePage({
   },
 })
 const route = useRoute()
-const router = useRouter()
+const isAlertVisible = ref(false)
+const isConfirmDialogVisible = ref(false)
+const notif = ref({
+  icon: null,
+  title: null,
+  text: null,
+  color: null,
+})
 const {
   data: detilData,
   execute: fetchData,
@@ -73,11 +80,92 @@ const submitTugas = async() => {
     }
   })
 }
+const sesiLatihanId = ref()
+const confirmTes = async(val) => {
+  if(val){
+    await $api('/pelatihan/tes-selesai', {
+      method: 'POST',
+      body: {
+        sesi_latihan_id: sesiLatihanId.value,
+      },
+      onResponse({ request, response, options }) {
+        fetchData()
+        sesiLatihanId.value = null
+      }
+    })
+  }
+}
+const isChecked = ref()
+const submitTes = async(sesi_latihan_id) => {
+  isConfirmDialogVisible.value = true
+  sesiLatihanId.value = sesi_latihan_id
+}
+const soalAktif = ref(0)
+const countSoal = ref(0)
+const prevSoal = (count, tes_id) => {
+  countSoal.value = count
+  soalAktif.value = soalAktif.value - 1
+  getSoal(soalAktif.value, tes_id)
+}
+const nextSoal = (count, tes_id) => {
+  countSoal.value = count
+  soalAktif.value = soalAktif.value + 1
+  getSoal(soalAktif.value, tes_id)
+}
+const prevColor = ref('secondary')
+const nextColor = ref('primary')
+const prevDisabled = ref(true)
+const nextDisabled = ref(false)
+watch(soalAktif, () => {
+  if(soalAktif.value){
+    if(soalAktif.value == (countSoal.value - 1)){
+      nextColor.value = 'secondary'
+      nextDisabled.value = true
+    } else {
+      nextColor.value = 'primary'
+      nextDisabled.value = false
+    }
+    prevDisabled.value = false
+    prevColor.value = 'primary'
+  } else {
+    nextColor.value = 'primary'
+    nextDisabled.value = false
+    prevDisabled.value = true
+    prevColor.value = 'secondary'
+  }
+})
+const soal = ref()
+const indexTab = ref()
+const changeTab = async(val) => {
+  let index = val - 1
+  indexTab.value = index
+  if(val > 0){
+    getSoal(index)
+  }
+}
+const isBusy = ref()
+const getSoal = async(index, tes_id) => {
+  isBusy.value = true
+  await $api('/pelatihan/get-soal', {
+    method: 'POST',
+    body: {
+      tes_id: data.value.sesi[indexTab.value].tes[index].tes_id,
+      tes_id_jawaban: tes_id,
+      jawaban_id: isChecked.value,
+    },
+    onResponse({ request, response, options }) {
+      let getData = response._data
+      soal.value = getData
+      isBusy.value = false
+      isChecked.value = getData.user_jawaban?.jawaban_id
+    }
+  })
+}
 </script>
 
 <template>
   <VCard :title="`Pelatihan ${data.judul}`">
-    <VTabs v-model="currentTab">
+    <VTabs v-model="currentTab" @update:modelValue="changeTab">
       <VTab>Pendahuluan</VTab>
       <VTab v-for="sesi in data.sesi">{{ `Sesi ${sesi.urut}` }}</VTab>
     </VTabs>
@@ -136,6 +224,47 @@ const submitTugas = async() => {
               </template>
             </template>
           </template>
+          <template v-if="sesi.tes.length">
+            <VExpansionPanels class="no-icon-rotate">
+              <VExpansionPanel>
+                <VExpansionPanelTitle class="bg-primary" disable-icon-rotate>TES FORMATIF
+                  <template #actions>
+                    <VIcon size="26" icon="tabler-file-report" color="white" />
+                  </template>
+                </VExpansionPanelTitle>
+                <VExpansionPanelText class="mt-4">
+                  <template v-if="isBusy">
+                    <VProgressCircular :size="60" color="primary" class="text-center" indeterminate />
+                  </template>
+                  <template v-else>
+                    <span class="text-rata" v-html="soal.deskripsi"></span>
+                    <VRadioGroup v-model="isChecked">
+                      <VRadio v-for="jawaban in soal.jawaban" :key="jawaban.jawaban_id" :value="jawaban.jawaban_id" :disabled="parseInt(sesi.user_tes?.status)">
+                        <template #label>
+                          <span v-html="jawaban.deskripsi"></span>
+                        </template>
+                      </VRadio>
+                    </VRadioGroup>
+                    <VRow justify="space-between" class="mb-3">
+                      <VCol cols="2">
+                        <VBtn @click="prevSoal(sesi.tes.length, soal.tes_id)" :color="prevColor" :disabled="prevDisabled || parseInt(sesi.user_tes?.status)">
+                          <VIcon icon="tabler-chevrons-left" /> Prev
+                        </VBtn>
+                      </VCol>
+                      <VCol cols="2" class="text-center" v-if="nextDisabled">
+                        <VBtn @click="submitTes(sesi.sesi_latihan_id)" :disabled="parseInt(sesi.user_tes?.status)">Simpan</VBtn>
+                      </VCol>
+                      <VCol cols="2" class="text-right">
+                        <VBtn @click="nextSoal(sesi.tes.length, soal.tes_id)" :color="nextColor" :disabled="nextDisabled || parseInt(sesi.user_tes?.status)">
+                          Next <VIcon icon="tabler-chevrons-right" />
+                        </VBtn>
+                      </VCol>
+                    </VRow>
+                  </template>
+                </VExpansionPanelText>
+              </VExpansionPanel>
+            </VExpansionPanels>
+          </template>
         </VWindowItem>
       </VWindow>
     </VCardText>
@@ -170,8 +299,17 @@ const submitTugas = async() => {
         </VCardText>
       </VCard>
     </VDialog>
+    <ShowAlert :color="notif.color" :icon="notif.icon" :title="notif.title" :text="notif.text" :disable-time-out="false" v-model:isSnackbarVisible="isAlertVisible" v-if="notif.color"></ShowAlert>
+    <ConfirmDialog
+      v-model:isDialogVisible="isConfirmDialogVisible"
+      confirmation-question="Apakah Anda yakin akan mengakhiri Tes Formatif ini?<br>Tes Formatif akan terkunci setelah Anda mengakhiri!"
+      :show-notif="false"
+      @confirm="confirmTes"
+    />
   </VCard>
 </template>
 <style lang="scss">
 .text-rata {text-align: justify; line-height: 1.6rem;}
+.v-expansion-panel {border-radius: 0px !important;}
+.v-expansion-panel-text__wrapper {padding: 0px !important;}
 </style>
