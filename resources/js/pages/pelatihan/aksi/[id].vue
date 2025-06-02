@@ -123,7 +123,7 @@ const submitTugas = async() => {
                     TUGAS
                   </v-col>
                   <v-col cols="4" class="text-right pe-8">
-                    <VBtn :disabled="cekTugas(sesi.sesi_latihan_id)" size="small" @click="unggahTugas(sesi.sesi_latihan_id)">Unggah Tugas <VIcon end icon="tabler-cloud-upload" /></VBtn>
+                    <VBtn :disabled="cekTugas(sesi.sesi_latihan_id)" :color="(cekTugas(sesi.sesi_latihan_id) ? 'secondary' : 'success')" size="small" @click="unggahTugas(sesi.sesi_latihan_id)">Unggah Tugas <VIcon end icon="tabler-cloud-upload" /></VBtn>
                   </v-col>
                 </v-row>
             </VAlert>
