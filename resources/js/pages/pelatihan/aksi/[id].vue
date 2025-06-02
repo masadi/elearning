@@ -140,6 +140,7 @@ const submitTugas = async() => {
       </VWindow>
     </VCardText>
     <VDialog v-model="isDialogVisible" persistent class="v-dialog-sm">
+      <DialogCloseBtn @click="isDialogVisible = !isDialogVisible" />
       <VCard title="Proses Kehadiran">
         <VCardText>
           <p>Untuk konfirmasi kehadiran Anda dalam kelas Tuton, silakan ceklist "Hadir" kemudian klik tombol Submit!</p>
@@ -156,6 +157,7 @@ const submitTugas = async() => {
       </VCard>
     </VDialog>
     <VDialog v-model="isUnggahTugas" persistent class="v-dialog-sm">
+      <DialogCloseBtn @click="isUnggahTugas = !isUnggahTugas" />
       <VCard :title="`Unggah Tugas ${judul_sesi}`">
         <VCardText>
           <p>Unggah tugas dibatasi hanya 1 (satu) kali! Pastikan berkas yang akan di unggah telah diperiksa.</p>
