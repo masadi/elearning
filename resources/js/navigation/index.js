@@ -52,11 +52,32 @@ export default [
     action: 'create',
     subject: 'pelatihan-create',
   },
-    {
-        title: 'Profile',
-        to: 'profile',
-        icon: { icon: 'tabler-user' },
-        action: 'read',
-        subject: 'profile-read',
-    },
+  /*{
+    title: 'Sesi',
+    to: 'sesi',
+    icon: { icon: 'tabler-checklist' },
+    action: 'create',
+    subject: 'sesi-create',
+  },
+  {
+    title: 'Materi',
+    to: 'materi',
+    icon: { icon: 'tabler-checklist' },
+    action: 'create',
+    subject: 'materi-create',
+  },
+  {
+    title: 'Dokumen',
+    to: 'dokumen',
+    icon: { icon: 'tabler-checklist' },
+    action: 'create',
+    subject: 'dokumen-create',
+  },*/
+  {
+    title: 'Profile',
+    to: 'profile',
+    icon: { icon: 'tabler-user' },
+    action: 'read',
+    subject: 'profile-read',
+  },
 ]

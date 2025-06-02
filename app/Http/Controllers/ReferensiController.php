@@ -460,19 +460,6 @@ class ReferensiController extends Controller
         $find->judul = request()->judul;
         $find->deskripsi = request()->deskripsi;
         if($find->save()){
-            foreach(request()->nama as $i => $nama){
-                if(request()->berkas[$i]){
-                    $nama = ($nama) ? $nama : request()->berkas[$i]->getClientOriginalName();
-                    $path = request()->berkas[$i]->store('berkas', 'public');
-                    Dokumen::create([
-                        'nama' => $nama,
-                        'table_name' => 'pelatihan',
-                        'table_id' => $find->pelatihan_id,
-                        'extension' => request()->berkas[$i]->extension(),
-                        'path' => basename($path),
-                    ]);
-                }
-            }
             $data = [
                 'color' => 'success',
                 'icon' => 'tabler-circle-check',
@@ -501,19 +488,6 @@ class ReferensiController extends Controller
         $find->judul = request()->judul;
         $find->deskripsi = request()->deskripsi;
         if($find->save()){
-            foreach(request()->nama as $i => $nama){
-                if(request()->berkas[$i]){
-                    $nama = ($nama) ? $nama : request()->berkas[$i]->getClientOriginalName();
-                    $path = request()->berkas[$i]->store('berkas', 'public');
-                    Dokumen::create([
-                        'nama' => $nama,
-                        'table_name' => 'sesi',
-                        'table_id' => $find->sesi_latihan_id,
-                        'extension' => request()->berkas[$i]->extension(),
-                        'path' => basename($path),
-                    ]);
-                }
-            }
             $data = [
                 'color' => 'success',
                 'icon' => 'tabler-circle-check',

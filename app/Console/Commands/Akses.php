@@ -53,6 +53,15 @@ class Akses extends Command
                 'administrator' => ['create', 'read', 'update', 'delete'], 
                 'guru' => ['read']
             ],
+            /*'sesi' => [
+                'administrator' => ['create'],
+            ],
+            'materi' => [
+                'administrator' => ['create'],
+            ],
+            'dokumen' => [
+                'administrator' => ['create'],
+            ],*/
             'profile' => [
                 'administrator' => ['read'], 
                 'guru' => ['read']

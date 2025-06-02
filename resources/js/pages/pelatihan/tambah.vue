@@ -20,12 +20,6 @@ const inputData = ref({
   judul: null,
   deskripsi: null,
 })
-const dokumen = ref([{
-  id: 1,
-  berkas: null,
-  nama: null,
-}])
-const nextDokumenId = ref(2)
 const isFormValid = ref(false)
 const refForm = ref()
 const isBusy = ref(false)
@@ -38,10 +32,6 @@ const onSubmit = async() => {
       for (const [key, value] of Object.entries(inputData.value)) {
         postData.append(key, (value) ? value : '');
       }
-      dokumen.value.forEach(e => {
-        postData.append('nama[]', (e.nama) ? e.nama : '');
-        postData.append('berkas[]', (e.berkas) ? e.berkas : '');
-      });
       await $api('/referensi/store', {
         method: 'POST',
         body: postData,
@@ -61,14 +51,6 @@ watch(isSnackbarClicked, () => {
     router.push({ name: 'pelatihan' })
   }
 })
-const addForm = () => {
-  dokumen.value.push({
-    id: nextDokumenId.value += nextDokumenId.value,
-  })
-}
-const delForm = (index) => {
-  dokumen.value.splice(index, 1)
-}
 </script>
 
 <template>
@@ -88,25 +70,9 @@ const delForm = (index) => {
         </VRow>
       </VCardText>
       <VCardText class="mt-16">
-        <VRow v-for="(dok, index) in dokumen" :id="dok.id" :key="dok.id">
-          <VCol md="6">
-            <AppTextField id="nama" v-model="dok.nama">
-              <template #label>Nama Dokumen</template>
-            </AppTextField>
-          </VCol>
-          <VCol md="4">
-            <VFileInput v-model="dok.berkas" label="Berkas Dokumen" />
-          </VCol>
-          <VCol md="2">
-            <VBtn block color="warning" @click="delForm(index)"><VIcon icon="tabler-x" /> Hapus</VBtn>
-          </VCol>
-        </VRow>
-        <VRow justify="space-between">
-          <VCol cols="4">
+        <VRow>
+          <VCol>
             <VBtn type="submit" :loading="isBusy" :disabled="isBusy">Submit</VBtn>
-          </VCol>
-          <VCol cols="4" class="text-right">
-            <VBtn color="info" @click="addForm">Tambah Form Dokumen <VIcon end icon="tabler-copy" /></VBtn>
           </VCol>
         </VRow>
       </VCardText>

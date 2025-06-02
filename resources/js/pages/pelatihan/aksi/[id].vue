@@ -56,10 +56,6 @@ const submitAbsen = async() => {
       <VWindow v-model="currentTab">
         <VWindowItem value="item-0">
           <span class="text-rata" v-html="data.deskripsi"></span>
-          <template v-if="data.dokumen.length">
-            <VAlert color="info" icon="tabler-file-info">DOKUMEN</VAlert>
-            <ListDokumen :dokumen="data.dokumen" />
-          </template>
         </VWindowItem>
         <VWindowItem v-for="sesi in data.sesi" :value="`item-${sesi.urut}`">
           <h4 class="text-h4 mb-2">{{ sesi.judul }}</h4>
@@ -80,10 +76,6 @@ const submitAbsen = async() => {
               Untuk konfirmasi kehadiran Anda dalam kelas Tuton, silakan klik Kehadiran Sesi ke-{{ sesi.urut }}
             </VAlert>
           </span>
-          <template v-if="sesi.dokumen.length">
-            <VAlert color="info" icon="tabler-file-info" class="mt-4">DOKUMEN SESI {{ sesi.urut }}</VAlert>
-            <ListDokumen :dokumen="sesi.dokumen" />
-          </template>
           <template v-if="sesi.materi.length">
             <VAlert color="info" icon="tabler-book">MATERI INISIASI</VAlert>
             <template v-for="materi in sesi.materi">
