@@ -32,24 +32,27 @@ class PelatihanController extends Controller
         return response()->json($data);
     }
     public function get_soal(){
-        $soal = TesFormatif::with(['jawaban', 'user_jawaban' => function($query){
-            $query->where('user_id', auth()->user()->id);
-        }])->find(request()->tes_id);
-        if(request()->jawaban_id){
-            UserJawaban::updateOrCreate(
-                [
-                    'tes_id' => request()->tes_id_jawaban,
+        $soal = NULL;
+        if(request()->tes_id){
+            $soal = TesFormatif::with(['jawaban', 'user_jawaban' => function($query){
+                $query->where('user_id', auth()->user()->id);
+            }])->find(request()->tes_id);
+            if(request()->jawaban_id){
+                UserJawaban::updateOrCreate(
+                    [
+                        'tes_id' => request()->tes_id_jawaban,
+                        'user_id' => auth()->user()->id,
+                    ],
+                    [
+                        'jawaban_id' => request()->jawaban_id,
+                    ]
+                );
+            } else {
+                UserTes::firstOrCreate([
+                    'sesi_latihan_id' => $soal->sesi_latihan_id,
                     'user_id' => auth()->user()->id,
-                ],
-                [
-                    'jawaban_id' => request()->jawaban_id,
-                ]
-            );
-        } else {
-            UserTes::firstOrCreate([
-                'sesi_latihan_id' => $soal->sesi_latihan_id,
-                'user_id' => auth()->user()->id,
-            ]);
+                ]);
+            }
         }
         $data = [
             'soal' => $soal,
