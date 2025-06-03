@@ -1,0 +1,1 @@
+import{p as s,H as r,P as o,l as c,q as n,a as p}from"./main-JLCl2Nar.js";const m=s({opacity:[Number,String],...r(),...o()},"VCardText"),l=c()({name:"VCardText",props:m(),setup(a,e){let{slots:t}=e;return n(()=>p(a.tag,{class:["v-card-text",a.class],style:[{"--v-card-text-opacity":a.opacity},a.style]},t)),{}}});export{l as V};

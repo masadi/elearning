@@ -159,7 +159,7 @@ const getSoal = async(index, tes_id) => {
       let getData = response._data
       soal.value = getData.soal
       isBusy.value = false
-      isChecked.value = getData.soal.user_jawaban?.jawaban_id
+      isChecked.value = getData.soal?.user_jawaban?.jawaban_id
       jmlSoal.value = getData.jml_soal
       if(jmlSoal.value === 1){
         nextColor.value = 'secondary'
