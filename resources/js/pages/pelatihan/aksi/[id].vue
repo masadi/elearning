@@ -237,7 +237,7 @@ const getSoal = async(index, tes_id) => {
                     <VProgressCircular :size="60" color="primary" class="text-center" indeterminate />
                   </template>
                   <template v-else>
-                    <span class="text-rata" v-html="soal.deskripsi"></span>
+                    <span class="text-soal" v-html="soal.deskripsi"></span>
                     <VRadioGroup v-model="isChecked">
                       <VRadio v-for="jawaban in soal.jawaban" :key="jawaban.jawaban_id" :value="jawaban.jawaban_id" :disabled="parseInt(sesi.user_tes?.status)">
                         <template #label>
@@ -310,6 +310,7 @@ const getSoal = async(index, tes_id) => {
 </template>
 <style lang="scss">
 .text-rata {text-align: justify; line-height: 1.6rem;}
+.text-soal {text-align: justify; line-height: 1.6rem; color: black; font-size: 115%;}
 .v-expansion-panel {border-radius: 0px !important;}
 .v-expansion-panel-text__wrapper {padding: 0px !important;}
 </style>
