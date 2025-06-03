@@ -24,6 +24,7 @@ const {
   },
 }))
 const data = computed(() => detilData.value)
+const jmlSoal = ref(0)
 const currentTab = ref('item-0')
 const isDialogVisible = ref(false)
 const isUnggahTugas = ref(false)
@@ -149,15 +150,21 @@ const getSoal = async(index, tes_id) => {
   await $api('/pelatihan/get-soal', {
     method: 'POST',
     body: {
-      tes_id: data.value.sesi[indexTab.value].tes[index].tes_id,
+      sesi_latihan_id: data.value.sesi[indexTab.value]?.sesi_latihan_id,
+      tes_id: data.value.sesi[indexTab.value]?.tes[index]?.tes_id,
       tes_id_jawaban: tes_id,
       jawaban_id: isChecked.value,
     },
     onResponse({ request, response, options }) {
       let getData = response._data
-      soal.value = getData
+      soal.value = getData.soal
       isBusy.value = false
-      isChecked.value = getData.user_jawaban?.jawaban_id
+      isChecked.value = getData.soal.user_jawaban?.jawaban_id
+      jmlSoal.value = getData.jml_soal
+      if(jmlSoal.value === 1){
+        nextColor.value = 'secondary'
+        nextDisabled.value = true
+      }
     }
   })
 }

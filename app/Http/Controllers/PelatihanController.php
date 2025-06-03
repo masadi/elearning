@@ -32,7 +32,7 @@ class PelatihanController extends Controller
         return response()->json($data);
     }
     public function get_soal(){
-        $data = TesFormatif::with(['jawaban', 'user_jawaban' => function($query){
+        $soal = TesFormatif::with(['jawaban', 'user_jawaban' => function($query){
             $query->where('user_id', auth()->user()->id);
         }])->find(request()->tes_id);
         if(request()->jawaban_id){
@@ -47,10 +47,14 @@ class PelatihanController extends Controller
             );
         } else {
             UserTes::firstOrCreate([
-                'sesi_latihan_id' => $data->sesi_latihan_id,
+                'sesi_latihan_id' => $soal->sesi_latihan_id,
                 'user_id' => auth()->user()->id,
             ]);
         }
+        $data = [
+            'soal' => $soal,
+            'jml_soal' => TesFormatif::where('sesi_latihan_id', request()->sesi_latihan_id)->count(),
+        ];
         return response()->json($data);
     }
     public function tes_selesai(){
