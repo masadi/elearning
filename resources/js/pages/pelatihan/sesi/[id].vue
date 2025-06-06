@@ -36,6 +36,30 @@ const headers = [
     sortable: false,
   },
   {
+    title: 'bobot kehadiran',
+    key: 'bobot_hadir',
+    align: 'center',
+    sortable: false,
+  },
+  {
+    title: 'bobot materi',
+    key: 'bobot_materi',
+    align: 'center',
+    sortable: false,
+  },
+  {
+    title: 'bobot tugas',
+    key: 'bobot_tugas',
+    align: 'center',
+    sortable: false,
+  },
+  {
+    title: 'bobot tes',
+    key: 'bobot_tes',
+    align: 'center',
+    sortable: false,
+  },
+  {
     title: 'jml materi',
     key: 'materi_count',
     align: 'center',
@@ -176,7 +200,7 @@ watch(isAlertVisible, () => {
       >
         <!-- Actions -->
         <template #item.actions="{ item }">
-          <IconBtn @click="materiSesi(item)">
+          <!--IconBtn @click="materiSesi(item)">
             <VTooltip activator="parent" location="top">Materi</VTooltip>
             <VIcon icon="tabler-file-export" />
           </IconBtn>
@@ -187,7 +211,7 @@ watch(isAlertVisible, () => {
           <IconBtn @click="ujianSesi(item)">
             <VTooltip activator="parent" location="top">Tes Formatif</VTooltip>
             <VIcon icon="tabler-clock-search" />
-          </IconBtn>
+          </IconBtn-->
           <IconBtn @click="editData(item.sesi_latihan_id)">
             <VTooltip activator="parent" location="top">Edit Sesi Latihan</VTooltip>
             <VIcon icon="tabler-pencil" />
@@ -196,7 +220,31 @@ watch(isAlertVisible, () => {
             <VTooltip activator="parent" location="top">Hapus Sesi Latihan</VTooltip>
             <VIcon icon="tabler-trash" />
           </IconBtn>
-
+          <VBtn icon variant="text" color="medium-emphasis">
+            <VIcon icon="tabler-dots-vertical" />
+            <VMenu activator="parent">
+              <VList>
+                <VListItem @click="materiSesi(item)">
+                  <template #prepend>
+                    <VIcon icon="tabler-file-export" />
+                  </template>
+                  <VListItemTitle>Materi</VListItemTitle>
+                </VListItem>
+                <VListItem @click="tugasSesi(item)">
+                  <template #prepend>
+                    <VIcon icon="tabler-user-check" />
+                  </template>
+                  <VListItemTitle>Tugas</VListItemTitle>
+                </VListItem>
+                <VListItem @click="ujianSesi(item)">
+                  <template #prepend>
+                    <VIcon icon="tabler-clock-search" />
+                  </template>
+                  <VListItemTitle>Tes Formatif</VListItemTitle>
+                </VListItem>
+              </VList>
+            </VMenu>
+          </VBtn>
         </template>
 
         <template #bottom>

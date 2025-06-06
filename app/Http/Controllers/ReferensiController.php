@@ -506,6 +506,10 @@ class ReferensiController extends Controller
         $find->urut = request()->urut;
         $find->judul = request()->judul;
         $find->deskripsi = request()->deskripsi;
+        $find->bobot_hadir = request()->bobot_hadir;
+        $find->bobot_materi = request()->bobot_materi;
+        $find->bobot_tugas = request()->bobot_tugas;
+        $find->bobot_tes = request()->bobot_tes;
         if($find->save()){
             $data = [
                 'color' => 'success',

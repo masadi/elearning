@@ -33,6 +33,10 @@ const inputData = ref({
   judul: `Sesi ${(pelatihan.value.sesi_count + 1)}`,
   urut: (pelatihan.value.sesi_count + 1),
   deskripsi: null,
+  bobot_hadir: null,
+  bobot_materi: null,
+  bobot_tugas: null,
+  bobot_tes: null,
 })
 const isFormValid = ref(false)
 const refForm = ref()
@@ -71,6 +75,26 @@ watch(isSnackbarClicked, () => {
     <VForm ref="refForm" v-model="isFormValid" @submit.prevent="onSubmit">
       <VCardText class="pb-12">
         <VRow>
+          <VCol cols="12">
+            <AppTextField v-model="inputData.bobot_hadir" :rules="[requiredValidator]">
+              <template #label>Bobot Kehadiran</template>
+            </AppTextField>
+          </VCol>
+          <VCol cols="12">
+            <AppTextField v-model="inputData.bobot_materi" :rules="[requiredValidator]">
+              <template #label>Bobot Materi</template>
+            </AppTextField>
+          </VCol>
+          <VCol cols="12">
+            <AppTextField v-model="inputData.bobot_tugas" :rules="[requiredValidator]">
+              <template #label>Bobot Tugas</template>
+            </AppTextField>
+          </VCol>
+          <VCol cols="12">
+            <AppTextField v-model="inputData.bobot_tes" :rules="[requiredValidator]">
+              <template #label>Bobot Tes Formatif</template>
+            </AppTextField>
+          </VCol>
           <VCol cols="12">
             <AppTextField v-model="inputData.judul" :rules="[requiredValidator]">
               <template #label>Judul Sesi</template>

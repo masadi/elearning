@@ -34,6 +34,10 @@ const inputData = ref({
   judul: sesi_latihan.value.judul,
   urut: sesi_latihan.value.urut,
   deskripsi: sesi_latihan.value.deskripsi,
+  bobot_hadir: sesi_latihan.value.bobot_hadir,
+  bobot_materi: sesi_latihan.value.bobot_materi,
+  bobot_tugas: sesi_latihan.value.bobot_tugas,
+  bobot_tes: sesi_latihan.value.bobot_tes,
 })
 const isConfirmDialogVisible = ref(false)
 const isFormValid = ref(false)
@@ -72,6 +76,26 @@ watch(isSnackbarClicked, () => {
     <VForm ref="refForm" v-model="isFormValid" @submit.prevent="onSubmit">
       <VCardText class="pb-12">
         <VRow>
+          <VCol cols="12">
+            <AppTextField v-model="inputData.bobot_hadir" :rules="[requiredValidator]">
+              <template #label>Bobot Kehadiran</template>
+            </AppTextField>
+          </VCol>
+          <VCol cols="12">
+            <AppTextField v-model="inputData.bobot_materi" :rules="[requiredValidator]">
+              <template #label>Bobot Materi</template>
+            </AppTextField>
+          </VCol>
+          <VCol cols="12">
+            <AppTextField v-model="inputData.bobot_tugas" :rules="[requiredValidator]">
+              <template #label>Bobot Tugas</template>
+            </AppTextField>
+          </VCol>
+          <VCol cols="12">
+            <AppTextField v-model="inputData.bobot_tes" :rules="[requiredValidator]">
+              <template #label>Bobot Tes Formatif</template>
+            </AppTextField>
+          </VCol>
           <VCol cols="12">
             <AppTextField v-model="inputData.judul" :rules="[requiredValidator]">
               <template #label>Judul Sesi</template>

@@ -12,14 +12,12 @@ class Jawaban extends Model
     protected $table = 'jawaban';
 	protected $primaryKey = 'jawaban_id';
     public $guarded = [];
-    protected $appends = ['is_checked'];
-    protected $hidden = [
-        'benar',
-    ];
-    protected function isChecked(): Attribute
+    //protected $appends = ['is_checked'];
+    //protected $hidden = ['benar'];
+    protected function benar(): Attribute
     {
         return new Attribute(
-            get: fn () => FALSE,
+            get: fn ($value) => (auth()->user()->hasRole('administrator')) ? $value : NULL,
         );
     }
 }

@@ -108,11 +108,22 @@ watch(isAlertVisible, () => {
   if (!isAlertVisible.value)
   fetchData()
 })
+const backToSesiLatihan = () => {
+  router.push({ name: 'pelatihan-sesi-id', params: {id: sesiLatihan.value.pelatihan_id} })
+}
 </script>
 
 <template>
   <section>
-    <VCard :title="`Data Tes Formatif (${sesiLatihan.judul})`">
+    <VCard>
+      <VCardItem>
+        <VCardTitle>Data Tes Formatif ({{sesiLatihan.judul}})</VCardTitle>
+        <template #append>
+          <div class="mt-n4 me-n2">
+            <VBtn size="small" color="warning" @click="backToSesiLatihan">Kembali Ke Sesi latihan</VBtn>
+          </div>
+        </template>
+      </VCardItem>
       <VCardText class="d-flex flex-wrap gap-4">
         <div class="d-flex gap-2 align-center">
           <AppSelect
