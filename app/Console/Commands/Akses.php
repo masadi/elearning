@@ -37,32 +37,37 @@ class Akses extends Command
                 'administrator' => ['read'], 
                 'guru' => ['read'], 
             ], 
-            'referensi-sekolah' => [
+            'laman-tentang' => [
                 'administrator' => ['create', 'read', 'update', 'delete']
             ],
-            'referensi-mata-pelajaran' => [
+            'laman-kontak' => [
+                'administrator' => ['create', 'read', 'update', 'delete'],
+            ],
+            'konten-slide' => [
                 'administrator' => ['create', 'read', 'update', 'delete']
             ],
-            'pembelajaran' => [
-                'administrator' => ['create', 'read', 'update', 'delete']
-            ],
-            'tes' => [
-                'administrator' => ['create', 'read', 'update', 'delete']
-            ],
-            /*'referensi-ptk' => [
-                'administrator' => ['create', 'read', 'update', 'delete']
-            ],
-            'referensi-rombel' => [
-                'administrator' => ['create', 'read', 'update', 'delete']
-            ],
-            'pelatihan' => [
+            'konten-ptk' => [
                 'administrator' => ['create', 'read', 'update', 'delete'], 
-                'guru' => ['read']
             ],
-            'sesi' => [
-                'administrator' => ['create'],
+            'konten-visi-misi' => [
+                'administrator' => ['create', 'read', 'update', 'delete']
             ],
-            'materi' => [
+            'konten-galeri' => [
+                'administrator' => ['create', 'read', 'update', 'delete'], 
+            ],
+            'konten-program' => [
+                'administrator' => ['create', 'read', 'update', 'delete'], 
+            ],
+            'asesmen-mata-pelajaran' => [
+                'administrator' => ['create', 'read', 'update', 'delete']
+            ],
+            'asesmen-pembelajaran' => [
+                'administrator' => ['create', 'read', 'update', 'delete']
+            ],
+            'asesmen-tes' => [
+                'administrator' => ['create', 'read', 'update', 'delete']
+            ],
+            /*'materi' => [
                 'administrator' => ['create'],
             ],
             'dokumen' => [

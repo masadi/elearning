@@ -3,7 +3,7 @@
   "files.insertFinalNewline": true,
   "javascript.updateImportsOnFileMove.enabled": "always",
   "[javascript]": {
-    "editor.defaultFormatter": "dbaeumer.vscode-eslint"
+    "editor.defaultFormatter": "apility.beautify-blade"
   },
   "[typescript]": {
     "editor.defaultFormatter": "dbaeumer.vscode-eslint",
