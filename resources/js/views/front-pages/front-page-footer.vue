@@ -1,9 +1,11 @@
 <script setup>
+import footerDarkBg from '@images/front-pages/backgrounds/footer-bg-dark.png'
+import footerLightBg from '@images/front-pages/backgrounds/footer-bg-light.png'
 import appleImg from '@images/front-pages/landing-page/apple-icon.png'
 import googlePlayImg from '@images/front-pages/landing-page/google-play-icon.png'
 import { VNodeRenderer } from '@layouts/components/VNodeRenderer'
 import { themeConfig } from '@themeConfig'
-
+const footerBg = useGenerateImageVariant(footerLightBg, footerDarkBg)
 
 const pagesList = [
   {
@@ -54,7 +56,7 @@ const demoList = [
 
 <template>
   <div class="footer">
-    <div class="footer-top pt-11">
+    <div class="footer-top pt-11" :style="{ 'background-image': `url(${footerBg})` }">
       <VContainer>
         <VRow>
           <!-- 👉 Footer  -->
@@ -184,7 +186,6 @@ const demoList = [
 }
 
 .footer-top {
-  border-radius: 60px 60px 0 0;
   background-size: cover;
   color: #fff;
 }
