@@ -13,11 +13,11 @@ return new class extends Migration
     {
         Schema::create('tes_formatif', function (Blueprint $table) {
             $table->uuid('tes_id');
-            $table->uuid('sesi_latihan_id');
+            $table->uuid('pembelajaran_id')->nullable();
             $table->longText('deskripsi')->nullable();
             $table->timestamps();
             $table->primary('tes_id');
-            $table->foreign('sesi_latihan_id')->references('sesi_latihan_id')->on('sesi_latihan')->cascadeOnDelete();
+            $table->foreign('pembelajaran_id')->references('pembelajaran_id')->on('pembelajaran')->cascadeOnDelete();
         });
     }
 

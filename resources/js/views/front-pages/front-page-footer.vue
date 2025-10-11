@@ -8,24 +8,23 @@ import { themeConfig } from '@themeConfig'
 const pagesList = [
   {
     name: 'Tentang Kami',
-    //to: { name: 'front-pages-pricing' },
+    to: '#',
   },
   {
     name: 'Galeri',
-    //to: { name: 'front-pages-payment' },
-    //isNew: true,
+    to: '#',
   },
   {
     name: 'Program',
-    //to: { name: 'front-pages-checkout' },
+    to: '#',
   },
   {
     name: 'Kontak Kami',
-    //to: { name: 'front-pages-help-center' },
+    to: '#',
   },
   {
-    name: 'Login/Register',
-    //to: { name: 'pages-authentication-login-v2' },
+    name: 'Admin',
+    to: { name: 'dashboard' },
   },
 ]
 

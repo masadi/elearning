@@ -6,7 +6,7 @@ export default [...dashboard, ...settings, ...referensi]*/
 export default [
     {
         title: 'Beranda',
-        to: { name: 'root' },
+        to: { name: 'dashboard' },
         icon: { icon: 'tabler-smart-home' },
         action: 'read',
         subject: 'dashboard-read',
@@ -22,7 +22,7 @@ export default [
         action: 'read',
         subject: 'referensi-sekolah-read',
       },
-      {
+      /*{
         title: 'PTK',
         to: 'referensi-ptk',
         icon: { icon: 'tabler-hand-finger-right' },
@@ -35,7 +35,7 @@ export default [
         icon: { icon: 'tabler-hand-finger-right' },
         action: 'read',
         subject: 'referensi-rombel-read',
-      },
+      },*/
       {
         title: 'Mata Pelajaran',
         to: 'referensi-mata-pelajaran',
@@ -46,20 +46,20 @@ export default [
     ],
   },
   {
-    title: 'Pelatihan',
-    to: 'pelatihan',
+    title: 'Pembelajaran',
+    to: 'pembelajaran',
     icon: { icon: 'tabler-checklist' },
     action: 'create',
-    subject: 'pelatihan-create',
-  },
-  /*{
-    title: 'Sesi',
-    to: 'sesi',
-    icon: { icon: 'tabler-checklist' },
-    action: 'create',
-    subject: 'sesi-create',
+    subject: 'pembelajaran-create',
   },
   {
+    title: 'Tes',
+    to: 'tes',
+    icon: { icon: 'tabler-zoom-check' },
+    action: 'create',
+    subject: 'pembelajaran-create',
+  },
+  /*{
     title: 'Materi',
     to: 'materi',
     icon: { icon: 'tabler-checklist' },

@@ -40,20 +40,26 @@ class Akses extends Command
             'referensi-sekolah' => [
                 'administrator' => ['create', 'read', 'update', 'delete']
             ],
-            'referensi-ptk' => [
+            'referensi-mata-pelajaran' => [
+                'administrator' => ['create', 'read', 'update', 'delete']
+            ],
+            'pembelajaran' => [
+                'administrator' => ['create', 'read', 'update', 'delete']
+            ],
+            'tes' => [
+                'administrator' => ['create', 'read', 'update', 'delete']
+            ],
+            /*'referensi-ptk' => [
                 'administrator' => ['create', 'read', 'update', 'delete']
             ],
             'referensi-rombel' => [
-                'administrator' => ['create', 'read', 'update', 'delete']
-            ],
-            'referensi-mata-pelajaran' => [
                 'administrator' => ['create', 'read', 'update', 'delete']
             ],
             'pelatihan' => [
                 'administrator' => ['create', 'read', 'update', 'delete'], 
                 'guru' => ['read']
             ],
-            /*'sesi' => [
+            'sesi' => [
                 'administrator' => ['create'],
             ],
             'materi' => [

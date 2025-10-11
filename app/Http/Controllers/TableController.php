@@ -30,6 +30,17 @@ class TableController extends Controller
             return response()->json($data);
         }
     }
+    public function get_sekolah(){
+        $data = [
+            'lists' => Sekolah::orderBy(request()->sortBy, request()->orderBy)
+            ->when(request()->q, function($query) {
+                $query->where('nama', 'LIKE', '%' . request()->q . '%');
+                $query->orWhere('npsn', 'LIKE', '%' . request()->q . '%');
+                $query->orWhere('alamat', 'LIKE', '%' . request()->q . '%');
+            })->paginate(request()->per_page),
+        ];
+        return response()->json($data);
+    }
     private function wherePtk(){
         return function($query){
             $query->whereHas('sekolah', function($query){

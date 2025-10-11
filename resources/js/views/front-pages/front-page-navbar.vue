@@ -15,6 +15,37 @@ const sidebar = ref(false)
 watch(() => display, () => {
   return display.mdAndUp ? sidebar.value = false : sidebar.value
 }, { deep: true })
+const navItems = [
+  {
+    name: 'Beranda',
+    to: { name: 'root' },
+  },
+  {
+    name: 'Tentang',
+    to: { name: 'page-tentang' },
+  },
+  {
+    name: 'Galeri',
+    to: { name: 'page-galeri' },
+  },
+  {
+    name: 'Program',
+    to: { name: 'page-program' },
+  },
+  {
+    name: 'Kontak',
+    to: { name: 'page-kontak' },
+  },
+];
+const isCurrentRoute = to => {
+  return route.matched.some(_route => _route.path.startsWith(router.resolve(to).path))
+
+  // ℹ️ Below is much accurate approach if you don't have any nested routes
+
+  // return route.matched.some(_route => _route.path === router.resolve(to).path)
+}
+
+const isPageActive = computed(() => menuItems.some(item => item.navItems.some(listItem => isCurrentRoute(listItem.to))))
 </script>
 
 <template>
@@ -24,10 +55,14 @@ watch(() => display, () => {
       <!-- Nav items -->
       <div>
         <div class="d-flex flex-column gap-y-4 pa-4">
-          <RouterLink v-for="(item, index) in ['Beranda', 'Tentang', 'Galeri', 'Program', 'Kontak']" :key="index"
+          <!--RouterLink v-for="(item, index) in ['Beranda', 'Tentang', 'Galeri', 'Program', 'Kontak']" :key="index"
             :to="{ name: 'root', hash: `#${item.toLowerCase().replace(' ', '-')}` }" class="nav-link font-weight-medium"
             :class="[props.activeId?.toLocaleLowerCase().replace('-', ' ') === item.toLocaleLowerCase() ? 'active-link' : '']">
             {{ item }}
+          </RouterLink-->
+          <RouterLink v-for="(item, index) in navItems" :key="index" :to="item.to" class="nav-link font-weight-medium"
+            :class="[isCurrentRoute(item.to) ? 'active-link' : 'text-high-emphasis']">
+            {{ item.name }}
           </RouterLink>
 
           <RouterLink :to="{ name: 'dashboard' }" target="_blank" class="font-weight-medium nav-link">
@@ -70,11 +105,16 @@ watch(() => display, () => {
 
           <!-- landing page sections -->
           <div class="text-base align-center d-none d-md-flex">
-            <RouterLink v-for="(item, index) in ['Beranda', 'Tentang', 'Galeri', 'Program', 'Kontak']" :key="index"
+            <!--RouterLink v-for="(item, index) in ['Beranda', 'Tentang', 'Galeri', 'Program', 'Kontak']" :key="index"
               :to="{ name: 'root', hash: `#${item.toLowerCase().replace(' ', '-')}` }"
               class="nav-link font-weight-medium py-2 px-2 px-lg-4"
               :class="[props.activeId?.toLocaleLowerCase().replace('-', ' ') === item.toLocaleLowerCase() ? 'active-link' : '']">
               {{ item }}
+            </RouterLink-->
+            <RouterLink v-for="(item, index) in navItems" :key="index" :to="item.to"
+              class="nav-link font-weight-medium py-2 px-2 px-lg-4"
+              :class="[isCurrentRoute(item.to) ? 'active-link' : 'text-high-emphasis']">
+              {{ item.name }}
             </RouterLink>
           </div>
         </div>

@@ -16,15 +16,15 @@ return new class extends Migration
     {
         Schema::create('pembelajaran', function (Blueprint $table) {
             $table->uuid('pembelajaran_id');
-            $table->uuid('rombongan_belajar_id');
-            $table->uuid('ptk_id');
+            $table->uuid('sekolah_id')->nullable();
             $table->foreignIdFor(MataPelajaran::class);
-			$table->string('nama_mata_pelajaran');
+			$table->string('judul');
+            $table->text('deskripsi')->nullable();
+            $table->unsignedTinyInteger('status')->default(1)->comment('1=aktif,0=nonaktif');
             $table->timestamps();
             $table->softDeletes();
             $table->primary('pembelajaran_id');
-            $table->foreign('rombongan_belajar_id')->references('rombongan_belajar_id')->on('rombongan_belajar')->onDelete('CASCADE');
-            $table->foreign('ptk_id')->references('ptk_id')->on('ptk')->onDelete('CASCADE');
+            $table->foreign('sekolah_id')->references('sekolah_id')->on('sekolah')->onDelete('CASCADE');
         });
     }
 

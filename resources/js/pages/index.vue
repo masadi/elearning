@@ -93,12 +93,13 @@ register()
           </VCardItem>
           <VCardText class="text-black">
             <v-row no-gutters>
-              <v-col class="me-8">
+              <v-col cols="12" sm="6" md="6" class="me-8">
                 <v-img fluid :src="banner" alt="" />
               </v-col>
-              <v-col>
-                <div class="text-h3 text-black">Visi</div>
-                <p class="text-h5 text-black">Lorem Ipsum is simply dummy text of the printing and typesetting industry.
+              <v-col cols="12" sm="6" md="5">
+                <div class="text-h3 text-black">Visia</div>
+                <p class="text-h5 text-black">aLorem Ipsum is simply dummy text of the printing and typesetting
+                  industry.
                   Lorem
                   Ipsum has been the
                   industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and
@@ -111,9 +112,10 @@ register()
           </VCardText>
           <VCardText class="text-black">
             <v-row no-gutters>
-              <v-col class="me-8">
-                <div class="text-h3 text-black">Misi</div>
-                <p class="text-h5 text-black">Lorem Ipsum is simply dummy text of the printing and typesetting industry.
+              <v-col cols="12" sm="6" md="5" class="me-8">
+                <div class="text-h3 text-black">Misia</div>
+                <p class="text-h5 text-black">bLorem Ipsum is simply dummy text of the printing and typesetting
+                  industry.
                   Lorem
                   Ipsum has been the
                   industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and
@@ -122,7 +124,7 @@ register()
                   release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing
                   software like Aldus PageMaker including versions of Lorem Ipsum.</p>
               </v-col>
-              <v-col>
+              <v-col cols="12" sm="6" md="6">
                 <v-img fluid :src="banner" alt="" />
               </v-col>
             </v-row>

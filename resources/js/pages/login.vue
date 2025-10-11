@@ -54,7 +54,7 @@ const login = async () => {
     useCookie('accessToken').value = accessToken
     await nextTick(() => {
       //window.location.replace('/')
-      router.replace(route.query.to ? String(route.query.to) : '/')
+      router.replace(route.query.to ? String(route.query.to) : '/dashboard')
     })
   } catch (err) {
     console.error(err)
@@ -101,19 +101,20 @@ const onSubmit = () => {
           </p>
         </VCardText>
         <VCardText>
-          <VForm
-            ref="refVForm"
-            @submit.prevent="onSubmit"
-          >
+          <VForm ref="refVForm" @submit.prevent="onSubmit">
             <VRow>
               <!-- email -->
               <VCol cols="12">
-                <AppTextField v-model="form.email" :error-messages="errors.email" autofocus label="Email" type="email" placeholder="email.anda@email.com" />
+                <AppTextField v-model="form.email" :error-messages="errors.email" autofocus label="Email" type="email"
+                  placeholder="email.anda@email.com" />
               </VCol>
 
               <!-- password -->
               <VCol cols="12">
-                <AppTextField v-model="form.password" :error-messages="errors.password" label="Password" placeholder="············" :type="isPasswordVisible ? 'text' : 'password'" autocomplete="password" :append-inner-icon="isPasswordVisible ? 'tabler-eye-off' :  'tabler-eye'" @click:append-inner="isPasswordVisible = !isPasswordVisible" />
+                <AppTextField v-model="form.password" :error-messages="errors.password" label="Password"
+                  placeholder="············" :type="isPasswordVisible ? 'text' : 'password'" autocomplete="password"
+                  :append-inner-icon="isPasswordVisible ? 'tabler-eye-off' : 'tabler-eye'"
+                  @click:append-inner="isPasswordVisible = !isPasswordVisible" />
 
                 <div class="d-flex align-center flex-wrap justify-space-between my-6">
                   <VCheckbox v-model="form.remember" label="Remember me" />
