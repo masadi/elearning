@@ -1,6 +1,7 @@
 <script setup>
 import Footer from '@/views/front-pages/front-page-footer.vue'
 import Navbar from '@/views/front-pages/front-page-navbar.vue'
+import Galeri from '@/views/pages/Galeri.vue'
 import { register } from 'swiper/element/bundle'
 definePage({
   meta: {
@@ -26,6 +27,7 @@ register()
           PageMaker including versions of Lorem Ipsum</p>
       </VContainer>
     </div>
+    <Galeri />
     <Footer />
   </div>
 </template>
