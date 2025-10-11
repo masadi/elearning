@@ -29,6 +29,24 @@ export default [{
         subject: 'laman-tentang-read',
       },
       {
+        title: 'Galeri',
+        to: 'laman-galeri',
+        icon: {
+          icon: 'tabler-hand-finger-right'
+        },
+        action: 'read',
+        subject: 'laman-galeri-read',
+      },
+      {
+        title: 'Program',
+        to: 'laman-program',
+        icon: {
+          icon: 'tabler-hand-finger-right'
+        },
+        action: 'read',
+        subject: 'laman-program-read',
+      },
+      {
         title: 'Kontak',
         to: 'laman-kontak',
         icon: {

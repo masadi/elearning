@@ -40,6 +40,12 @@ class Akses extends Command
             'laman-tentang' => [
                 'administrator' => ['create', 'read', 'update', 'delete']
             ],
+            'laman-galeri' => [
+                'administrator' => ['create', 'read', 'update', 'delete']
+            ],
+            'laman-program' => [
+                'administrator' => ['create', 'read', 'update', 'delete']
+            ],
             'laman-kontak' => [
                 'administrator' => ['create', 'read', 'update', 'delete'],
             ],
