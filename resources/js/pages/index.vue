@@ -63,7 +63,7 @@ register()
               </VCardItem>
               <VCardText>
                 <p class="font-weight-bold text-black mb-0">
-                  ACHMADI, S.Pd.I.
+                  Si Fulan, S.Pd.I.
                 </p>
                 <p class="clamp-text text-black mb-0">
                   Kepala Sekolah
@@ -78,10 +78,10 @@ register()
               </VCardItem>
               <VCardText>
                 <p class="font-weight-bold text-black mb-0">
-                  ACHMADI, S.Pd.I.
+                  Si Fulan, S.Kom.
                 </p>
                 <p class="clamp-text text-black mb-0">
-                  Kepala Sekolah
+                  Jabatan A
                 </p>
               </VCardText>
             </VCard>
