@@ -7,6 +7,7 @@ use App\Http\Controllers\SettingController;
 use App\Http\Controllers\ReferensiController;
 use App\Http\Controllers\TableController;
 use App\Http\Controllers\PelatihanController;
+use App\Http\Controllers\LamanController;
 
 Route::group(['prefix' => 'auth'], function () {
     Route::post('login', [AuthController::class, 'login']);
@@ -41,5 +42,9 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
         Route::post('unggah', [PelatihanController::class, 'unggah']);
         Route::post('get-soal', [PelatihanController::class, 'get_soal']);
         Route::post('tes-selesai', [PelatihanController::class, 'tes_selesai']);
+    });
+    Route::group(['prefix' => 'laman'], function () {
+        Route::post('/store', [LamanController::class, 'store']);
+        Route::delete('/destroy/{id}', [LamanController::class, 'destroy']);
     });
 });

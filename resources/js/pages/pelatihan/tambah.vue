@@ -23,8 +23,8 @@ const inputData = ref({
 const isFormValid = ref(false)
 const refForm = ref()
 const isBusy = ref(false)
-const onSubmit = async() => {
-  refForm.value?.validate().then(async({ valid }) => {
+const onSubmit = async () => {
+  refForm.value?.validate().then(async ({ valid }) => {
     if (valid) {
       isBusy.value = true
       const postData = new FormData();
@@ -47,7 +47,7 @@ const onSubmit = async() => {
 }
 const router = useRouter()
 watch(isSnackbarClicked, () => {
-  if(isSnackbarClicked.value){
+  if (isSnackbarClicked.value) {
     router.push({ name: 'pelatihan' })
   }
 })
@@ -65,7 +65,8 @@ watch(isSnackbarClicked, () => {
           </VCol>
           <VCol cols="12">
             <label for="">Deskripsi Pelatihan</label>
-            <QuillEditor theme="snow" toolbar="full" v-model:content="inputData.deskripsi" contentType="html" :rules="[requiredValidator]" />
+            <QuillEditor theme="snow" toolbar="full" v-model:content="inputData.deskripsi" contentType="html"
+              :rules="[requiredValidator]" />
           </VCol>
         </VRow>
       </VCardText>
@@ -77,6 +78,7 @@ watch(isSnackbarClicked, () => {
         </VRow>
       </VCardText>
     </VForm>
-    <ShowAlert :color="notif.color" :icon="notif.icon" :title="notif.title" :text="notif.text" :disable-time-out="false" v-model:isSnackbarVisible="isAlertVisible" v-model:isSnackbarClicked="isSnackbarClicked"></ShowAlert>
+    <ShowAlert :color="notif.color" :icon="notif.icon" :title="notif.title" :text="notif.text" :disable-time-out="false"
+      v-model:isSnackbarVisible="isAlertVisible" v-model:isSnackbarClicked="isSnackbarClicked"></ShowAlert>
   </VCard>
 </template>

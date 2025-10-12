@@ -13,6 +13,7 @@ use App\Models\SesiLatihan;
 use App\Models\MateriSesi;
 use App\Models\TugasSesi;
 use App\Models\TesFormatif;
+use App\Models\Page;
 
 class TableController extends Controller
 {
@@ -154,6 +155,50 @@ class TableController extends Controller
                 $query->where('judul', 'LIKE', '%' . request()->q . '%');
             })->paginate(request()->per_page),
             'data' => SesiLatihan::find(request()->sesi_latihan_id),
+        ];
+        return response()->json($data);
+    }
+    public function get_tentang(){
+        $data = [
+            'lists' => Page::whereType('tentang')->with('sekolah')->orderBy(request()->sortBy, request()->orderBy)
+            ->when(request()->q, function($query) {
+                $query->where('sekolah', 'LIKE', '%' . request()->q . '%');
+                $query->orWhere('deskripsi', 'LIKE', '%' . request()->q . '%');
+            })->paginate(request()->per_page),
+            'sekolah' => Sekolah::all(),
+        ];
+        return response()->json($data);
+    }
+    public function get_galeri(){
+        $data = [
+            'lists' => Page::whereType('galeri')->with('sekolah')->orderBy(request()->sortBy, request()->orderBy)
+            ->when(request()->q, function($query) {
+                $query->where('sekolah', 'LIKE', '%' . request()->q . '%');
+                $query->orWhere('deskripsi', 'LIKE', '%' . request()->q . '%');
+            })->paginate(request()->per_page),
+            'sekolah' => Sekolah::all(),
+        ];
+        return response()->json($data);
+    }
+    public function get_program(){
+        $data = [
+            'lists' => Page::whereType('program')->with('sekolah')->orderBy(request()->sortBy, request()->orderBy)
+            ->when(request()->q, function($query) {
+                $query->where('sekolah', 'LIKE', '%' . request()->q . '%');
+                $query->orWhere('deskripsi', 'LIKE', '%' . request()->q . '%');
+            })->paginate(request()->per_page),
+            'sekolah' => Sekolah::all(),
+        ];
+        return response()->json($data);
+    }
+    public function get_kontak(){
+        $data = [
+            'lists' => Page::whereType('kontak')->with('sekolah')->orderBy(request()->sortBy, request()->orderBy)
+            ->when(request()->q, function($query) {
+                $query->where('sekolah', 'LIKE', '%' . request()->q . '%');
+                $query->orWhere('deskripsi', 'LIKE', '%' . request()->q . '%');
+            })->paginate(request()->per_page),
+            'sekolah' => Sekolah::all(),
         ];
         return response()->json($data);
     }

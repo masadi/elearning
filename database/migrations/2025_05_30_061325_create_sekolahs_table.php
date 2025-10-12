@@ -27,6 +27,7 @@ return new class extends Migration
 			$table->string('email', 50)->nullable();
 			$table->string('website', 100)->nullable();
             $table->string('logo')->nullable();
+            $table->unsignedTinyInteger('is_default')->default(0)->comment('1=aktif,0=nonaktif');
             $table->softDeletes();
             $table->timestamps();
             $table->primary('sekolah_id');
