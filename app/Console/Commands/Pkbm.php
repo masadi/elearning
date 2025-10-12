@@ -46,6 +46,7 @@ class Pkbm extends Command
                     'telpon' => $data->nomor_telepon,
                     'website' => $data->website,
                     'fax' => $data->nomor_fax,
+                    'is_default' => ($n == 'P2965775') ? 1 : 0,
                 ]
             );
             $this->info('NPSN '.$n.' OK');

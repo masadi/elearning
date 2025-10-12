@@ -30,18 +30,31 @@ const emit = defineEmits([
 const isFormValid = ref(false)
 const refForm = ref()
 const form = ref({
+  id: '',
   sekolah_id: null,
   type: props.pageType,
   content: null,
+  foto: null,
+  nama: null,
 })
 const onSubmit = async () => {
   refForm.value?.validate().then(async ({ valid }) => {
     if (valid) {
+      const postData = new FormData();
+      postData.append('id', form.value.id);
+      postData.append('sekolah_id', form.value.sekolah_id);
+      postData.append('type', form.value.type);
+      postData.append('content', form.value.content);
+      postData.append('foto', form.value.foto);
+      postData.append('nama', form.value.nama);
       await $api('/laman/store', {
         method: 'POST',
-        body: form.value,
+        body: postData,
         onResponse({ request, response, options }) {
           let getData = response._data
+          console.log(getData);
+          console.log(postData);
+
           onReset()
           emit('notif', getData)
         }
@@ -52,19 +65,23 @@ const onSubmit = async () => {
 const onReset = () => {
   emit('update:isDialogVisible', false)
   form.value = {
+    id: '',
     sekolah_id: null,
     type: props.pageType,
     content: null,
+    foto: null,
+    nama: null,
   }
 }
 watch(props, async () => {
-  console.log(props);
-
   if (props.isDialogVisible && props.detilData) {
     form.value = {
+      id: props.detilData.id,
       sekolah_id: props.detilData.sekolah_id,
       type: props.pageType,
-      content: props.detilData.content,
+      content: props.pageType == 'program' ? props.detilData.deskripsi : props.detilData.content,
+      foto: null,
+      nama: props.detilData.nama,
     }
   }
 })
@@ -104,6 +121,28 @@ watch(props, async () => {
                 </VCol>
               </VRow>
             </VCol>
+            <template v-if="pageType == 'program'">
+              <VCol cols="12">
+                <VRow no-gutters>
+                  <VCol cols="12" md="3" class="d-flex align-items-center">
+                    <label class="v-label text-body-2 text-high-emphasis" for="nama">Nama</label>
+                  </VCol>
+                  <VCol cols="12" md="9">
+                    <AppTextField id="nama" v-model="form.nama" :rules="[requiredValidator]" />
+                  </VCol>
+                </VRow>
+              </VCol>
+              <VCol cols="12">
+                <VRow no-gutters>
+                  <VCol cols="12" md="3" class="d-flex align-items-center">
+                    <label class="v-label text-body-2 text-high-emphasis" for="foto">Gambar</label>
+                  </VCol>
+                  <VCol cols="12" md="9">
+                    <VFileInput accept="image/*" v-model="form.foto" :rules="[requiredValidator]" />
+                  </VCol>
+                </VRow>
+              </VCol>
+            </template>
             <VCol cols="12">
               <VRow no-gutters>
                 <VCol cols="12" md="3" class="d-flex align-items-center">

@@ -21,8 +21,8 @@ const emit = defineEmits([
 const fileExcel = ref('')
 const isFormValid = ref(false)
 const refForm = ref()
-const onSubmit = async() => {
-  refForm.value?.validate().then(async({ valid }) => {
+const onSubmit = async () => {
+  refForm.value?.validate().then(async ({ valid }) => {
     if (valid) {
       await $api('/referensi/store', {
         method: 'POST',
@@ -49,7 +49,7 @@ const onReset = () => {
 }
 const showTable = ref(false)
 const imported_data = ref([])
-const importData = async(val) => {
+const importData = async (val) => {
   const postData = new FormData();
   postData.append('file_excel', val);
   await $api('/referensi/import', {
@@ -65,15 +65,8 @@ const importData = async(val) => {
 </script>
 
 <template>
-  <VDialog
-    fullscreen
-    :scrim="false"
-    scrollable
-    content-class="scrollable-dialog"
-    transition="dialog-bottom-transition"
-    :model-value="props.isDialogVisible"
-    @update:model-value="onReset"
-  >
+  <VDialog fullscreen :scrim="false" scrollable content-class="scrollable-dialog" transition="dialog-bottom-transition"
+    :model-value="props.isDialogVisible" @update:model-value="onReset">
     <!-- 👉 Dialog close btn -->
     <!--DialogCloseBtn @click="onReset" /-->
 
@@ -86,14 +79,16 @@ const importData = async(val) => {
           <VToolbarTitle>Tambah PTK</VToolbarTitle>
           <VSpacer />
           <VToolbarItems>
-            <VBtn variant="text" href="/unduhan/template-ptk" target="_blank">Unduh Template <VIcon end icon="tabler-cloud-download" /></VBtn>
+            <VBtn variant="text" href="/unduhan/template-ptk" target="_blank">Unduh Template
+              <VIcon end icon="tabler-cloud-download" />
+            </VBtn>
             <VBtn variant="text" @click="onSubmit">Simpan</VBtn>
           </VToolbarItems>
         </VToolbar>
       </div>
       <VCardText>
         <VForm ref="refForm" v-model="isFormValid" @submit.prevent="onSubmit">
-          <VFileInput accept=".xlsx" v-model="fileExcel" label="Import Excel" @update:modelValue="importData"/>
+          <VFileInput accept=".xlsx" v-model="fileExcel" label="Import Excel" @update:modelValue="importData" />
           <VTable class="permission-table text-no-wrap mb-6 mt-4">
             <thead>
               <tr>
@@ -114,7 +109,8 @@ const importData = async(val) => {
                     {{ value }}
                   </template>
                   <template v-else>
-                    <AppTextField v-model="item[key]" :rules="[requiredValidator, emailValidator]" v-if="key == 'email'" />
+                    <AppTextField v-model="item[key]" :rules="[requiredValidator, emailValidator]"
+                      v-if="key == 'email'" />
                     <AppTextField v-model="item[key]" :rules="[requiredValidator]" v-else-if="key != 'nuptk'" />
                     <AppTextField v-model="item[key]" v-else />
                   </template>

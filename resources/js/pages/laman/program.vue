@@ -35,8 +35,13 @@ const headers = [
     sortable: false,
   },
   {
+    title: 'nama',
+    key: 'nama',
+    sortable: false,
+  },
+  {
     title: 'deskripsi',
-    key: 'content',
+    key: 'deskripsi',
     sortable: false,
   },
   {
@@ -93,11 +98,14 @@ const confirmDelete = async (val) => {
     })
   }
 }
-const isDetilDataVisible = ref(false)
 const detilData = ref()
 const editData = async (val) => {
   isAddNewData.value = true
   detilData.value = val
+}
+const addNewData = () => {
+  isAddNewData.value = true
+  detilData.value = null
 }
 watch(isAlertVisible, () => {
   if (!isAlertVisible.value)
@@ -124,7 +132,7 @@ watch(isAlertVisible, () => {
         <div class="d-flex align-center flex-wrap gap-4">
           <!-- 👉 Search  -->
           <AppTextField v-model="searchQuery" placeholder="Cari..." style="inline-size: 15.625rem;" />
-          <VBtn @click="isAddNewData = true">Tambah
+          <VBtn @click="addNewData">Tambah
             <VIcon end icon="tabler-plus" />
           </VBtn>
         </div>
@@ -144,8 +152,8 @@ watch(isAlertVisible, () => {
           {{ item.sekolah?.nama ?? '-' }}
         </template>
 
-        <template #item.content="{ item }">
-          <span v-html="item.content"></span>
+        <template #item.deskripsi="{ item }">
+          <span v-html="item.deskripsi"></span>
         </template>
 
         <!-- Actions -->

@@ -14,6 +14,8 @@ use App\Models\MateriSesi;
 use App\Models\TugasSesi;
 use App\Models\TesFormatif;
 use App\Models\Page;
+use App\Models\Galeri;
+use App\Models\Program;
 
 class TableController extends Controller
 {
@@ -162,8 +164,7 @@ class TableController extends Controller
         $data = [
             'lists' => Page::whereType('tentang')->with('sekolah')->orderBy(request()->sortBy, request()->orderBy)
             ->when(request()->q, function($query) {
-                $query->where('sekolah', 'LIKE', '%' . request()->q . '%');
-                $query->orWhere('deskripsi', 'LIKE', '%' . request()->q . '%');
+                $query->where('content', 'LIKE', '%' . request()->q . '%');
             })->paginate(request()->per_page),
             'sekolah' => Sekolah::all(),
         ];
@@ -171,10 +172,10 @@ class TableController extends Controller
     }
     public function get_galeri(){
         $data = [
-            'lists' => Page::whereType('galeri')->with('sekolah')->orderBy(request()->sortBy, request()->orderBy)
+            'lists' => Galeri::with('sekolah')->orderBy(request()->sortBy, request()->orderBy)
             ->when(request()->q, function($query) {
-                $query->where('sekolah', 'LIKE', '%' . request()->q . '%');
-                $query->orWhere('deskripsi', 'LIKE', '%' . request()->q . '%');
+                $query->where('nama', 'LIKE', '%' . request()->q . '%');
+                $query->orWhere('lokasi', 'LIKE', '%' . request()->q . '%');
             })->paginate(request()->per_page),
             'sekolah' => Sekolah::all(),
         ];
@@ -182,9 +183,9 @@ class TableController extends Controller
     }
     public function get_program(){
         $data = [
-            'lists' => Page::whereType('program')->with('sekolah')->orderBy(request()->sortBy, request()->orderBy)
+            'lists' => Program::with('sekolah')->orderBy(request()->sortBy, request()->orderBy)
             ->when(request()->q, function($query) {
-                $query->where('sekolah', 'LIKE', '%' . request()->q . '%');
+                $query->where('nama', 'LIKE', '%' . request()->q . '%');
                 $query->orWhere('deskripsi', 'LIKE', '%' . request()->q . '%');
             })->paginate(request()->per_page),
             'sekolah' => Sekolah::all(),
@@ -195,8 +196,7 @@ class TableController extends Controller
         $data = [
             'lists' => Page::whereType('kontak')->with('sekolah')->orderBy(request()->sortBy, request()->orderBy)
             ->when(request()->q, function($query) {
-                $query->where('sekolah', 'LIKE', '%' . request()->q . '%');
-                $query->orWhere('deskripsi', 'LIKE', '%' . request()->q . '%');
+                $query->where('content', 'LIKE', '%' . request()->q . '%');
             })->paginate(request()->per_page),
             'sekolah' => Sekolah::all(),
         ];

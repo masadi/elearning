@@ -44,7 +44,10 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
         Route::post('tes-selesai', [PelatihanController::class, 'tes_selesai']);
     });
     Route::group(['prefix' => 'laman'], function () {
+        Route::get('/', [LamanController::class, 'index']);
         Route::post('/store', [LamanController::class, 'store']);
         Route::delete('/destroy/{id}', [LamanController::class, 'destroy']);
+        Route::delete('/galeri/destroy/{id}', [LamanController::class, 'destroy_galeri']);
+        Route::delete('/program/destroy/{id}', [LamanController::class, 'destroy_program']);
     });
 });

@@ -2,7 +2,7 @@
 import Footer from '@/views/front-pages/front-page-footer.vue'
 import Navbar from '@/views/front-pages/front-page-navbar.vue'
 import Program from '@/views/pages/Program.vue'
-import { register } from 'swiper/element/bundle'
+import { ref } from 'vue'
 definePage({
   meta: {
     layout: 'blank',
@@ -10,7 +10,22 @@ definePage({
   },
 })
 const activeSectionId = ref()
-register()
+const isBusy = ref(true)
+const content = ref(null)
+const getData = async (data) => {
+  await $api(`/laman`, {
+    query: {
+      type: data,
+    },
+    onResponse({ request, response, options }) {
+      let getData = response._data
+      console.log(getData);
+      isBusy.value = false
+      content.value = getData?.content
+    }
+  })
+}
+getData('tentang')
 </script>
 
 <template>
@@ -19,12 +34,8 @@ register()
     <div style="margin-top: 65px;" class="white">
       <VContainer>
         <h3 class="text-h3">Tentang Kami</h3>
-        <p>Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the
-          industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and
-          scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap into
-          electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the release of
-          Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing software like Aldus
-          PageMaker including versions of Lorem Ipsum</p>
+        <VProgressCircular indeterminate color="warning" size="150" v-if="isBusy" />
+        <div v-html="content" v-else></div>
       </VContainer>
     </div>
     <Program />
