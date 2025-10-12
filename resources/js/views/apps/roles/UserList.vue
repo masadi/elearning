@@ -13,7 +13,7 @@ const emit = defineEmits(['statistik', 'aplikasi'])
 // Data table options
 const itemsPerPage = ref(10)
 const page = ref(1)
-const sortBy = ref('id')
+const sortBy = ref('nama')
 const orderBy = ref('ASC')
 
 const updateOptions = options => {
