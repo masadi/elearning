@@ -45,6 +45,8 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
     });
     Route::group(['prefix' => 'laman'], function () {
         Route::get('/', [LamanController::class, 'index']);
+        Route::get('/galeri/{slug}', [LamanController::class, 'get_galeri']);
+        Route::get('/program/{slug}', [LamanController::class, 'get_program']);
         Route::post('/store', [LamanController::class, 'store']);
         Route::delete('/destroy/{id}', [LamanController::class, 'destroy']);
         Route::delete('/galeri/destroy/{id}', [LamanController::class, 'destroy_galeri']);

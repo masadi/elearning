@@ -1,3 +1,7 @@
+<script setup>
+import { register } from 'swiper/element/bundle';
+register()
+</script>
 <template>
   <div class="blue-lighten-5">
     <VContainer>
@@ -18,19 +22,19 @@
         }
         `,
         ]" :breakpoints="{
-            992: {
-              slidesPerView: 4,
-              spaceBetween: 30,
-            },
-            780: {
-              slidesPerView: 3,
-              spaceBetween: 30,
-            },
-            460: {
-              slidesPerView: 2,
-              spaceBetween: 20,
-            },
-          }">
+          992: {
+            slidesPerView: 4,
+            spaceBetween: 30,
+          },
+          780: {
+            slidesPerView: 3,
+            spaceBetween: 30,
+          },
+          460: {
+            slidesPerView: 2,
+            spaceBetween: 20,
+          },
+        }">
         <template v-for="i in 10">
           <swiper-slide>
             <v-card max-width="400" color="#fff">

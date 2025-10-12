@@ -12,7 +12,17 @@ class LamanController extends Controller
 {
     public function index(){
         $sekolah = Sekolah::where('is_default', 1)->first();
-        $pages = Page::whereType(request()->type)->where('sekolah_id', $sekolah?->sekolah_id)->first();
+        if(request()->type == 'galeri'){
+            $pages = Galeri::where('sekolah_id', $sekolah?->sekolah_id)->orderBy('created_at', 'DESC')->get();
+        } elseif(request()->type == 'program'){
+            $pages = Program::where('sekolah_id', $sekolah?->sekolah_id)->orderBy('created_at', 'DESC')->get();
+        } elseif(request()->type == 'last-program'){
+            $pages = Program::where('sekolah_id', $sekolah?->sekolah_id)->orderBy('created_at', 'DESC')->take(2)->get();
+        } elseif(request()->type == 'program-terbaru'){
+            $pages = Program::where('sekolah_id', $sekolah?->sekolah_id)->orderBy('created_at', 'DESC')->offset(2)->limit(3)->get();
+        } else {
+            $pages = Page::whereType(request()->type)->where('sekolah_id', $sekolah?->sekolah_id)->first();
+        }
         return response()->json($pages);
     }
     public function store(Request $request){
@@ -151,5 +161,13 @@ class LamanController extends Controller
             'text' => 'Program berhasil dihapus.',
         ];
         return response()->json($data);
+    }
+    public function get_galeri($slug){
+        $galeri = Galeri::where('slug', $slug)->firstOrFail();
+        return response()->json($galeri);
+    }
+    public function get_program($slug){
+        $program = Program::where('slug', $slug)->firstOrFail();
+        return response()->json($program);
     }
 }
