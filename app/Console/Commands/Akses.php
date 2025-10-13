@@ -36,9 +36,9 @@ class Akses extends Command
             'dashboard' => [
                 'administrator' => ['read'], 
                 'sekolah' => ['read'], 
-            ], 
+            ],
             'laman-tentang' => [
-                'administrator' => ['create', 'read', 'update', 'delete'],
+                'administrator' => ['read'],
                 'sekolah' => ['create', 'read', 'update', 'delete'], 
             ],
             'laman-galeri' => [
@@ -85,6 +85,10 @@ class Akses extends Command
                 'administrator' => ['create', 'read', 'update', 'delete'],
                 'sekolah' => ['create', 'read', 'update', 'delete'], 
             ],
+            /*'user' => [
+                'administrator' => ['create', 'read', 'update', 'delete'], 
+                'sekolah' => ['read']
+            ],*/
             'profile' => [
                 'administrator' => ['read'], 
                 'sekolah' => ['read']
