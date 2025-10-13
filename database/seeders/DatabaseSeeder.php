@@ -15,11 +15,19 @@ class DatabaseSeeder extends Seeder
     public function run(): void
     {
         // User::factory(10)->create();
-
+        Artisan::call('app:pkbm');
         User::factory()->create([
             'name' => 'Administrator',
             'username' => 'administrator',
             'email' => config('app.email'),
+            'password' => bcrypt('Qwerty123'),
+            'avatar' => '/images/avatars/avatar-1.png'
+        ]);
+        User::factory()->create([
+            'sekolah_id' => '0e8b732a-1324-49f7-b135-126272e01b65',
+            'name' => 'PKBM Demo',
+            'username' => 'sekolah',
+            'email' => 'sekolah@email.com',
             'password' => bcrypt('Qwerty123'),
             'avatar' => '/images/avatars/avatar-1.png'
         ]);

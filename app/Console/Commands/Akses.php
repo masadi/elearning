@@ -35,59 +35,70 @@ class Akses extends Command
         $permissions = [
             'dashboard' => [
                 'administrator' => ['read'], 
-                'guru' => ['read'], 
+                'sekolah' => ['read'], 
             ], 
             'laman-tentang' => [
-                'administrator' => ['create', 'read', 'update', 'delete']
+                'administrator' => ['create', 'read', 'update', 'delete'],
+                'sekolah' => ['create', 'read', 'update', 'delete'], 
             ],
             'laman-galeri' => [
-                'administrator' => ['create', 'read', 'update', 'delete']
+                'administrator' => ['create', 'read', 'update', 'delete'],
+                'sekolah' => ['create', 'read', 'update', 'delete'], 
             ],
             'laman-program' => [
-                'administrator' => ['create', 'read', 'update', 'delete']
+                'administrator' => ['create', 'read', 'update', 'delete'],
+                'sekolah' => ['create', 'read', 'update', 'delete'], 
             ],
             'laman-kontak' => [
                 'administrator' => ['create', 'read', 'update', 'delete'],
+                'sekolah' => ['create', 'read', 'update', 'delete'], 
             ],
             'konten-slide' => [
-                'administrator' => ['create', 'read', 'update', 'delete']
+                'administrator' => ['create', 'read', 'update', 'delete'],
+                'sekolah' => ['create', 'read', 'update', 'delete'], 
             ],
             'konten-ptk' => [
-                'administrator' => ['create', 'read', 'update', 'delete'], 
+                'administrator' => ['create', 'read', 'update', 'delete'],
+                'sekolah' => ['create', 'read', 'update', 'delete'], 
             ],
             'konten-visi-misi' => [
-                'administrator' => ['create', 'read', 'update', 'delete']
+                'administrator' => ['create', 'read', 'update', 'delete'],
+                'sekolah' => ['create', 'read', 'update', 'delete'], 
             ],
             'konten-galeri' => [
-                'administrator' => ['create', 'read', 'update', 'delete'], 
+                'administrator' => ['create', 'read', 'update', 'delete'],
+                'sekolah' => ['create', 'read', 'update', 'delete'], 
             ],
             'konten-program' => [
-                'administrator' => ['create', 'read', 'update', 'delete'], 
+                'administrator' => ['create', 'read', 'update', 'delete'],
+                'sekolah' => ['create', 'read', 'update', 'delete'], 
             ],
             'asesmen-mata-pelajaran' => [
-                'administrator' => ['create', 'read', 'update', 'delete']
+                'administrator' => ['create', 'read', 'update', 'delete'],
+                'sekolah' => ['create', 'read', 'update', 'delete'], 
             ],
             'asesmen-pembelajaran' => [
-                'administrator' => ['create', 'read', 'update', 'delete']
+                'administrator' => ['create', 'read', 'update', 'delete'],
+                'sekolah' => ['create', 'read', 'update', 'delete'], 
             ],
             'asesmen-tes' => [
-                'administrator' => ['create', 'read', 'update', 'delete']
+                'administrator' => ['create', 'read', 'update', 'delete'],
+                'sekolah' => ['create', 'read', 'update', 'delete'], 
             ],
-            /*'materi' => [
-                'administrator' => ['create'],
-            ],
-            'dokumen' => [
-                'administrator' => ['create'],
-            ],*/
             'profile' => [
                 'administrator' => ['read'], 
-                'guru' => ['read']
+                'sekolah' => ['read']
             ],
         ];
         $admin = Role::where('name', 'administrator')->first();
         $user = User::where('email', config('app.email'))->first();
         if(!$user->hasRole('administrator')){
             $user->addRole($admin);
+        }
+        $sekolah = Role::where('name', 'sekolah')->first();
+        $user = User::where('email', 'sekolah@email.com')->first();
+        if(!$user->hasRole('sekolah')){
+            $user->addRole($sekolah);
         }
         $not_in = [];
         foreach($permissions as $permission => $roles){

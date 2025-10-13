@@ -15,7 +15,7 @@ return [
         'administrator' => [
             'web' => 'r',
         ],
-        'guru' => [
+        'sekolah' => [
             'web' => 'r',
         ],
     ],

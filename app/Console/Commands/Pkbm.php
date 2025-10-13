@@ -27,6 +27,22 @@ class Pkbm extends Command
      */
     public function handle()
     {
+        Sekolah::updateOrCreate(
+                ['sekolah_id' => '0e8b732a-1324-49f7-b135-126272e01b65'],
+                [
+                    'npsn' => '12345678',
+                    'nama' => 'PKBM Demo',
+                    'alamat' => 'Jl. Pendidikan No. 1',
+                    'desa_kelurahan' => 'Pendidikan',
+                    //'kecamatan' => $data->kecamatan,
+                    //'kabupaten' => $data->kabupaten,
+                    //'provinsi' => $data->provinsi,
+                    'kodepos' => '1234567',
+                    'email' => 'sekolah@email.com',
+                    'telpon' => '1234567890',
+                    'is_default' => 1,
+                ]
+            );
         $npsn = ['P2965775','P9997969','P2970187','P2965937','P9999064','P9996629','P9908815','P9952459','P2965854','P2965547', '69873707'];
         foreach ($npsn as $n) {
             $response = Http::get('sync.erapor-smk.net/api/v7/sekolah/'.$n);
@@ -46,7 +62,6 @@ class Pkbm extends Command
                     'telpon' => $data->nomor_telepon,
                     'website' => $data->website,
                     'fax' => $data->nomor_fax,
-                    'is_default' => ($n == 'P2965775') ? 1 : 0,
                 ]
             );
             $this->info('NPSN '.$n.' OK');
