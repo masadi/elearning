@@ -30,13 +30,13 @@ const updateOptions = options => {
 // Headers
 const headers = [
   {
-    title: 'deskripsi soal',
-    key: 'deskripsi',
+    title: 'sekolah',
+    key: 'sekolah',
     sortable: false,
   },
   {
-    title: 'pembelajaran',
-    key: 'pembelajaran',
+    title: 'gambar',
+    key: 'gambar',
     sortable: false,
   },
   {
@@ -50,12 +50,13 @@ const handleNotif = (val) => {
   notif.value = val
   isAlertVisible.value = true
 }
+const kontenType = 'slide'
 const {
   data: getData,
   execute: fetchData,
 } = await useApi(createUrl('/table', {
   query: {
-    data: 'rombel',
+    data: kontenType,
     q: searchQuery,
     itemsPerPage,
     page,
@@ -80,7 +81,7 @@ const deleteData = async id => {
 }
 const confirmDelete = async (val) => {
   if (val) {
-    await $api(`/referensi/destroy/mapel/${deletedId.value}`, {
+    await $api(`/konten/destroy/slide/${deletedId.value}`, {
       method: 'DELETE',
       onResponse({ request, response, options }) {
         let getData = response._data
@@ -92,33 +93,10 @@ const confirmDelete = async (val) => {
     })
   }
 }
-const isDetilDataVisible = ref(false)
-const detilData = ref()
-const detilDataData = async (val) => {
-  isDetilDataVisible.value = true
-  detilData.value = val
-}
 watch(isAlertVisible, () => {
   if (!isAlertVisible.value)
     fetchData()
 })
-const updateData = async userData => {
-  console.log(userData);
-  const postData = new FormData();
-  postData.append('data', 'update-mapel');
-  for (const [key, value] of Object.entries(userData)) {
-    postData.append(key, (value) ? value : '');
-  }
-  await $api('/referensi/store', {
-    method: 'POST',
-    body: postData,
-    onResponse({ request, response, options }) {
-      let getData = response._data
-      notif.value = getData
-      isAlertVisible.value = true
-    }
-  })
-}
 </script>
 
 <template>
@@ -155,43 +133,16 @@ const updateData = async userData => {
         { value: -1, title: '$vuetify.dataFooter.itemsPerPageAll' },
       ]" :items="items" :items-length="total_item" :headers="headers" class="text-no-wrap"
         @update:options="updateOptions">
-        <!-- User -->
-        <template #item.walas="{ item }">
-          <div class="d-flex align-center gap-x-4">
-            <VAvatar size="34" :variant="!item.walas.avatar ? 'tonal' : undefined"
-              :color="!item.walas.avatar ? 'success' : undefined">
-              <VImg v-if="item.walas.avatar" :src="item.walas.avatar" />
-              <span v-else>{{ avatarText(item.walas.name) }}</span>
-            </VAvatar>
-            <div class="d-flex flex-column">
-              <h6 class="text-base">
-                {{ item.walas.nama }}
-              </h6>
-              <div class="text-sm">
-                {{ item.walas.email }}
-              </div>
-            </div>
-          </div>
+        <template #item.sekolah="{ item }">
+          {{ item.sekolah?.nama ?? '-' }}
         </template>
-
-        <!-- 👉 Role -->
-        <template #item.ttl="{ item }">
-          {{ item.tempat_lahir }}, {{ new Date(item.tanggal_lahir).toLocaleString('id-ID', {
-            hour12: false,
-            day: 'numeric',
-            month: 'long',
-            year: 'numeric',
-          }) }}
+        <template #item.gambar="{ item }">
+          <VImg fluid :src="`/storage/images/${item.gambar}`" max-width="200" max-height="100" />
         </template>
-
         <!-- Actions -->
         <template #item.actions="{ item }">
           <IconBtn @click="deleteData(item.id)">
             <VIcon icon="tabler-trash" />
-          </IconBtn>
-
-          <IconBtn @click="detilDataData(item)">
-            <VIcon icon="tabler-pencil" />
           </IconBtn>
         </template>
 
@@ -203,8 +154,7 @@ const updateData = async userData => {
     </VCard>
 
     <!-- 👉 Add New User -->
-    <RombelAddDialog v-model:is-dialog-visible="isAddNewData" v-model:sekolah="sekolah" @notif="handleNotif" />
-    <RombelDetilDialog v-model:is-dialog-visible="isDetilDataVisible" v-model:detil-data="detilData"
+    <AddSlideDialog v-model:is-dialog-visible="isAddNewData" v-model:sekolah="sekolah" v-model:konten-type="kontenType"
       @notif="handleNotif" />
     <ShowAlert :color="notif.color" :icon="notif.icon" :title="notif.title" :text="notif.text" :disable-time-out="false"
       v-model:isSnackbarVisible="isAlertVisible" v-if="notif.color"></ShowAlert>

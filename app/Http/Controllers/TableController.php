@@ -16,6 +16,7 @@ use App\Models\TesFormatif;
 use App\Models\Page;
 use App\Models\Galeri;
 use App\Models\Program;
+use App\Models\Slide;
 
 class TableController extends Controller
 {
@@ -195,6 +196,16 @@ class TableController extends Controller
     public function get_kontak(){
         $data = [
             'lists' => Page::whereType('kontak')->with('sekolah')->orderBy(request()->sortBy, request()->orderBy)
+            ->when(request()->q, function($query) {
+                $query->where('content', 'LIKE', '%' . request()->q . '%');
+            })->paginate(request()->per_page),
+            'sekolah' => Sekolah::all(),
+        ];
+        return response()->json($data);
+    }
+    public function get_slide(){
+        $data = [
+            'lists' => Slide::with('sekolah')->orderBy(request()->sortBy, request()->orderBy)
             ->when(request()->q, function($query) {
                 $query->where('content', 'LIKE', '%' . request()->q . '%');
             })->paginate(request()->per_page),

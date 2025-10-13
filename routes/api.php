@@ -8,6 +8,7 @@ use App\Http\Controllers\ReferensiController;
 use App\Http\Controllers\TableController;
 use App\Http\Controllers\PelatihanController;
 use App\Http\Controllers\LamanController;
+use App\Http\Controllers\KontenController;
 
 Route::group(['prefix' => 'auth'], function () {
     Route::post('login', [AuthController::class, 'login']);
@@ -51,5 +52,9 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
         Route::delete('/destroy/{id}', [LamanController::class, 'destroy']);
         Route::delete('/galeri/destroy/{id}', [LamanController::class, 'destroy_galeri']);
         Route::delete('/program/destroy/{id}', [LamanController::class, 'destroy_program']);
+    });
+    Route::group(['prefix' => 'konten'], function () {
+        Route::post('/store', [KontenController::class, 'store']);
+        Route::delete('/destroy/{data}/{id}', [KontenController::class, 'destroy']);
     });
 });
