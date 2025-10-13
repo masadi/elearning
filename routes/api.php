@@ -16,6 +16,13 @@ Route::group(['prefix' => 'auth'], function () {
         Route::get('logout', [AuthController::class, 'logout']);
     });
 });
+Route::group(['prefix' => 'frontend'], function () {
+    Route::group(['prefix' => 'laman'], function () {
+        Route::get('/', [LamanController::class, 'index']);
+        Route::get('/galeri/{slug}', [LamanController::class, 'get_galeri']);
+        Route::get('/program/{slug}', [LamanController::class, 'get_program']);
+    });
+});
 Route::group(['middleware' => 'auth:sanctum'], function () {
     Route::group(['prefix' => 'settings'], function () {
         Route::get('users-roles', [SettingController::class, 'users_roles']);
@@ -44,17 +51,19 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
         Route::post('get-soal', [PelatihanController::class, 'get_soal']);
         Route::post('tes-selesai', [PelatihanController::class, 'tes_selesai']);
     });
-    Route::group(['prefix' => 'laman'], function () {
-        Route::get('/', [LamanController::class, 'index']);
-        Route::get('/galeri/{slug}', [LamanController::class, 'get_galeri']);
-        Route::get('/program/{slug}', [LamanController::class, 'get_program']);
-        Route::post('/store', [LamanController::class, 'store']);
-        Route::delete('/destroy/{id}', [LamanController::class, 'destroy']);
-        Route::delete('/galeri/destroy/{id}', [LamanController::class, 'destroy_galeri']);
-        Route::delete('/program/destroy/{id}', [LamanController::class, 'destroy_program']);
-    });
-    Route::group(['prefix' => 'konten'], function () {
-        Route::post('/store', [KontenController::class, 'store']);
-        Route::delete('/destroy/{data}/{id}', [KontenController::class, 'destroy']);
+    Route::group(['prefix' => 'admin'], function () {
+        Route::group(['prefix' => 'laman'], function () {
+            Route::get('/', [LamanController::class, 'index']);
+            Route::get('/galeri/{slug}', [LamanController::class, 'get_galeri']);
+            Route::get('/program/{slug}', [LamanController::class, 'get_program']);
+            Route::post('/store', [LamanController::class, 'store']);
+            Route::delete('/destroy/{id}', [LamanController::class, 'destroy']);
+            Route::delete('/galeri/destroy/{id}', [LamanController::class, 'destroy_galeri']);
+            Route::delete('/program/destroy/{id}', [LamanController::class, 'destroy_program']);
+        });
+        Route::group(['prefix' => 'konten'], function () {
+            Route::post('/store', [KontenController::class, 'store']);
+            Route::delete('/destroy/{data}/{id}', [KontenController::class, 'destroy']);
+        });
     });
 });

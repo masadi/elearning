@@ -21,7 +21,7 @@ const galeri = ref([])
 const lastProgram = ref([])
 const programTerbaru = ref([])
 const getData = async (data) => {
-  await $api(`/laman`, {
+  await $api(`/frontend/laman`, {
     query: {
       type: data,
     },

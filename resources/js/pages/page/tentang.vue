@@ -13,7 +13,7 @@ const activeSectionId = ref()
 const isBusy = ref(true)
 const content = ref(null)
 const getData = async (data) => {
-  await $api(`/laman`, {
+  await $api(`/frontend/laman`, {
     query: {
       type: data,
     },
