@@ -40,25 +40,14 @@ getData('program')
           <VCol v-for="(subItem, subIndex) in item" :key="subIndex">
             <v-card color="#fff">
               <v-img class="align-end text-white" height="200" :src="`/storage/images/${subItem.foto}`" cover></v-img>
-              <v-card-title>
-                <RouterLink :to="{ name: 'program-slug', params: { slug: subItem.slug } }">{{ subItem.nama
-                }}</RouterLink>
-              </v-card-title>
               <v-card-text>
-                <v-row no-gutters>
-                  <v-col>
-                    <VIcon icon="tabler-calendar-week" /> {{ subItem.tanggal_indo }}
-                  </v-col>
-                  <v-col>
-                    <VIcon icon="tabler-map-pin" /> {{ subItem.lokasi }}
-                  </v-col>
-                </v-row>
+                <v-card-title class="ps-0 pb-2">
+                  <RouterLink :to="{ name: 'program-slug', params: { slug: subItem.slug } }">
+                    {{ subItem.nama
+                    }}</RouterLink>
+                </v-card-title>
+                <v-card-sub-title class="mt-2">{{ subItem.tanggal_indo }}</v-card-sub-title>
               </v-card-text>
-              <VCardText class="justify-center">
-                <VBtn variant="elevated" :to="{ name: 'galeri-slug', params: { slug: subItem.slug } }">
-                  Lihat
-                </VBtn>
-              </VCardText>
             </v-card>
           </VCol>
         </VRow>
