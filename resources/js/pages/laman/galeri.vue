@@ -81,6 +81,7 @@ if (getData.value.color) {
 const items = computed(() => getData.value.lists.data)
 const total_item = computed(() => getData.value.lists.total)
 const sekolah = computed(() => getData.value.sekolah)
+const sekolahId = computed(() => getData.value.sekolah_id)
 const isAddNewData = ref(false)
 
 const deletedId = ref()
@@ -176,8 +177,8 @@ watch(isAlertVisible, () => {
     </VCard>
 
     <!-- 👉 Add New User -->
-    <GaleriAddDialog v-model:is-dialog-visible="isAddNewData" v-model:sekolah="sekolah" v-model:pageType="pageType"
-      v-model:detil-data="detilData" @notif="handleNotif" />
+    <GaleriAddDialog v-model:is-dialog-visible="isAddNewData" v-model:sekolah="sekolah" v-model:sekolahId="sekolahId"
+      v-model:pageType="pageType" v-model:detil-data="detilData" @notif="handleNotif" />
     <ShowAlert :color="notif.color" :icon="notif.icon" :title="notif.title" :text="notif.text" :disable-time-out="false"
       v-model:isSnackbarVisible="isAlertVisible" v-if="notif.color"></ShowAlert>
     <ConfirmDialog v-model:isDialogVisible="isConfirmDialogVisible"

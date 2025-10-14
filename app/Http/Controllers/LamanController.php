@@ -26,6 +26,7 @@ class LamanController extends Controller
         return response()->json($pages);
     }
     public function store(Request $request){
+        $user = auth()->user();
         if($request->type == 'galeri'){
             $request->validate([
                 'sekolah_id' => 'required',
@@ -107,7 +108,6 @@ class LamanController extends Controller
                 ];
                 return response()->json($data);
             }
-            dd(request()->all());
         } else {
             $request->validate([
                 'type' => 'required|string',
@@ -115,7 +115,7 @@ class LamanController extends Controller
             ]);
             $page = Page::updateOrCreate(
                 [
-                    'sekolah_id' => $request->sekolah_id,
+                    'sekolah_id' => $user->sekolah_id ?? $request->sekolah_id,
                     'type' => $request->type,
                 ],
                 ['content' => $request->content]

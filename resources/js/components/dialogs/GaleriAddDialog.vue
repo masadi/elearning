@@ -21,6 +21,11 @@ const props = defineProps({
     required: false,
     default: null,
   },
+  sekolahId: {
+    type: String,
+    required: false,
+    default: null,
+  },
 })
 
 const emit = defineEmits([
@@ -32,7 +37,7 @@ const refForm = ref()
 const form = ref({
   type: 'galeri',
   id: null,
-  sekolah_id: null,
+  sekolah_id: props.sekolahId,
   nama: null,
   foto_id_gdrive: null,
   folder_id_gdrive: null,
@@ -42,7 +47,7 @@ const form = ref({
 const onSubmit = async () => {
   refForm.value?.validate().then(async ({ valid }) => {
     if (valid) {
-      await $api('/laman/store', {
+      await $api('/admin/laman/store', {
         method: 'POST',
         body: form.value,
         onResponse({ request, response, options }) {
@@ -106,7 +111,7 @@ watch(props, async () => {
       <VCardText>
         <VForm ref="refForm" v-model="isFormValid" @submit.prevent="onSubmit">
           <VRow>
-            <VCol cols="12">
+            <VCol cols="12" v-if="!$can('create', 'laman-tentang-create')">
               <VRow no-gutters>
                 <VCol cols="12" md="3" class="d-flex align-items-center">
                   <label class="v-label text-body-2 text-high-emphasis" for="sekolah_id">Sekolah</label>

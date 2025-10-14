@@ -21,6 +21,11 @@ const props = defineProps({
     required: false,
     default: null,
   },
+  sekolahId: {
+    type: String,
+    required: false,
+    default: null,
+  },
 })
 
 const emit = defineEmits([
@@ -31,7 +36,7 @@ const isFormValid = ref(false)
 const refForm = ref()
 const form = ref({
   id: '',
-  sekolah_id: null,
+  sekolah_id: props.sekolahId,
   type: props.pageType,
   content: null,
   foto: null,
@@ -47,7 +52,7 @@ const onSubmit = async () => {
       postData.append('content', form.value.content);
       postData.append('foto', form.value.foto);
       postData.append('nama', form.value.nama);
-      await $api('/laman/store', {
+      await $api('/admin/laman/store', {
         method: 'POST',
         body: postData,
         onResponse({ request, response, options }) {
@@ -110,7 +115,7 @@ watch(props, async () => {
       <VCardText>
         <VForm ref="refForm" v-model="isFormValid" @submit.prevent="onSubmit">
           <VRow>
-            <VCol cols="12">
+            <VCol cols="12" v-if="!$can('create', 'laman-tentang-create')">
               <VRow no-gutters>
                 <VCol cols="12" md="3" class="d-flex align-items-center">
                   <label class="v-label text-body-2 text-high-emphasis" for="sekolah_id">Sekolah</label>

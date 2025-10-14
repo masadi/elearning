@@ -162,23 +162,33 @@ class TableController extends Controller
         return response()->json($data);
     }
     public function get_tentang(){
-        $data = [
-            'lists' => Page::whereType('tentang')->with('sekolah')->orderBy(request()->sortBy, request()->orderBy)
-            ->when(request()->q, function($query) {
-                $query->where('content', 'LIKE', '%' . request()->q . '%');
-            })->paginate(request()->per_page),
-            'sekolah' => Sekolah::all(),
-        ];
+        $user = auth()->user();
+        if($user->sekolah_id) {
+            $data = Page::whereType('tentang')->with('sekolah')->where('sekolah_id', $user->sekolah_id)->first();
+        } else {
+            $data = [
+                'lists' => Page::whereType('tentang')->with('sekolah')->orderBy(request()->sortBy, request()->orderBy)
+                ->when(request()->q, function($query) {
+                    $query->where('content', 'LIKE', '%' . request()->q . '%');
+                })->paginate(request()->per_page),
+                'sekolah' => Sekolah::all(),
+            ];
+        }
         return response()->json($data);
     }
     public function get_galeri(){
         $data = [
-            'lists' => Galeri::with('sekolah')->orderBy(request()->sortBy, request()->orderBy)
+            'lists' => Galeri::where(function($query){
+                if(auth()->user()->sekolah_id){
+                    $query->where('sekolah_id', auth()->user()->sekolah_id);
+                }
+            })->with('sekolah')->orderBy(request()->sortBy, request()->orderBy)
             ->when(request()->q, function($query) {
                 $query->where('nama', 'LIKE', '%' . request()->q . '%');
                 $query->orWhere('lokasi', 'LIKE', '%' . request()->q . '%');
             })->paginate(request()->per_page),
             'sekolah' => Sekolah::all(),
+            'sekolah_id' => auth()->user()->sekolah_id,
         ];
         return response()->json($data);
     }
@@ -190,17 +200,23 @@ class TableController extends Controller
                 $query->orWhere('deskripsi', 'LIKE', '%' . request()->q . '%');
             })->paginate(request()->per_page),
             'sekolah' => Sekolah::all(),
+            'sekolah_id' => auth()->user()->sekolah_id,
         ];
         return response()->json($data);
     }
     public function get_kontak(){
-        $data = [
-            'lists' => Page::whereType('kontak')->with('sekolah')->orderBy(request()->sortBy, request()->orderBy)
-            ->when(request()->q, function($query) {
-                $query->where('content', 'LIKE', '%' . request()->q . '%');
-            })->paginate(request()->per_page),
-            'sekolah' => Sekolah::all(),
-        ];
+        $user = auth()->user();
+        if($user->sekolah_id) {
+            $data = Page::whereType('kontak')->with('sekolah')->where('sekolah_id', $user->sekolah_id)->first();
+        } else {
+            $data = [
+                'lists' => Page::whereType('kontak')->with('sekolah')->orderBy(request()->sortBy, request()->orderBy)
+                ->when(request()->q, function($query) {
+                    $query->where('content', 'LIKE', '%' . request()->q . '%');
+                })->paginate(request()->per_page),
+                'sekolah' => Sekolah::all(),
+            ];
+        }
         return response()->json($data);
     }
     public function get_slide(){
