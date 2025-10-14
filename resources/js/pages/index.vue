@@ -1,12 +1,9 @@
 <script setup>
 import Footer from '@/views/front-pages/front-page-footer.vue'
 import Navbar from '@/views/front-pages/front-page-navbar.vue'
-import swiper12 from '@images/banner/banner-12.jpg'
-import swiper20 from '@images/banner/banner-20.jpg'
-import swiper7 from '@images/banner/banner-7.jpg'
-import swiper8 from '@images/banner/banner-8.jpg'
-import swiper9 from '@images/banner/banner-9.jpg'
-import banner from '@images/front-pages/misc/checkout-image.png'
+import Galeri from '@/views/pages/Galeri.vue'
+import Program from '@/views/pages/Program.vue'
+import noimage from '@images/banner/noimage.jpg'
 import { register } from 'swiper/element/bundle'
 definePage({
   meta: {
@@ -20,6 +17,10 @@ const isBusy = ref(true)
 const galeri = ref([])
 const lastProgram = ref([])
 const programTerbaru = ref([])
+const slider = ref([])
+const dataPtk = ref([])
+const visi = ref()
+const misi = ref()
 const getData = async (data) => {
   await $api(`/frontend/laman`, {
     query: {
@@ -37,12 +38,28 @@ const getData = async (data) => {
       if (data == 'program-terbaru') {
         programTerbaru.value = getData
       }
+      if (data == 'slider') {
+        slider.value = getData
+      }
+      if (data == 'ptk') {
+        dataPtk.value = getData
+      }
+      if (data == 'visi') {
+        visi.value = getData
+      }
+      if (data == 'misi') {
+        misi.value = getData
+      }
     }
   })
 }
 getData('galeri')
 getData('last-program')
 getData('program-terbaru')
+getData('slider')
+getData('ptk')
+getData('visi')
+getData('misi')
 </script>
 
 <template>
@@ -50,14 +67,8 @@ getData('program-terbaru')
     <Navbar :active-id="activeSectionId" />
     <div style="margin-top: 65px;">
       <swiper-container pagination="true" navigation="true" autoplay="true" events-prefix="swiper-">
-        <swiper-slide v-for="swiperImg in [
-          swiper12,
-          swiper9,
-          swiper8,
-          swiper7,
-          swiper20,
-        ]" :key="swiperImg">
-          <VImg :src="swiperImg" />
+        <swiper-slide v-for="swiperImg in slider" :key="swiperImg.id">
+          <VImg :src="`/storage/images/${swiperImg.gambar}`" />
         </swiper-slide>
       </swiper-container>
     </div>
@@ -83,32 +94,17 @@ getData('program-terbaru')
               spaceBetween: 10,
             },
           }">
-          <swiper-slide>
+          <swiper-slide v-for="ptk in dataPtk" :key="ptk.ptk_id">
             <VCard color="#ECEFF1" class="text-center">
               <VCardItem>
-                <VAvatar size="200" :image="swiper12" />
+                <VAvatar size="200" :image="ptk.avatar" />
               </VCardItem>
               <VCardText>
                 <p class="font-weight-bold text-black mb-0">
-                  Si Fulan, S.Pd.I.
+                  {{ ptk.nama }}
                 </p>
                 <p class="clamp-text text-black mb-0">
-                  Kepala Sekolah
-                </p>
-              </VCardText>
-            </VCard>
-          </swiper-slide>
-          <swiper-slide>
-            <VCard color="#ECEFF1" class="text-center">
-              <VCardItem>
-                <VAvatar size="200" :image="swiper12" />
-              </VCardItem>
-              <VCardText>
-                <p class="font-weight-bold text-black mb-0">
-                  Si Fulan, S.Kom.
-                </p>
-                <p class="clamp-text text-black mb-0">
-                  Jabatan A
+                  {{ ptk.jabatan }}
                 </p>
               </VCardText>
             </VCard>
@@ -121,163 +117,32 @@ getData('program-terbaru')
           <VCardText class="text-black">
             <v-row no-gutters>
               <v-col cols="12" sm="6" md="6" class="me-8">
-                <v-img fluid :src="banner" alt="" />
+                <v-img fluid :src="`/storage/images/${visi?.image}`" alt="visi" v-if="visi?.image" />
+                <v-img fluid :src="noimage" alt="visi" v-else />
               </v-col>
               <v-col cols="12" sm="6" md="5">
-                <div class="text-h3 text-black">Visia</div>
-                <p class="text-h5 text-black">aLorem Ipsum is simply dummy text of the printing and typesetting
-                  industry.
-                  Lorem
-                  Ipsum has been the
-                  industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and
-                  scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap
-                  into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the
-                  release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing
-                  software like Aldus PageMaker including versions of Lorem Ipsum.</p>
+                <div class="text-h3 text-black">Visi</div>
+                <div class="text-h5 text-black" v-html="visi?.content"></div>
               </v-col>
             </v-row>
           </VCardText>
           <VCardText class="text-black">
             <v-row no-gutters>
               <v-col cols="12" sm="6" md="5" class="me-8">
-                <div class="text-h3 text-black">Misia</div>
-                <p class="text-h5 text-black">bLorem Ipsum is simply dummy text of the printing and typesetting
-                  industry.
-                  Lorem
-                  Ipsum has been the
-                  industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and
-                  scrambled it to make a type specimen book. It has survived not only five centuries, but also the leap
-                  into electronic typesetting, remaining essentially unchanged. It was popularised in the 1960s with the
-                  release of Letraset sheets containing Lorem Ipsum passages, and more recently with desktop publishing
-                  software like Aldus PageMaker including versions of Lorem Ipsum.</p>
+                <div class="text-h3 text-black">Misi</div>
+                <div class="text-h5 text-black" v-html="misi?.content"></div>
               </v-col>
               <v-col cols="12" sm="6" md="6">
-                <v-img fluid :src="banner" alt="" />
+                <v-img fluid :src="`/storage/images/${misi?.image}`" alt="misi" v-if="misi?.image" />
+                <v-img fluid :src="noimage" alt="misi" v-else />
               </v-col>
             </v-row>
           </VCardText>
         </VCard>
       </VContainer>
     </div>
-    <div class="blue-lighten-5">
-      <VContainer>
-        <h3 class="text-h3 text-black">Galeri Kegiatan</h3>
-      </VContainer>
-      <VContainer fluid>
-        <swiper-container navigation="true" centered-slides="true" space-between="30" slides-per-view="5"
-          events-prefix="swiper-" :injectStyles="[
-            `
-        .swiper-button-next, .swiper-button-prev{
-          background: rgb(var(--v-theme-primary)) !important;
-          color: #fff !important;
-          padding-inline: 0.45rem !important;
-          padding-block: 0.45rem !important;
-          inline-size: 1rem !important;
-          block-size: 1rem !important;
-          border-radius: 50%
-        }
-        `,
-          ]" :breakpoints="{
-            992: {
-              slidesPerView: 4,
-              spaceBetween: 30,
-            },
-            780: {
-              slidesPerView: 3,
-              spaceBetween: 30,
-            },
-            460: {
-              slidesPerView: 2,
-              spaceBetween: 20,
-            },
-          }">
-          <template v-for="gal in galeri" :key="gal.id">
-            <swiper-slide>
-              <v-card max-width="400" color="#fff">
-                <v-img class="align-end text-white" height="200"
-                  :src="`https://drive.google.com/thumbnail?id=${gal.foto_id_gdrive}`" cover>
-                  <v-card-title>{{ gal.nama }}</v-card-title>
-                </v-img>
-                <v-card-text>
-                  <v-row no-gutters>
-                    <v-col>
-                      <VIcon icon="tabler-calendar-week" /> {{ gal.tanggal_indo }}
-                    </v-col>
-                    <v-col>
-                      <VIcon icon="tabler-map-pin" /> {{ gal.lokasi }}
-                    </v-col>
-                  </v-row>
-                </v-card-text>
-                <VCardText class="justify-center">
-                  <VBtn variant="elevated" :to="{ name: 'galeri-slug', params: { slug: gal.slug } }">
-                    Lihat
-                  </VBtn>
-                </VCardText>
-              </v-card>
-            </swiper-slide>
-          </template>
-        </swiper-container>
-      </VContainer>
-    </div>
-    <div class="white">
-      <VContainer>
-        <v-row no-gutters class="mb-8">
-          <v-col>
-            <h3 class="text-h3 text-black">Program Kegiatan</h3>
-          </v-col>
-          <v-spacer></v-spacer>
-          <v-col class="text-right">
-            <VBtn variant="elevated" :to="{ name: 'page-program' }">
-              Lihat Program Lainnya
-            </VBtn>
-          </v-col>
-        </v-row>
-        <v-row no-gutters>
-          <v-col class="me-4" v-for="program in lastProgram" :key="program.id">
-            <v-card color="#fff">
-              <v-img class="align-end text-white" height="200" :src="`/storage/images/${program.foto}`" cover>
-              </v-img>
-              <v-card-text>
-                <v-card-title class="text-black ps-0 pb-2">
-                  <RouterLink :to="{ name: 'program-slug', params: { slug: program.slug } }">{{ program.nama }}
-                  </RouterLink>
-                </v-card-title>
-                <v-card-sub-title class="mt-2">{{ program.tanggal_indo }}</v-card-sub-title>
-              </v-card-text>
-            </v-card>
-          </v-col>
-          <v-col>
-            <template v-for="terbaru in programTerbaru" :key="terbaru.id">
-              <div class="mb-8">
-                <RouterLink :to="{ name: 'program-slug', params: { slug: terbaru.slug } }">
-                  <v-row no-gutters>
-                    <v-col cols="4" class="me-4">
-                      <v-card color="#BBDEFB" class="text-center">
-                        <v-card-title style="color:#0D47A1" class="text-h3 pb-0">{{ terbaru.tanggal }}</v-card-title>
-                        <v-card-title style="color:#0D47A1" class="pt-0">{{ terbaru.bulan }}</v-card-title>
-                      </v-card>
-
-                    </v-col>
-                    <v-col cols="7">
-                      <v-card class="no-elevated">
-                        <VCardText class="text-black pt-4">
-                          <p class="font-weight-bold text-black mb-0">
-                            <a href="#">Kategori</a>
-                          </p>
-                          <p class="clamp-text text-black mb-0">
-                            {{ terbaru.nama }}
-                          </p>
-                        </VCardText>
-                      </v-card>
-                    </v-col>
-                  </v-row>
-                </RouterLink>
-              </div>
-            </template>
-          </v-col>
-        </v-row>
-      </VContainer>
-    </div>
+    <Galeri v-model:galeri="galeri" />
+    <Program v-model:lastProgram="lastProgram" v-model:programTerbaru="programTerbaru" />
     <Footer />
   </div>
 </template>

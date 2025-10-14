@@ -11,6 +11,7 @@ definePage({
 const activeSectionId = ref()
 const isBusy = ref(true)
 const items = ref([])
+const galeri = ref([])
 const getData = async (data) => {
   await $api(`/frontend/laman`, {
     query: {
@@ -19,14 +20,20 @@ const getData = async (data) => {
     onResponse({ request, response, options }) {
       let getData = response._data
       isBusy.value = false
-      const chunkSize = 3;
-      for (let i = 0; i < getData.length; i += chunkSize) {
-        items.value.push(getData.slice(i, i + chunkSize));
+      if (data == 'program') {
+        const chunkSize = 3;
+        for (let i = 0; i < getData.length; i += chunkSize) {
+          items.value.push(getData.slice(i, i + chunkSize));
+        }
+      }
+      if (data == 'galeri') {
+        galeri.value = getData
       }
     }
   })
 }
 getData('program')
+getData('galeri')
 </script>
 
 <template>
@@ -53,7 +60,7 @@ getData('program')
         </VRow>
       </VContainer>
     </div>
-    <Galeri />
+    <Galeri v-model:galeri="galeri" />
     <Footer />
   </div>
 </template>

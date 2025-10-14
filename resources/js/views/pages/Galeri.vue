@@ -1,6 +1,12 @@
 <script setup>
 import { register } from 'swiper/element/bundle';
 register()
+const props = defineProps({
+  galeri: {
+    type: Array,
+    required: true,
+  },
+})
 </script>
 <template>
   <div class="blue-lighten-5">
@@ -35,25 +41,25 @@ register()
             spaceBetween: 20,
           },
         }">
-        <template v-for="i in 10">
+        <template v-for="gal in galeri" :key="gal.id">
           <swiper-slide>
             <v-card max-width="400" color="#fff">
-              <v-img class="align-end text-white" height="200" src="https://cdn.vuetifyjs.com/images/cards/docks.jpg"
-                cover>
-                <v-card-title>Top 10 Australian beaches</v-card-title>
+              <v-img class="align-end text-white" height="200"
+                :src="`https://drive.google.com/thumbnail?id=${gal.foto_id_gdrive}`" cover>
+                <v-card-title>{{ gal.nama }}</v-card-title>
               </v-img>
               <v-card-text>
                 <v-row no-gutters>
                   <v-col>
-                    <VIcon icon="tabler-calendar-week" /> 27 Oktober 2023
+                    <VIcon icon="tabler-calendar-week" /> {{ gal.tanggal_indo }}
                   </v-col>
                   <v-col>
-                    <VIcon icon="tabler-map-pin" /> Lapangan Bola
+                    <VIcon icon="tabler-map-pin" /> {{ gal.lokasi }}
                   </v-col>
                 </v-row>
               </v-card-text>
               <VCardText class="justify-center">
-                <VBtn variant="elevated">
+                <VBtn variant="elevated" :to="{ name: 'galeri-slug', params: { slug: gal.slug } }">
                   Lihat
                 </VBtn>
               </VCardText>

@@ -17,8 +17,8 @@ const searchQuery = ref('')
 // Data table options
 const itemsPerPage = ref(10)
 const page = ref(1)
-const sortBy = ref('created_at')
-const orderBy = ref('DESC')
+const sortBy = ref('urut')
+const orderBy = ref('ASC')
 
 const updateOptions = options => {
   if (options.sortBy.length) {
@@ -29,6 +29,11 @@ const updateOptions = options => {
 
 // Headers
 const headers = [
+  {
+    title: 'no',
+    key: 'urut',
+    sortable: false,
+  },
   {
     title: 'nama',
     key: 'nama',
@@ -72,7 +77,10 @@ const total_item = computed(() => getData.value.lists.total)
 const sekolah = computed(() => getData.value.sekolah)
 const sekolahId = computed(() => getData.value.sekolah_id)
 const isAddNewData = ref(false)
-
+const addNewData = () => {
+  isAddNewData.value = true
+  detilData.value = null
+}
 const deletedId = ref()
 const isConfirmDialogVisible = ref()
 const deleteData = async id => {
@@ -93,33 +101,15 @@ const confirmDelete = async (val) => {
     })
   }
 }
-const isDetilDataVisible = ref(false)
 const detilData = ref()
 const detilDataData = async (val) => {
-  isDetilDataVisible.value = true
+  isAddNewData.value = true
   detilData.value = val
 }
 watch(isAlertVisible, () => {
   if (!isAlertVisible.value)
     fetchData()
 })
-const updateData = async userData => {
-  console.log(userData);
-  const postData = new FormData();
-  postData.append('data', 'update-mapel');
-  for (const [key, value] of Object.entries(userData)) {
-    postData.append(key, (value) ? value : '');
-  }
-  await $api('/referensi/store', {
-    method: 'POST',
-    body: postData,
-    onResponse({ request, response, options }) {
-      let getData = response._data
-      notif.value = getData
-      isAlertVisible.value = true
-    }
-  })
-}
 </script>
 
 <template>
@@ -141,7 +131,7 @@ const updateData = async userData => {
         <div class="d-flex align-center flex-wrap gap-4">
           <!-- 👉 Search  -->
           <AppTextField v-model="searchQuery" placeholder="Cari..." style="inline-size: 15.625rem;" />
-          <VBtn @click="isAddNewData = true">Tambah
+          <VBtn @click="addNewData">Tambah
             <VIcon end icon="tabler-cloud-upload" />
           </VBtn>
         </div>
@@ -202,9 +192,7 @@ const updateData = async userData => {
 
     <!-- 👉 Add New User -->
     <AddPtkDialog v-model:is-dialog-visible="isAddNewData" v-model:sekolah="sekolah" v-model:sekolahId="sekolahId"
-      @notif="handleNotif" />
-    <RombelDetilDialog v-model:is-dialog-visible="isDetilDataVisible" v-model:detil-data="detilData"
-      @notif="handleNotif" />
+      v-model:detilData="detilData" @notif="handleNotif" />
     <ShowAlert :color="notif.color" :icon="notif.icon" :title="notif.title" :text="notif.text" :disable-time-out="false"
       v-model:isSnackbarVisible="isAlertVisible" v-if="notif.color"></ShowAlert>
     <ConfirmDialog v-model:isDialogVisible="isConfirmDialogVisible"

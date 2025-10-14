@@ -3,10 +3,6 @@ import { ref } from 'vue'
 import { VForm } from 'vuetify/components/VForm'
 
 const props = defineProps({
-  sekolah: {
-    type: Object,
-    required: true,
-  },
   isDialogVisible: {
     type: Boolean,
     required: true,
@@ -20,6 +16,11 @@ const props = defineProps({
     required: false,
     default: null,
   },
+  detilData: {
+    type: Object,
+    required: false,
+    default: null,
+  },
 })
 
 const emit = defineEmits([
@@ -28,7 +29,6 @@ const emit = defineEmits([
   //'update:importedData',
 ])
 
-const fileExcel = ref('')
 const isFormValid = ref(false)
 const refForm = ref()
 const form = ref({
@@ -37,16 +37,19 @@ const form = ref({
   nama: null,
   avatar: null,
   jabatan: null,
+  urut: 0,
 })
 const onSubmit = async () => {
   refForm.value?.validate().then(async ({ valid }) => {
     if (valid) {
       const postData = new FormData();
       postData.append('data', 'ptk');
+      postData.append('ptk_id', form.value.ptk_id ?? '');
       postData.append('sekolah_id', form.value.sekolah_id ?? '');
-      postData.append('avatar', form.value.avatar ?? '');
       postData.append('nama', form.value.nama ?? '');
       postData.append('jabatan', form.value.jabatan ?? '');
+      postData.append('urut', form.value.urut ?? '');
+      postData.append('avatar', form.value.avatar ?? '');
       await $api('/admin/konten/store', {
         method: 'POST',
         body: postData,
@@ -68,8 +71,21 @@ const onReset = () => {
     nama: null,
     jabatan: null,
     avatar: null,
+    urut: 0,
   }
 }
+watch(props, async () => {
+  if (props.isDialogVisible && props.detilData) {
+    form.value = {
+      ptk_id: props.detilData.ptk_id,
+      sekolah_id: props.detilData.sekolah_id,
+      nama: props.detilData.nama,
+      jabatan: props.detilData.jabatan,
+      avatar: null,
+      urut: props.detilData.urut,
+    }
+  }
+})
 </script>
 
 <template>
@@ -109,6 +125,16 @@ const onReset = () => {
                 </VCol>
                 <VCol cols="12" md="9">
                   <AppTextField id="jabatan" v-model="form.jabatan" :rules="[requiredValidator]" />
+                </VCol>
+              </VRow>
+            </VCol>
+            <VCol cols="12">
+              <VRow no-gutters>
+                <VCol cols="12" md="3" class="d-flex align-items-center">
+                  <label class="v-label text-body-2 text-high-emphasis" for="urut">Nomor Urut</label>
+                </VCol>
+                <VCol cols="12" md="9">
+                  <AppTextField id="urut" v-model="form.urut" :rules="[requiredValidator]" />
                 </VCol>
               </VRow>
             </VCol>

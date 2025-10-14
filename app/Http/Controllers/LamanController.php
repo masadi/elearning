@@ -7,6 +7,8 @@ use App\Models\Page;
 use App\Models\Sekolah;
 use App\Models\Galeri;
 use App\Models\Program;
+use App\Models\Slide;
+use App\Models\Ptk;
 
 class LamanController extends Controller
 {
@@ -20,6 +22,10 @@ class LamanController extends Controller
             $pages = Program::where('sekolah_id', $sekolah?->sekolah_id)->orderBy('created_at', 'DESC')->take(2)->get();
         } elseif(request()->type == 'program-terbaru'){
             $pages = Program::where('sekolah_id', $sekolah?->sekolah_id)->orderBy('created_at', 'DESC')->offset(2)->limit(3)->get();
+        } elseif(request()->type == 'slider'){
+            $pages = Slide::where('sekolah_id', $sekolah?->sekolah_id)->orderBy('created_at', 'DESC')->get();
+        } elseif(request()->type == 'ptk'){
+            $pages = Ptk::where('sekolah_id', $sekolah?->sekolah_id)->orderBy('urut')->get();
         } else {
             $pages = Page::whereType(request()->type)->where('sekolah_id', $sekolah?->sekolah_id)->first();
         }

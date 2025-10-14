@@ -11,6 +11,8 @@ definePage({
 const activeSectionId = ref()
 const isBusy = ref(true)
 const items = ref([])
+const lastProgram = ref([])
+const programTerbaru = ref([])
 const getData = async (data) => {
   await $api(`/frontend/laman`, {
     query: {
@@ -19,14 +21,24 @@ const getData = async (data) => {
     onResponse({ request, response, options }) {
       let getData = response._data
       isBusy.value = false
-      const chunkSize = 3;
-      for (let i = 0; i < getData.length; i += chunkSize) {
-        items.value.push(getData.slice(i, i + chunkSize));
+      if (data == 'tentang') {
+        const chunkSize = 3;
+        for (let i = 0; i < getData.length; i += chunkSize) {
+          items.value.push(getData.slice(i, i + chunkSize));
+        }
+      }
+      if (data == 'last-program') {
+        lastProgram.value = getData
+      }
+      if (data == 'program-terbaru') {
+        programTerbaru.value = getData
       }
     }
   })
 }
 getData('galeri')
+getData('last-program')
+getData('program-terbaru')
 </script>
 
 <template>
@@ -63,7 +75,7 @@ getData('galeri')
         </VRow>
       </VContainer>
     </div>
-    <Program />
+    <Program v-model:lastProgram="lastProgram" v-model:programTerbaru="programTerbaru" />
     <Footer />
   </div>
 </template>

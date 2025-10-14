@@ -92,12 +92,24 @@ class KontenController extends Controller
         ]);
         $upload = request()->avatar->store('images', 'public');
         $avatar = basename($upload);
-        $data = Ptk::create([
-            'sekolah_id' => $request->sekolah_id,
-            'nama' => $request->nama,
-            'jabatan' => $request->jabatan,
-            'avatar' => $avatar,
-        ]);
+        if($request->ptk_id){
+            $data = Ptk::find($request->ptk_id);
+            $data->update([
+                'sekolah_id' => $request->sekolah_id,
+                'nama' => $request->nama,
+                'jabatan' => $request->jabatan,
+                'avatar' => $avatar,
+                'urut' => $request->urut,
+            ]);
+        } else {
+            $data = Ptk::create([
+                'sekolah_id' => $request->sekolah_id,
+                'nama' => $request->nama,
+                'jabatan' => $request->jabatan,
+                'avatar' => $avatar,
+                'urut' => $request->urut,
+            ]);
+        }
         if ($data) {
             return response()->json([
                 'color' => 'success',

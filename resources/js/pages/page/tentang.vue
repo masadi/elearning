@@ -12,6 +12,8 @@ definePage({
 const activeSectionId = ref()
 const isBusy = ref(true)
 const content = ref(null)
+const lastProgram = ref([])
+const programTerbaru = ref([])
 const getData = async (data) => {
   await $api(`/frontend/laman`, {
     query: {
@@ -21,11 +23,21 @@ const getData = async (data) => {
       let getData = response._data
       console.log(getData);
       isBusy.value = false
-      content.value = getData?.content
+      if (data == 'tentang') {
+        content.value = getData?.content
+      }
+      if (data == 'last-program') {
+        lastProgram.value = getData
+      }
+      if (data == 'program-terbaru') {
+        programTerbaru.value = getData
+      }
     }
   })
 }
 getData('tentang')
+getData('last-program')
+getData('program-terbaru')
 </script>
 
 <template>
@@ -38,7 +50,7 @@ getData('tentang')
         <div v-html="content" v-else></div>
       </VContainer>
     </div>
-    <Program />
+    <Program v-model:lastProgram="lastProgram" v-model:programTerbaru="programTerbaru" />
     <Footer />
   </div>
 </template>

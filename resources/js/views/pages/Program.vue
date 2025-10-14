@@ -1,4 +1,14 @@
 <script setup>
+const props = defineProps({
+  lastProgram: {
+    type: Array,
+    required: true,
+  },
+  programTerbaru: {
+    type: Array,
+    required: true,
+  },
+})
 </script>
 <template>
   <div class="white">
@@ -9,45 +19,34 @@
         </v-col>
         <v-spacer></v-spacer>
         <v-col class="text-right">
-          <VBtn variant="elevated">
+          <VBtn variant="elevated" :to="{ name: 'page-program' }">
             Lihat Program Lainnya
           </VBtn>
         </v-col>
       </v-row>
       <v-row no-gutters>
-        <v-col class="me-4">
+        <v-col class="me-4" v-for="program in lastProgram" :key="program.id">
           <v-card color="#fff">
-            <v-img class="align-end text-white" height="200" src="https://cdn.vuetifyjs.com/images/cards/docks.jpg"
-              cover>
+            <v-img class="align-end text-white" height="200" :src="`/storage/images/${program.foto}`" cover>
             </v-img>
             <v-card-text>
-              <v-card-sub-title>Kategori</v-card-sub-title>
-              <v-card-title class="text-black ps-0 pb-2"><a href="#">Judul Kegiatan</a></v-card-title>
-              <v-card-sub-title class="mt-2">27 Oktober 2023</v-card-sub-title>
-            </v-card-text>
-          </v-card>
-        </v-col>
-        <v-col class="me-4">
-          <v-card color="#fff">
-            <v-img class="align-end text-white" height="200" src="https://cdn.vuetifyjs.com/images/cards/docks.jpg"
-              cover>
-            </v-img>
-            <v-card-text>
-              <v-card-sub-title>Kategori</v-card-sub-title>
-              <v-card-title class="text-black ps-0 pb-2"><a href="#">Judul Kegiatan</a></v-card-title>
-              <v-card-sub-title class="mt-2">27 Oktober 2023</v-card-sub-title>
+              <v-card-title class="text-black ps-0 pb-2">
+                <RouterLink :to="{ name: 'program-slug', params: { slug: program.slug } }">{{ program.nama }}
+                </RouterLink>
+              </v-card-title>
+              <v-card-sub-title class="mt-2">{{ program.tanggal_indo }}</v-card-sub-title>
             </v-card-text>
           </v-card>
         </v-col>
         <v-col>
-          <template v-for="i in 3">
+          <template v-for="terbaru in programTerbaru" :key="terbaru.id">
             <div class="mb-8">
-              <a href="#">
+              <RouterLink :to="{ name: 'program-slug', params: { slug: terbaru.slug } }">
                 <v-row no-gutters>
                   <v-col cols="4" class="me-4">
                     <v-card color="#BBDEFB" class="text-center">
-                      <v-card-title style="color:#0D47A1" class="text-h3 pb-0">10</v-card-title>
-                      <v-card-title style="color:#0D47A1" class="pt-0">Oktober</v-card-title>
+                      <v-card-title style="color:#0D47A1" class="text-h3 pb-0">{{ terbaru.tanggal }}</v-card-title>
+                      <v-card-title style="color:#0D47A1" class="pt-0">{{ terbaru.bulan }}</v-card-title>
                     </v-card>
 
                   </v-col>
@@ -58,13 +57,13 @@
                           <a href="#">Kategori</a>
                         </p>
                         <p class="clamp-text text-black mb-0">
-                          Judul Kegiatan
+                          {{ terbaru.nama }}
                         </p>
                       </VCardText>
                     </v-card>
                   </v-col>
                 </v-row>
-              </a>
+              </RouterLink>
             </div>
           </template>
         </v-col>
