@@ -232,7 +232,7 @@ class TableController extends Controller
     }
     public function get_pembelajaran(){
         $data = [
-            'lists' => Pembelajaran::with('mata_pelajaran')->withCount('tes')->where(function($query){
+            'lists' => Pembelajaran::withWhereHas('mata_pelajaran')->withCount('tes')->where(function($query){
                 if(auth()->user()->sekolah_id){
                     $query->where('sekolah_id', auth()->user()->sekolah_id);
                 }
@@ -249,6 +249,7 @@ class TableController extends Controller
     public function get_tes(){
         $data = [
             'lists' => TesFormatif::with(['kunci', 'jawaban'])->withCount(['jawaban'])->withWhereHas('pembelajaran', function($query){
+                $query->whereHas('mata_pelajaran');
                 if(auth()->user()->sekolah_id){
                     $query->where('sekolah_id', auth()->user()->sekolah_id);
                 }
