@@ -22,7 +22,7 @@ class Ptk extends Model
     protected function avatar(): Attribute
     {
         return Attribute::make(
-            get: fn ($value) => ($value) ? '/storage/'.$value : NULL,
+            get: fn ($value) => ($value) ? '/storage/images/'.$value : NULL,
         );
     }
     public function user()

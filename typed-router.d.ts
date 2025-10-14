@@ -26,8 +26,6 @@ declare module 'vue-router/auto-routes' {
     'dashboard': RouteRecordInfo<'dashboard', '/dashboard', Record<never, never>, Record<never, never>>,
     'dokumen': RouteRecordInfo<'dokumen', '/dokumen', Record<never, never>, Record<never, never>>,
     'galeri-slug': RouteRecordInfo<'galeri-slug', '/galeri/:slug', { slug: ParamValue<true> }, { slug: ParamValue<false> }>,
-    'konten-galeri': RouteRecordInfo<'konten-galeri', '/konten/galeri', Record<never, never>, Record<never, never>>,
-    'konten-program': RouteRecordInfo<'konten-program', '/konten/program', Record<never, never>, Record<never, never>>,
     'konten-ptk': RouteRecordInfo<'konten-ptk', '/konten/ptk', Record<never, never>, Record<never, never>>,
     'konten-slide': RouteRecordInfo<'konten-slide', '/konten/slide', Record<never, never>, Record<never, never>>,
     'konten-visi-misi': RouteRecordInfo<'konten-visi-misi', '/konten/visi-misi', Record<never, never>, Record<never, never>>,

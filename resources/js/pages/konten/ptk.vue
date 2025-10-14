@@ -30,13 +30,13 @@ const updateOptions = options => {
 // Headers
 const headers = [
   {
-    title: 'deskripsi soal',
-    key: 'deskripsi',
+    title: 'nama',
+    key: 'nama',
     sortable: false,
   },
   {
-    title: 'pembelajaran',
-    key: 'pembelajaran',
+    title: 'jabatan',
+    key: 'jabatan',
     sortable: false,
   },
   {
@@ -55,7 +55,7 @@ const {
   execute: fetchData,
 } = await useApi(createUrl('/table', {
   query: {
-    data: 'rombel',
+    data: 'ptk',
     q: searchQuery,
     itemsPerPage,
     page,
@@ -70,6 +70,7 @@ if (getData.value.color) {
 const items = computed(() => getData.value.lists.data)
 const total_item = computed(() => getData.value.lists.total)
 const sekolah = computed(() => getData.value.sekolah)
+const sekolahId = computed(() => getData.value.sekolah_id)
 const isAddNewData = ref(false)
 
 const deletedId = ref()
@@ -80,7 +81,7 @@ const deleteData = async id => {
 }
 const confirmDelete = async (val) => {
   if (val) {
-    await $api(`/referensi/destroy/mapel/${deletedId.value}`, {
+    await $api(`/admin/konten/destroy/ptk/${deletedId.value}`, {
       method: 'DELETE',
       onResponse({ request, response, options }) {
         let getData = response._data
@@ -156,20 +157,17 @@ const updateData = async userData => {
       ]" :items="items" :items-length="total_item" :headers="headers" class="text-no-wrap"
         @update:options="updateOptions">
         <!-- User -->
-        <template #item.walas="{ item }">
+        <template #item.nama="{ item }">
           <div class="d-flex align-center gap-x-4">
-            <VAvatar size="34" :variant="!item.walas.avatar ? 'tonal' : undefined"
-              :color="!item.walas.avatar ? 'success' : undefined">
-              <VImg v-if="item.walas.avatar" :src="item.walas.avatar" />
-              <span v-else>{{ avatarText(item.walas.name) }}</span>
+            <VAvatar size="34" :variant="!item.avatar ? 'tonal' : undefined"
+              :color="!item.avatar ? 'success' : undefined">
+              <VImg v-if="item.avatar" :src="item.avatar" />
+              <span v-else>{{ avatarText(item.nama) }}</span>
             </VAvatar>
             <div class="d-flex flex-column">
               <h6 class="text-base">
-                {{ item.walas.nama }}
+                {{ item.nama }}
               </h6>
-              <div class="text-sm">
-                {{ item.walas.email }}
-              </div>
             </div>
           </div>
         </template>
@@ -186,7 +184,7 @@ const updateData = async userData => {
 
         <!-- Actions -->
         <template #item.actions="{ item }">
-          <IconBtn @click="deleteData(item.id)">
+          <IconBtn @click="deleteData(item.ptk_id)">
             <VIcon icon="tabler-trash" />
           </IconBtn>
 
@@ -203,7 +201,8 @@ const updateData = async userData => {
     </VCard>
 
     <!-- 👉 Add New User -->
-    <RombelAddDialog v-model:is-dialog-visible="isAddNewData" v-model:sekolah="sekolah" @notif="handleNotif" />
+    <AddPtkDialog v-model:is-dialog-visible="isAddNewData" v-model:sekolah="sekolah" v-model:sekolahId="sekolahId"
+      @notif="handleNotif" />
     <RombelDetilDialog v-model:is-dialog-visible="isDetilDataVisible" v-model:detil-data="detilData"
       @notif="handleNotif" />
     <ShowAlert :color="notif.color" :icon="notif.icon" :title="notif.title" :text="notif.text" :disable-time-out="false"

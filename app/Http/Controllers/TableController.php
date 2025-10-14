@@ -55,14 +55,16 @@ class TableController extends Controller
     }
     public function get_ptk(){
         $data = [
-            'lists' => Ptk::where($this->wherePtk())->orderBy(request()->sortBy, request()->orderBy)
+            'lists' => Ptk::where(function($query){
+                if(auth()->user()->sekolah_id){
+                    $query->where('sekolah_id', auth()->user()->sekolah_id);
+                }
+            })->orderBy(request()->sortBy, request()->orderBy)
             ->when(request()->q, function($query) {
                 $query->where('nama', 'LIKE', '%' . request()->q . '%');
-                $query->where($this->wherePtk());
-                $query->orWhere('email', 'LIKE', '%' . request()->q . '%');
-                $query->where($this->wherePtk());
             })->paginate(request()->per_page),
-            'sekolah' => Sekolah::where('user_id', auth()->user()->id)->first(),
+            'sekolah' => Sekolah::all(),
+            'sekolah_id' => auth()->user()->sekolah_id,
         ];
         return response()->json($data);
     }
@@ -220,6 +222,25 @@ class TableController extends Controller
         }
         return response()->json($data);
     }
+    public function get_visi(){
+        $user = auth()->user();
+        if($user->sekolah_id) {
+            $data = [
+                'visi' => Page::whereType('visi')->with('sekolah')->where('sekolah_id', $user->sekolah_id)->first(),
+                'misi' => Page::whereType('misi')->with('sekolah')->where('sekolah_id', $user->sekolah_id)->first(),
+                'sekolah_id' => $user->sekolah_id,
+            ];
+        } else {
+            $data = [
+                'lists' => Page::whereType('kontak')->with('sekolah')->orderBy(request()->sortBy, request()->orderBy)
+                ->when(request()->q, function($query) {
+                    $query->where('content', 'LIKE', '%' . request()->q . '%');
+                })->paginate(request()->per_page),
+                'sekolah' => Sekolah::all(),
+            ];
+        }
+        return response()->json($data);
+    }
     public function get_slide(){
         $data = [
             'lists' => Slide::with('sekolah')->orderBy(request()->sortBy, request()->orderBy)
@@ -227,6 +248,7 @@ class TableController extends Controller
                 $query->where('content', 'LIKE', '%' . request()->q . '%');
             })->paginate(request()->per_page),
             'sekolah' => Sekolah::all(),
+            'sekolah_id' => auth()->user()->sekolah_id,
         ];
         return response()->json($data);
     }

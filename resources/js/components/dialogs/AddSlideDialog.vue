@@ -14,6 +14,11 @@ const props = defineProps({
     type: String,
     required: true,
   },
+  sekolahId: {
+    type: String,
+    required: false,
+    default: null,
+  },
 })
 
 const emit = defineEmits([
@@ -22,7 +27,7 @@ const emit = defineEmits([
   //'update:importedData',
 ])
 const form = ref({
-  sekolah_id: null,
+  sekolah_id: props.sekolahId,
   gambar: null,
   data: props.kontenType,
 })
@@ -35,7 +40,7 @@ const onSubmit = async () => {
       postData.append('data', form.value.data ?? '');
       postData.append('sekolah_id', form.value.sekolah_id ?? '');
       postData.append('gambar', form.value.gambar ?? '');
-      await $api('/konten/store', {
+      await $api('/admin/konten/store', {
         method: 'POST',
         body: postData,
         onResponse({ request, response, options }) {
@@ -51,7 +56,7 @@ const onSubmit = async () => {
 const onReset = () => {
   emit('update:isDialogVisible', false)
   form.value = {
-    sekolah_id: null,
+    sekolah_id: props.sekolahId,
     gambar: null,
     data: props.kontenType,
   }
@@ -68,7 +73,7 @@ const onReset = () => {
       <VForm ref="refForm" v-model="isFormValid" @submit.prevent="onSubmit">
         <VCardText>
           <VRow>
-            <VCol cols="12">
+            <VCol cols="12" v-if="!$can('create', 'laman-tentang-create')">
               <VRow no-gutters>
                 <VCol cols="12" md="3" class="d-flex align-items-center">
                   <label class="v-label text-body-2 text-high-emphasis" for="sekolah_id">Sekolah</label>

@@ -71,6 +71,7 @@ if (getData.value.color) {
 const items = computed(() => getData.value.lists.data)
 const total_item = computed(() => getData.value.lists.total)
 const sekolah = computed(() => getData.value.sekolah)
+const sekolahId = computed(() => getData.value.sekolah_id)
 const isAddNewData = ref(false)
 
 const deletedId = ref()
@@ -81,7 +82,7 @@ const deleteData = async id => {
 }
 const confirmDelete = async (val) => {
   if (val) {
-    await $api(`/konten/destroy/slide/${deletedId.value}`, {
+    await $api(`/admin/konten/destroy/slide/${deletedId.value}`, {
       method: 'DELETE',
       onResponse({ request, response, options }) {
         let getData = response._data
@@ -154,8 +155,8 @@ watch(isAlertVisible, () => {
     </VCard>
 
     <!-- 👉 Add New User -->
-    <AddSlideDialog v-model:is-dialog-visible="isAddNewData" v-model:sekolah="sekolah" v-model:konten-type="kontenType"
-      @notif="handleNotif" />
+    <AddSlideDialog v-model:is-dialog-visible="isAddNewData" v-model:sekolah="sekolah" v-model:sekolahId="sekolahId"
+      v-model:konten-type="kontenType" @notif="handleNotif" />
     <ShowAlert :color="notif.color" :icon="notif.icon" :title="notif.title" :text="notif.text" :disable-time-out="false"
       v-model:isSnackbarVisible="isAlertVisible" v-if="notif.color"></ShowAlert>
     <ConfirmDialog v-model:isDialogVisible="isConfirmDialogVisible"

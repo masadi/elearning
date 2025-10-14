@@ -89,24 +89,6 @@ export default [{
         action: 'create',
         subject: 'konten-visi-misi-create',
       },
-      {
-        title: 'Galeri',
-        to: 'konten-galeri',
-        icon: {
-          icon: 'tabler-hand-finger-right'
-        },
-        action: 'create',
-        subject: 'konten-galeri-create',
-      },
-      {
-        title: 'Program',
-        to: 'konten-program',
-        icon: {
-          icon: 'tabler-hand-finger-right'
-        },
-        action: 'create',
-        subject: 'konten-program-create',
-      },
     ],
   },
   {

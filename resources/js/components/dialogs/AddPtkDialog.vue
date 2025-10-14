@@ -1,4 +1,5 @@
 <script setup>
+import { ref } from 'vue'
 import { VForm } from 'vuetify/components/VForm'
 
 const props = defineProps({
@@ -9,6 +10,15 @@ const props = defineProps({
   isDialogVisible: {
     type: Boolean,
     required: true,
+  },
+  sekolah: {
+    type: Array,
+    required: true,
+  },
+  sekolahId: {
+    type: String,
+    required: false,
+    default: null,
   },
 })
 
@@ -21,22 +31,29 @@ const emit = defineEmits([
 const fileExcel = ref('')
 const isFormValid = ref(false)
 const refForm = ref()
+const form = ref({
+  ptk_id: null,
+  sekolah_id: props.sekolahId,
+  nama: null,
+  avatar: null,
+  jabatan: null,
+})
 const onSubmit = async () => {
   refForm.value?.validate().then(async ({ valid }) => {
     if (valid) {
-      await $api('/referensi/store', {
+      const postData = new FormData();
+      postData.append('data', 'ptk');
+      postData.append('sekolah_id', form.value.sekolah_id ?? '');
+      postData.append('avatar', form.value.avatar ?? '');
+      postData.append('nama', form.value.nama ?? '');
+      postData.append('jabatan', form.value.jabatan ?? '');
+      await $api('/admin/konten/store', {
         method: 'POST',
-        body: {
-          data: 'import-ptk',
-          sekolah_id: props.sekolah.sekolah_id,
-          item: imported_data.value,
-        },
+        body: postData,
         onResponse({ request, response, options }) {
           let getData = response._data
-          emit('update:isDialogVisible', false)
           emit('notif', getData)
-          imported_data.value = []
-          fileExcel.value = ''
+          onReset()
         }
       })
     }
@@ -45,81 +62,74 @@ const onSubmit = async () => {
 
 const onReset = () => {
   emit('update:isDialogVisible', false)
-  fileExcel.value = ''
-}
-const showTable = ref(false)
-const imported_data = ref([])
-const importData = async (val) => {
-  const postData = new FormData();
-  postData.append('file_excel', val);
-  await $api('/referensi/import', {
-    method: 'POST',
-    body: postData,
-    onResponse({ request, response, options }) {
-      let getData = response._data
-      imported_data.value = getData.imported_data
-      showTable.value = true
-    }
-  })
+  form.value = {
+    ptk_id: null,
+    sekolah_id: props.sekolahId,
+    nama: null,
+    jabatan: null,
+    avatar: null,
+  }
 }
 </script>
 
 <template>
-  <VDialog fullscreen :scrim="false" scrollable content-class="scrollable-dialog" transition="dialog-bottom-transition"
-    :model-value="props.isDialogVisible" @update:model-value="onReset">
+  <VDialog width="500" :model-value="props.isDialogVisible" @update:model-value="onReset">
     <!-- 👉 Dialog close btn -->
     <!--DialogCloseBtn @click="onReset" /-->
 
-    <VCard>
-      <div>
-        <VToolbar color="primary">
-          <VBtn icon variant="plain" @click="onReset">
-            <VIcon color="white" icon="tabler-x" />
+    <VCard title="Tambah PTK">
+      <VForm ref="refForm" v-model="isFormValid" @submit.prevent="onSubmit">
+        <VCardText>
+          <VRow>
+            <VCol cols="12" v-if="!$can('create', 'laman-tentang-create')">
+              <VRow no-gutters>
+                <VCol cols="12" md="3" class="d-flex align-items-center">
+                  <label class="v-label text-body-2 text-high-emphasis" for="sekolah_id">Sekolah</label>
+                </VCol>
+                <VCol cols="12" md="9">
+                  <VAutocomplete v-model="form.sekolah_id" variant="outlined" :items="sekolah" item-title="nama"
+                    item-value="sekolah_id" placeholder="== Pilih Sekolah ==" :rules="[requiredValidator]" />
+                </VCol>
+              </VRow>
+            </VCol>
+            <VCol cols="12">
+              <VRow no-gutters>
+                <VCol cols="12" md="3" class="d-flex align-items-center">
+                  <label class="v-label text-body-2 text-high-emphasis" for="nama">Nama</label>
+                </VCol>
+                <VCol cols="12" md="9">
+                  <AppTextField id="nama" v-model="form.nama" :rules="[requiredValidator]" />
+                </VCol>
+              </VRow>
+            </VCol>
+            <VCol cols="12">
+              <VRow no-gutters>
+                <VCol cols="12" md="3" class="d-flex align-items-center">
+                  <label class="v-label text-body-2 text-high-emphasis" for="jabatan">Jabatan</label>
+                </VCol>
+                <VCol cols="12" md="9">
+                  <AppTextField id="jabatan" v-model="form.jabatan" :rules="[requiredValidator]" />
+                </VCol>
+              </VRow>
+            </VCol>
+            <VCol cols="12">
+              <VRow no-gutters>
+                <VCol cols="12" md="3" class="d-flex align-items-center">
+                  <label class="v-label text-body-2 text-high-emphasis" for="avatar">Foto</label>
+                </VCol>
+                <VCol cols="12" md="9">
+                  <VFileInput accept="image/*" v-model="form.avatar" :rules="[requiredValidator]" />
+                </VCol>
+              </VRow>
+            </VCol>
+          </VRow>
+        </VCardText>
+        <VCardText class="d-flex justify-end">
+          <VBtn type="submit">
+            Simpan
           </VBtn>
-          <VToolbarTitle>Tambah PTK</VToolbarTitle>
-          <VSpacer />
-          <VToolbarItems>
-            <VBtn variant="text" href="/unduhan/template-ptk" target="_blank">Unduh Template
-              <VIcon end icon="tabler-cloud-download" />
-            </VBtn>
-            <VBtn variant="text" @click="onSubmit">Simpan</VBtn>
-          </VToolbarItems>
-        </VToolbar>
-      </div>
-      <VCardText>
-        <VForm ref="refForm" v-model="isFormValid" @submit.prevent="onSubmit">
-          <VFileInput accept=".xlsx" v-model="fileExcel" label="Import Excel" @update:modelValue="importData" />
-          <VTable class="permission-table text-no-wrap mb-6 mt-4">
-            <thead>
-              <tr>
-                <th>no</th>
-                <th>nama</th>
-                <th>nuptk</th>
-                <th>email</th>
-                <th>jenis_kelamin</th>
-                <th>tempat_lahir</th>
-                <th>tanggal_lahir</th>
-                <th>nik</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr v-for="(item, index) in imported_data" :key="item.no">
-                <td v-for="value, key, i in item">
-                  <template v-if="key == 'no'">
-                    {{ value }}
-                  </template>
-                  <template v-else>
-                    <AppTextField v-model="item[key]" :rules="[requiredValidator, emailValidator]"
-                      v-if="key == 'email'" />
-                    <AppTextField v-model="item[key]" :rules="[requiredValidator]" v-else-if="key != 'nuptk'" />
-                    <AppTextField v-model="item[key]" v-else />
-                  </template>
-                </td>
-              </tr>
-            </tbody>
-          </VTable>
-        </VForm>
-      </VCardText>
+        </VCardText>
+      </VForm>
     </VCard>
   </VDialog>
 </template>
