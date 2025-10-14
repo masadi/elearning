@@ -260,6 +260,7 @@ class TableController extends Controller
             'sekolah' => Sekolah::all(),
             'sekolah_id' => auth()->user()->sekolah_id,
             'pembelajaran' => Pembelajaran::where(function($query){
+                $query->whereHas('mata_pelajaran');
                 if(auth()->user()->sekolah_id){
                     $query->where('sekolah_id', auth()->user()->sekolah_id);
                 }
