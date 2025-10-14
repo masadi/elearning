@@ -29,7 +29,7 @@ class AuthController extends Controller
         if(!Auth::attempt($credentials)){
             return response()->json([
                 'user' => NULL,
-                'message' => [
+                'errors' => [
                     'password' => 'Password salah!',
                 ]
             ],422);
