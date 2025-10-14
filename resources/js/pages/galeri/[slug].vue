@@ -13,7 +13,7 @@ const isBusy = ref(true)
 const item = ref([])
 const route = useRoute()
 const getData = async (data) => {
-  await $api(`/laman/galeri/${route.params.slug}`, {
+  await $api(`/frontend/laman/galeri/${route.params.slug}`, {
     query: {
       type: data,
     },
