@@ -65,84 +65,91 @@ getData('misi')
 <template>
   <div class="landing-page-wrapper">
     <Navbar :active-id="activeSectionId" />
-    <div style="margin-top: 65px;">
-      <swiper-container pagination="true" navigation="true" autoplay="true" events-prefix="swiper-">
-        <swiper-slide v-for="swiperImg in slider" :key="swiperImg.id">
-          <VImg :src="`/storage/images/${swiperImg.gambar}`" />
-        </swiper-slide>
-      </swiper-container>
-    </div>
-    <div class="white">
-      <VContainer>
-        <h3 class="text-h3">Pendidik dan Tenaga Kependidikan</h3>
-        <swiper-container pagination-clickable="true" slides-per-view="5" space-between="50" events-prefix="swiper-"
-          :breakpoints="{
-            1024: {
-              slidesPerView: 4,
-              spaceBetween: 40,
-            },
-            768: {
-              slidesPerView: 3,
-              spaceBetween: 30,
-            },
-            640: {
-              slidesPerView: 2,
-              spaceBetween: 20,
-            },
-            320: {
-              slidesPerView: 1,
-              spaceBetween: 10,
-            },
-          }">
-          <swiper-slide v-for="ptk in dataPtk" :key="ptk.ptk_id">
-            <VCard color="#ECEFF1" class="text-center">
-              <VCardItem>
-                <VAvatar size="200" :image="ptk.avatar" />
-              </VCardItem>
-              <VCardText>
-                <p class="font-weight-bold text-black mb-0">
-                  {{ ptk.nama }}
-                </p>
-                <p class="clamp-text text-black mb-0">
-                  {{ ptk.jabatan }}
-                </p>
-              </VCardText>
-            </VCard>
+    <template v-if="isBusy">
+      <div style="margin-top: 65px;" class="text-center">
+        <VProgressCircular indeterminate color="warning" size="150" />
+      </div>
+    </template>
+    <template v-else>
+      <div style="margin-top: 65px;">
+        <swiper-container pagination="true" navigation="true" autoplay="true" events-prefix="swiper-">
+          <swiper-slide v-for="swiperImg in slider" :key="swiperImg.id">
+            <VImg :src="`/storage/images/${swiperImg.gambar}`" />
           </swiper-slide>
         </swiper-container>
-        <VCard color="#fff" class="mt-5 mb-5 pa-5">
-          <VCardItem class="text-center">
-            <VCardTitle class="text-black text-h2">Visi dan Misi</VCardTitle>
-          </VCardItem>
-          <VCardText class="text-black">
-            <v-row no-gutters>
-              <v-col cols="12" sm="6" md="6" class="me-8">
-                <v-img fluid :src="`/storage/images/${visi?.image}`" alt="visi" v-if="visi?.image" />
-                <v-img fluid :src="noimage" alt="visi" v-else />
-              </v-col>
-              <v-col cols="12" sm="6" md="5">
-                <div class="text-h3 text-black">Visi</div>
-                <div class="text-h5 text-black" v-html="visi?.content"></div>
-              </v-col>
-            </v-row>
-          </VCardText>
-          <VCardText class="text-black">
-            <v-row no-gutters>
-              <v-col cols="12" sm="6" md="5" class="me-8">
-                <div class="text-h3 text-black">Misi</div>
-                <div class="text-h5 text-black" v-html="misi?.content"></div>
-              </v-col>
-              <v-col cols="12" sm="6" md="6">
-                <v-img fluid :src="`/storage/images/${misi?.image}`" alt="misi" v-if="misi?.image" />
-                <v-img fluid :src="noimage" alt="misi" v-else />
-              </v-col>
-            </v-row>
-          </VCardText>
-        </VCard>
-      </VContainer>
-    </div>
-    <Galeri v-model:galeri="galeri" />
-    <Program v-model:lastProgram="lastProgram" v-model:programTerbaru="programTerbaru" />
+      </div>
+      <div class="white">
+        <VContainer>
+          <h3 class="text-h3">Pendidik dan Tenaga Kependidikan</h3>
+          <swiper-container pagination-clickable="true" slides-per-view="5" space-between="50" events-prefix="swiper-"
+            :breakpoints="{
+              1024: {
+                slidesPerView: 4,
+                spaceBetween: 40,
+              },
+              768: {
+                slidesPerView: 3,
+                spaceBetween: 30,
+              },
+              640: {
+                slidesPerView: 2,
+                spaceBetween: 20,
+              },
+              320: {
+                slidesPerView: 1,
+                spaceBetween: 10,
+              },
+            }">
+            <swiper-slide v-for="ptk in dataPtk" :key="ptk.ptk_id">
+              <VCard color="#ECEFF1" class="text-center">
+                <VCardItem>
+                  <VAvatar size="200" :image="ptk.avatar" />
+                </VCardItem>
+                <VCardText>
+                  <p class="font-weight-bold text-black mb-0">
+                    {{ ptk.nama }}
+                  </p>
+                  <p class="clamp-text text-black mb-0">
+                    {{ ptk.jabatan }}
+                  </p>
+                </VCardText>
+              </VCard>
+            </swiper-slide>
+          </swiper-container>
+          <VCard color="#fff" class="mt-5 mb-5 pa-5">
+            <VCardItem class="text-center">
+              <VCardTitle class="text-black text-h2">Visi dan Misi</VCardTitle>
+            </VCardItem>
+            <VCardText class="text-black">
+              <v-row no-gutters>
+                <v-col cols="12" sm="6" md="6" class="me-8">
+                  <v-img fluid :src="`/storage/images/${visi?.image}`" alt="visi" v-if="visi?.image" />
+                  <v-img fluid :src="noimage" alt="visi" v-else />
+                </v-col>
+                <v-col cols="12" sm="6" md="5">
+                  <div class="text-h3 text-black">Visi</div>
+                  <div class="text-h5 text-black" v-html="visi?.content"></div>
+                </v-col>
+              </v-row>
+            </VCardText>
+            <VCardText class="text-black">
+              <v-row no-gutters>
+                <v-col cols="12" sm="6" md="5" class="me-8">
+                  <div class="text-h3 text-black">Misi</div>
+                  <div class="text-h5 text-black" v-html="misi?.content"></div>
+                </v-col>
+                <v-col cols="12" sm="6" md="6">
+                  <v-img fluid :src="`/storage/images/${misi?.image}`" alt="misi" v-if="misi?.image" />
+                  <v-img fluid :src="noimage" alt="misi" v-else />
+                </v-col>
+              </v-row>
+            </VCardText>
+          </VCard>
+        </VContainer>
+      </div>
+      <Galeri v-model:galeri="galeri" />
+      <Program v-model:lastProgram="lastProgram" v-model:programTerbaru="programTerbaru" />
+    </template>
     <Footer />
   </div>
 </template>
