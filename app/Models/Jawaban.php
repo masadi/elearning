@@ -14,10 +14,10 @@ class Jawaban extends Model
     public $guarded = [];
     //protected $appends = ['is_checked'];
     //protected $hidden = ['benar'];
-    protected function benar(): Attribute
+    /*protected function benar(): Attribute
     {
         return new Attribute(
             get: fn ($value) => (auth()->user()->hasRole('administrator')) ? $value : NULL,
         );
-    }
+    }*/
 }

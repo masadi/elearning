@@ -14,12 +14,12 @@ class Pembelajaran extends Model
 	protected $primaryKey = 'pembelajaran_id';
     public $guarded = [];
     
-    public function rombongan_belajar()
+    public function mata_pelajaran()
     {
-        return $this->belongsTo(RombonganBelajar::class, 'rombongan_belajar_id', 'rombongan_belajar_id');
+        return $this->belongsTo(MataPelajaran::class);
     }
-    public function ptk()
+    public function tes()
     {
-        return $this->belongsTo(Ptk::class, 'ptk_id', 'ptk_id');
+        return $this->hasMany(TesFormatif::class, 'pembelajaran_id', 'pembelajaran_id');
     }
 }

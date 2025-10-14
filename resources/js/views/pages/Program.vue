@@ -1,3 +1,5 @@
+<script setup>
+</script>
 <template>
   <div class="white">
     <VContainer>
@@ -70,3 +72,24 @@
     </VContainer>
   </div>
 </template>
+<style lang="scss" scoped>
+.white {
+  background-color: #FFFFFF;
+  color: black !important;
+}
+
+.blue-lighten-5 {
+  background-color: #E0E0E0;
+  color: black !important;
+}
+
+.white h3,
+.text-black {
+  color: black !important;
+}
+
+.no-elevated {
+  box-shadow: none !important;
+  background: none !important;
+}
+</style>

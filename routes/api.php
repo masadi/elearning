@@ -9,6 +9,8 @@ use App\Http\Controllers\TableController;
 use App\Http\Controllers\PelatihanController;
 use App\Http\Controllers\LamanController;
 use App\Http\Controllers\KontenController;
+use App\Http\Controllers\PembelajaranController;
+use App\Http\Controllers\TesController;
 
 Route::group(['prefix' => 'auth'], function () {
     Route::post('login', [AuthController::class, 'login']);
@@ -64,6 +66,14 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
         Route::group(['prefix' => 'konten'], function () {
             Route::post('/store', [KontenController::class, 'store']);
             Route::delete('/destroy/{data}/{id}', [KontenController::class, 'destroy']);
+        });
+        Route::group(['prefix' => 'pembelajaran'], function () {
+            Route::post('/store', [PembelajaranController::class, 'store']);
+            Route::delete('/destroy/{id}', [PembelajaranController::class, 'destroy']);
+        });
+        Route::group(['prefix' => 'tes'], function () {
+            Route::post('/store', [TesController::class, 'store']);
+            Route::delete('/destroy/{id}', [TesController::class, 'destroy']);
         });
     });
 });

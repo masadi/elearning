@@ -17,6 +17,7 @@ use App\Models\Page;
 use App\Models\Galeri;
 use App\Models\Program;
 use App\Models\Slide;
+use App\Models\Pembelajaran;
 
 class TableController extends Controller
 {
@@ -226,6 +227,42 @@ class TableController extends Controller
                 $query->where('content', 'LIKE', '%' . request()->q . '%');
             })->paginate(request()->per_page),
             'sekolah' => Sekolah::all(),
+        ];
+        return response()->json($data);
+    }
+    public function get_pembelajaran(){
+        $data = [
+            'lists' => Pembelajaran::with('mata_pelajaran')->withCount('tes')->where(function($query){
+                if(auth()->user()->sekolah_id){
+                    $query->where('sekolah_id', auth()->user()->sekolah_id);
+                }
+            })->orderBy(request()->sortBy, request()->orderBy)
+            ->when(request()->q, function($query) {
+                $query->where('judul', 'LIKE', '%' . request()->q . '%');
+            })->paginate(request()->per_page),
+            'sekolah' => Sekolah::all(),
+            'sekolah_id' => auth()->user()->sekolah_id,
+            'mata_pelajaran' => MataPelajaran::all(),
+        ];
+        return response()->json($data);
+    }
+    public function get_tes(){
+        $data = [
+            'lists' => TesFormatif::with(['kunci', 'jawaban'])->withCount(['jawaban'])->withWhereHas('pembelajaran', function($query){
+                if(auth()->user()->sekolah_id){
+                    $query->where('sekolah_id', auth()->user()->sekolah_id);
+                }
+            })->orderBy(request()->sortBy, request()->orderBy)
+            ->when(request()->q, function($query) {
+                $query->where('judul', 'LIKE', '%' . request()->q . '%');
+            })->paginate(request()->per_page),
+            'sekolah' => Sekolah::all(),
+            'sekolah_id' => auth()->user()->sekolah_id,
+            'pembelajaran' => Pembelajaran::where(function($query){
+                if(auth()->user()->sekolah_id){
+                    $query->where('sekolah_id', auth()->user()->sekolah_id);
+                }
+            })->get(),
         ];
         return response()->json($data);
     }

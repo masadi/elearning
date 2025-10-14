@@ -12,9 +12,9 @@ class TesFormatif extends Model
     protected $table = 'tes_formatif';
 	protected $primaryKey = 'tes_id';
     public $guarded = [];
-    public function sesi()
+    public function pembelajaran()
     {
-        return $this->belongsTo(SesiLatihan::class, 'sesi_latihan_id', 'sesi_latihan_id')->orderBy('created_at');
+        return $this->belongsTo(Pembelajaran::class, 'pembelajaran_id', 'pembelajaran_id');
     }
     public function jawaban()
     {

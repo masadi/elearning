@@ -48,6 +48,7 @@ const headers = [
     title: 'jml tes',
     key: 'tes_count',
     sortable: false,
+    align: 'center',
   },
   {
     title: 'Actions',
@@ -65,7 +66,7 @@ const {
   execute: fetchData,
 } = await useApi(createUrl('/table', {
   query: {
-    data: 'ptk',
+    data: 'pembelajaran',
     q: searchQuery,
     itemsPerPage,
     page,
@@ -80,7 +81,9 @@ if (getData.value.color) {
 const items = computed(() => getData.value.lists.data)
 const total_item = computed(() => getData.value.lists.total)
 const sekolah = computed(() => getData.value.sekolah)
-const isAddNewPtkVisible = ref(false)
+const sekolahId = computed(() => getData.value.sekolah_id)
+const mataPelajaran = computed(() => getData.value.mata_pelajaran)
+const isAddNewData = ref(false)
 
 const deletedId = ref()
 const isConfirmDialogVisible = ref()
@@ -90,7 +93,7 @@ const deleteData = async id => {
 }
 const confirmDelete = async (val) => {
   if (val) {
-    await $api(`/referensi/destroy/ptk/${deletedId.value}`, {
+    await $api(`/admin/pembelajaran/destroy/${deletedId.value}`, {
       method: 'DELETE',
       onResponse({ request, response, options }) {
         let getData = response._data
@@ -102,39 +105,15 @@ const confirmDelete = async (val) => {
     })
   }
 }
-const isDetilPtkVisible = ref(false)
-const isEditPtkVisible = ref(false)
-const detilPtk = ref()
-const detilPtkData = async (val) => {
-  isDetilPtkVisible.value = true
-  detilPtk.value = val
-}
+const detilData = ref()
 const editData = async (val) => {
-  isEditPtkVisible.value = true
-  detilPtk.value = val
+  isAddNewData.value = true
+  detilData.value = val
 }
 watch(isAlertVisible, () => {
   if (!isAlertVisible.value)
     fetchData()
 })
-const updatePtk = async userData => {
-  console.log(userData);
-  const postData = new FormData();
-  postData.append('data', 'update-ptk');
-  for (const [key, value] of Object.entries(userData)) {
-    postData.append(key, (value) ? value : '');
-  }
-  await $api('/referensi/store', {
-    method: 'POST',
-    body: postData,
-    onResponse({ request, response, options }) {
-      let getData = response._data
-      notif.value = getData
-      isAlertVisible.value = true
-      isEditPtkVisible.value = false
-    }
-  })
-}
 </script>
 
 <template>
@@ -155,8 +134,9 @@ const updatePtk = async userData => {
 
         <div class="d-flex align-center flex-wrap gap-4">
           <!-- 👉 Search  -->
+          {{ isAddNewData }}
           <AppTextField v-model="searchQuery" placeholder="Cari..." style="inline-size: 15.625rem;" />
-          <VBtn @click="isAddNewPtkVisible = true">Tambah
+          <VBtn @click="isAddNewData = true">Tambah
             <VIcon end icon="tabler-cloud-upload" />
           </VBtn>
         </div>
@@ -172,43 +152,18 @@ const updatePtk = async userData => {
       ]" :items="items" :items-length="total_item" :headers="headers" class="text-no-wrap"
         @update:options="updateOptions">
         <!-- User -->
-        <template #item.user="{ item }">
-          <div class="d-flex align-center gap-x-4">
-            <VAvatar size="34" :variant="!item.avatar ? 'tonal' : undefined"
-              :color="!item.avatar ? 'success' : undefined">
-              <VImg v-if="item.avatar" :src="item.avatar" />
-              <span v-else>{{ avatarText(item.name) }}</span>
-            </VAvatar>
-            <div class="d-flex flex-column">
-              <h6 class="text-base">
-                {{ item.nama }}
-              </h6>
-              <div class="text-sm">
-                {{ item.email }}
-              </div>
-            </div>
-          </div>
+        <template #item.mata_pelajaran="{ item }">
+          {{ item.mata_pelajaran?.nama }}
         </template>
-
-        <!-- 👉 Role -->
-        <template #item.ttl="{ item }">
-          {{ item.tempat_lahir }}, {{ new Date(item.tanggal_lahir).toLocaleString('id-ID', {
-            hour12: false,
-            day: 'numeric',
-            month: 'long',
-            year: 'numeric',
-          }) }}
+        <template #item.status="{ item }">
+          {{ item.status == 1 ? 'Aktif' : 'Tidak Aktif' }}
         </template>
-
         <!-- Actions -->
         <template #item.actions="{ item }">
-          <IconBtn @click="deleteData(item.ptk_id)">
+          <IconBtn @click="deleteData(item.pembelajaran_id)">
             <VIcon icon="tabler-trash" />
           </IconBtn>
 
-          <IconBtn @click="detilPtkData(item)">
-            <VIcon icon="tabler-eye" />
-          </IconBtn>
           <IconBtn @click="editData(item)">
             <VIcon icon="tabler-pencil" />
           </IconBtn>
@@ -223,9 +178,8 @@ const updatePtk = async userData => {
     </VCard>
 
     <!-- 👉 Add New User -->
-    <AddPtkDialog v-model:is-dialog-visible="isAddNewPtkVisible" @notif="handleNotif" v-model:sekolah="sekolah" />
-    <PtkDetilDialog v-model:is-dialog-visible="isDetilPtkVisible" v-model:detilPtk="detilPtk" />
-    <PtkEditDialog v-model:is-dialog-visible="isEditPtkVisible" v-model:detil-ptk="detilPtk" @submit="updatePtk" />
+    <PembelajaranAddDialog v-model:is-dialog-visible="isAddNewData" @notif="handleNotif" v-model:sekolah="sekolah"
+      v-model:sekolahId="sekolahId" v-model:detil-data="detilData" v-model:mataPelajaran="mataPelajaran" />
     <ShowAlert :color="notif.color" :icon="notif.icon" :title="notif.title" :text="notif.text" :disable-time-out="false"
       v-model:isSnackbarVisible="isAlertVisible" v-if="notif.color"></ShowAlert>
     <ConfirmDialog v-model:isDialogVisible="isConfirmDialogVisible"

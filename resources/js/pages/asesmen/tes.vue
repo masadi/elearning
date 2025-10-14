@@ -30,13 +30,13 @@ const updateOptions = options => {
 // Headers
 const headers = [
   {
-    title: 'deskripsi soal',
-    key: 'deskripsi',
+    title: 'pembelajaran',
+    key: 'pembelajaran',
     sortable: false,
   },
   {
-    title: 'pembelajaran',
-    key: 'pembelajaran',
+    title: 'deskripsi soal',
+    key: 'deskripsi',
     sortable: false,
   },
   {
@@ -55,7 +55,7 @@ const {
   execute: fetchData,
 } = await useApi(createUrl('/table', {
   query: {
-    data: 'rombel',
+    data: 'tes',
     q: searchQuery,
     itemsPerPage,
     page,
@@ -70,6 +70,8 @@ if (getData.value.color) {
 const items = computed(() => getData.value.lists.data)
 const total_item = computed(() => getData.value.lists.total)
 const sekolah = computed(() => getData.value.sekolah)
+const sekolahId = computed(() => getData.value.sekolah_id)
+const pembelajaran = computed(() => getData.value.pembelajaran)
 const isAddNewData = ref(false)
 
 const deletedId = ref()
@@ -80,7 +82,7 @@ const deleteData = async id => {
 }
 const confirmDelete = async (val) => {
   if (val) {
-    await $api(`/referensi/destroy/mapel/${deletedId.value}`, {
+    await $api(`/admin/tes/destroy/${deletedId.value}`, {
       method: 'DELETE',
       onResponse({ request, response, options }) {
         let getData = response._data
@@ -92,33 +94,19 @@ const confirmDelete = async (val) => {
     })
   }
 }
-const isDetilDataVisible = ref(false)
+const addNewData = () => {
+  isAddNewData.value = true
+  detilData.value = null
+}
 const detilData = ref()
 const detilDataData = async (val) => {
-  isDetilDataVisible.value = true
+  isAddNewData.value = true
   detilData.value = val
 }
 watch(isAlertVisible, () => {
   if (!isAlertVisible.value)
     fetchData()
 })
-const updateData = async userData => {
-  console.log(userData);
-  const postData = new FormData();
-  postData.append('data', 'update-mapel');
-  for (const [key, value] of Object.entries(userData)) {
-    postData.append(key, (value) ? value : '');
-  }
-  await $api('/referensi/store', {
-    method: 'POST',
-    body: postData,
-    onResponse({ request, response, options }) {
-      let getData = response._data
-      notif.value = getData
-      isAlertVisible.value = true
-    }
-  })
-}
 </script>
 
 <template>
@@ -140,7 +128,7 @@ const updateData = async userData => {
         <div class="d-flex align-center flex-wrap gap-4">
           <!-- 👉 Search  -->
           <AppTextField v-model="searchQuery" placeholder="Cari..." style="inline-size: 15.625rem;" />
-          <VBtn @click="isAddNewData = true">Tambah
+          <VBtn @click="addNewData">Tambah
             <VIcon end icon="tabler-cloud-upload" />
           </VBtn>
         </div>
@@ -156,37 +144,18 @@ const updateData = async userData => {
       ]" :items="items" :items-length="total_item" :headers="headers" class="text-no-wrap"
         @update:options="updateOptions">
         <!-- User -->
-        <template #item.walas="{ item }">
-          <div class="d-flex align-center gap-x-4">
-            <VAvatar size="34" :variant="!item.walas.avatar ? 'tonal' : undefined"
-              :color="!item.walas.avatar ? 'success' : undefined">
-              <VImg v-if="item.walas.avatar" :src="item.walas.avatar" />
-              <span v-else>{{ avatarText(item.walas.name) }}</span>
-            </VAvatar>
-            <div class="d-flex flex-column">
-              <h6 class="text-base">
-                {{ item.walas.nama }}
-              </h6>
-              <div class="text-sm">
-                {{ item.walas.email }}
-              </div>
-            </div>
-          </div>
+        <template #item.pembelajaran="{ item }">
+          {{ item.pembelajaran.judul }}
         </template>
 
         <!-- 👉 Role -->
-        <template #item.ttl="{ item }">
-          {{ item.tempat_lahir }}, {{ new Date(item.tanggal_lahir).toLocaleString('id-ID', {
-            hour12: false,
-            day: 'numeric',
-            month: 'long',
-            year: 'numeric',
-          }) }}
+        <template #item.deskripsi="{ item }">
+          <span v-html="item.deskripsi"></span>
         </template>
 
         <!-- Actions -->
         <template #item.actions="{ item }">
-          <IconBtn @click="deleteData(item.id)">
+          <IconBtn @click="deleteData(item.tes_id)">
             <VIcon icon="tabler-trash" />
           </IconBtn>
 
@@ -203,9 +172,8 @@ const updateData = async userData => {
     </VCard>
 
     <!-- 👉 Add New User -->
-    <RombelAddDialog v-model:is-dialog-visible="isAddNewData" v-model:sekolah="sekolah" @notif="handleNotif" />
-    <RombelDetilDialog v-model:is-dialog-visible="isDetilDataVisible" v-model:detil-data="detilData"
-      @notif="handleNotif" />
+    <TesAddDialog v-model:is-dialog-visible="isAddNewData" @notif="handleNotif" v-model:sekolah="sekolah"
+      v-model:sekolahId="sekolahId" v-model:detil-data="detilData" v-model:pembelajaran="pembelajaran" />
     <ShowAlert :color="notif.color" :icon="notif.icon" :title="notif.title" :text="notif.text" :disable-time-out="false"
       v-model:isSnackbarVisible="isAlertVisible" v-if="notif.color"></ShowAlert>
     <ConfirmDialog v-model:isDialogVisible="isConfirmDialogVisible"
