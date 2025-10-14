@@ -95,13 +95,8 @@ const confirmDelete = async (val) => {
     })
   }
 }
-const isDetilDataVisible = ref(false)
 const isEditDataVisible = ref(false)
 const detilData = ref()
-const detilDataData = async (val) => {
-  isDetilDataVisible.value = true
-  detilData.value = val
-}
 const editData = async (val) => {
   isEditDataVisible.value = true
   detilData.value = val
@@ -164,44 +159,12 @@ const updateData = async userData => {
         { value: -1, title: '$vuetify.dataFooter.itemsPerPageAll' },
       ]" :items="items" :items-length="total_item" :headers="headers" class="text-no-wrap"
         @update:options="updateOptions">
-        <!-- User -->
-        <template #item.user="{ item }">
-          <div class="d-flex align-center gap-x-4">
-            <VAvatar size="34" :variant="!item.avatar ? 'tonal' : undefined"
-              :color="!item.avatar ? 'success' : undefined">
-              <VImg v-if="item.avatar" :src="item.avatar" />
-              <span v-else>{{ avatarText(item.name) }}</span>
-            </VAvatar>
-            <div class="d-flex flex-column">
-              <h6 class="text-base">
-                {{ item.nama }}
-              </h6>
-              <div class="text-sm">
-                {{ item.email }}
-              </div>
-            </div>
-          </div>
-        </template>
-
-        <!-- 👉 Role -->
-        <template #item.ttl="{ item }">
-          {{ item.tempat_lahir }}, {{ new Date(item.tanggal_lahir).toLocaleString('id-ID', {
-            hour12: false,
-            day: 'numeric',
-            month: 'long',
-            year: 'numeric',
-          }) }}
-        </template>
-
         <!-- Actions -->
         <template #item.actions="{ item }">
           <IconBtn @click="deleteData(item.id)">
             <VIcon icon="tabler-trash" />
           </IconBtn>
 
-          <IconBtn @click="detilDataData(item)">
-            <VIcon icon="tabler-eye" />
-          </IconBtn>
           <IconBtn @click="editData(item)">
             <VIcon icon="tabler-pencil" />
           </IconBtn>
@@ -217,8 +180,6 @@ const updateData = async userData => {
 
     <!-- 👉 Add New User -->
     <MapelAddDialog v-model:is-dialog-visible="isAddNewData" @notif="handleNotif" />
-    <MapelDetilDialog v-model:is-dialog-visible="isDetilDataVisible" @notif="handleNotif"
-      v-model:detil-data="detilData" />
     <MapelEditDialog v-model:is-dialog-visible="isEditDataVisible" v-model:detil-data="detilData"
       @submit="updateData" />
     <ShowAlert :color="notif.color" :icon="notif.icon" :title="notif.title" :text="notif.text" :disable-time-out="false"
