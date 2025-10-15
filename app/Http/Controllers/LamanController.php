@@ -176,4 +176,29 @@ class LamanController extends Controller
         $program = Program::where('slug', $slug)->firstOrFail();
         return response()->json($program);
     }
+    public function sekolah(){
+        $sekolah = Sekolah::where('npsn', request()->npsn)->first();
+        if($sekolah){
+            $data = [
+                'sekolah' => $sekolah,
+                'success' => TRUE,
+            ];
+        } else {
+            $data = [
+                'sekolah' => NULL,
+                'success' => FALSE,
+            ];
+        }
+        return response()->json($data);
+    }
+    public function ambil_data(Request $request){
+        $data = [
+            'galeri' => Galeri::where('sekolah_id', $request->sekolah_id)->orderBy('created_at', 'DESC')->get(),
+            'program' => Program::where('sekolah_id', $request->sekolah_id)->orderBy('created_at', 'DESC')->get(),
+            'slide' => Slide::where('sekolah_id', $request->sekolah_id)->orderBy('created_at', 'DESC')->get(),
+            'ptk' => Ptk::where('sekolah_id', $request->sekolah_id)->orderBy('urut')->get(),
+            'page' => Page::where('sekolah_id', $request->sekolah_id)->get(),
+        ];
+        return response()->json($data);
+    }
 }

@@ -70,9 +70,9 @@ const demoList = [
               </div>
 
               <div class="mb-6" :class="$vuetify.theme.current.dark ? 'text-body-1' : 'text-white-variant'">
-                Lorem Ipsum is simply dummy text of the printing and typesetting industry. Lorem Ipsum has been the
-                industry's standard dummy text ever since the 1500s, when an unknown printer took a galley of type and
-                scrambled it to make a type specimen book.
+                Aplikasi E-Learning PKBM adalah platform terpadu yang menyajikan profil, visi, dan misi lembaga,
+                dilengkapi dengan laporan kegiatan serta galeri foto-foto pembelajaran daring, sekaligus berfungsi
+                sebagai pusat akses ke seluruh modul interaktif dan bank soal ujian bagi warga belajar.
               </div>
             </div>
           </VCol>

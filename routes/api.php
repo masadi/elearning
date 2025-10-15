@@ -21,8 +21,10 @@ Route::group(['prefix' => 'auth'], function () {
 Route::group(['prefix' => 'frontend'], function () {
     Route::group(['prefix' => 'laman'], function () {
         Route::get('/', [LamanController::class, 'index']);
+        Route::get('/sekolah', [LamanController::class, 'sekolah']);
         Route::get('/galeri/{slug}', [LamanController::class, 'get_galeri']);
         Route::get('/program/{slug}', [LamanController::class, 'get_program']);
+        Route::post('/ambil-data', [LamanController::class, 'ambil_data']);
     });
 });
 Route::group(['middleware' => 'auth:sanctum'], function () {

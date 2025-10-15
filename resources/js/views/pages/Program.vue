@@ -30,11 +30,11 @@ const props = defineProps({
             <v-img class="align-end text-white" height="200" :src="`/storage/images/${program.foto}`" cover>
             </v-img>
             <v-card-text>
-              <v-card-title class="text-black ps-0 pb-2">
+              <v-card-title class="text-black pb-2">
                 <RouterLink :to="{ name: 'program-slug', params: { slug: program.slug } }">{{ program.nama }}
                 </RouterLink>
               </v-card-title>
-              <v-card-sub-title class="mt-2">{{ program.tanggal_indo }}</v-card-sub-title>
+              <v-card-subtitle class="text-black mt-2">{{ program.tanggal_indo }}</v-card-subtitle>
             </v-card-text>
           </v-card>
         </v-col>
