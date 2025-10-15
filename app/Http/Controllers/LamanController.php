@@ -203,7 +203,7 @@ class LamanController extends Controller
             'page' => Page::where('sekolah_id', $request->sekolah_id)->get(),
             'mapel' => MataPelajaran::all(),
             'pembelajaran' => Pembelajaran::has('mata_pelajaran')->where('sekolah_id', $request->sekolah_id)->get(),
-            'tes_formatif' => TesFormatif::with(['kunci', 'jawaban'])->withWhereHas('pembelajaran', function($query) use ($request){
+            'tes_formatif' => TesFormatif::with(['jawaban'])->withWhereHas('pembelajaran', function($query) use ($request){
                 $query->has('mata_pelajaran');
                 $query->where('sekolah_id', $request->sekolah_id);
             })->get(),
