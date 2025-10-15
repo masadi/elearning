@@ -9,6 +9,9 @@ use App\Models\Galeri;
 use App\Models\Program;
 use App\Models\Slide;
 use App\Models\Ptk;
+use App\Models\MataPelajaran;
+use App\Models\Pembelajaran;
+use App\Models\TesFormatif;
 
 class LamanController extends Controller
 {
@@ -198,6 +201,12 @@ class LamanController extends Controller
             'slide' => Slide::where('sekolah_id', $request->sekolah_id)->orderBy('created_at', 'DESC')->get(),
             'ptk' => Ptk::where('sekolah_id', $request->sekolah_id)->orderBy('urut')->get(),
             'page' => Page::where('sekolah_id', $request->sekolah_id)->get(),
+            'mapel' => MataPelajaran::all(),
+            'pembelajaran' => Pembelajaran::has('mata_pelajaran')->where('sekolah_id', $request->sekolah_id)->get(),
+            'tes_formatif' => TesFormatif::with(['kunci', 'jawaban'])->withWhereHas('pembelajaran', function($query) use ($request){
+                $query->has('mata_pelajaran');
+                $query->where('sekolah_id', $request->sekolah_id);
+            })->get(),
         ];
         return response()->json($data);
     }
