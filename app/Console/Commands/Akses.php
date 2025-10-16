@@ -75,7 +75,7 @@ class Akses extends Command
             ],
             'asesmen-mata-pelajaran' => [
                 'administrator' => ['create', 'read', 'update', 'delete'],
-                'sekolah' => ['create', 'read', 'update', 'delete'], 
+                //'sekolah' => ['create', 'read', 'update', 'delete'], 
             ],
             'asesmen-pembelajaran' => [
                 'administrator' => ['create', 'read', 'update', 'delete'],

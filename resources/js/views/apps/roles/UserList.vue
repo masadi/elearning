@@ -1,11 +1,12 @@
 <script setup>
+const isAlertVisible = ref(false)
+const isAlertClicked = ref(false)
 const notif = ref({
   icon: null,
   title: null,
   text: null,
   color: null,
 })
-const isAlertVisible = ref(false)
 // 👉 Store
 const searchQuery = ref('')
 const selectedRole = ref()
@@ -64,82 +65,48 @@ const {
 }))
 const items = computed(() => getData.value.lists.data)
 const total_item = computed(() => getData.value.lists.total)
+const mataPelajaran = computed(() => getData.value.mata_pelajaran)
 const statistik = computed(() => getData.value.statistik)
 const aplikasi = computed(() => getData.value.aplikasi)
 emit('statistik', statistik.value)
 emit('aplikasi', aplikasi.value)
 // 👉 search filters
-
-const resolveUserRoleVariant = role => {
-  if (!role)
-    return {
-      color: 'primary',
-      icon: 'tabler-user',
+const isDialogVisible = ref(false)
+const namaSekolah = ref()
+const form = ref({
+  sekolah_id: null,
+  selected: [],
+})
+const mappingMapel = (item) => {
+  isDialogVisible.value = true
+  namaSekolah.value = item.nama
+  form.value.sekolah_id = item.sekolah_id
+  item.mapel.forEach(element => {
+    form.value.selected.push(element.mata_pelajaran_id)
+  });
+}
+const saveMappingMapel = async () => {
+  console.log(form.value);
+  await $api('/admin/sekolah/save-mapping', {
+    method: 'POST',
+    body: form.value,
+    onResponse({ request, response, options }) {
+      let getData = response._data
+      isDialogVisible.value = false
+      isAlertVisible.value = true
+      notif.value = getData
+      fetchData()
     }
-  const roleLowerCase = role.toLowerCase()
-  if (roleLowerCase === 'administrator')
-    return {
-      color: 'primary',
-      icon: 'tabler-user',
+  })
+}
+watch(isDialogVisible, () => {
+  if (!isDialogVisible.value) {
+    console.log('close-modal');
+    form.value = {
+      sekolah_id: null,
+      selected: [],
     }
-  if (roleLowerCase === 'operator')
-    return {
-      color: 'warning',
-      icon: 'tabler-settings',
-    }
-  if (roleLowerCase === 'koperasi')
-    return {
-      color: 'success',
-      icon: 'tabler-chart-donut',
-    }
-  if (roleLowerCase === 'editor')
-    return {
-      color: 'info',
-      icon: 'tabler-pencil',
-    }
-  if (roleLowerCase === 'admin')
-    return {
-      color: 'error',
-      icon: 'tabler-device-laptop',
-    }
-
-  return {
-    color: 'primary',
-    icon: 'tabler-user',
   }
-}
-
-const isConfirmDialogVisible = ref()
-const deletedId = ref()
-const deleteUser = async id => {
-  deletedId.value = id
-  isConfirmDialogVisible.value = true
-}
-
-const confirmDelete = async () => {
-  await $api(`/settings/destroy/user/${deletedId.value}`, {
-    method: 'DELETE',
-    onResponse({ request, response, options }) {
-      let getData = response._data
-      notif.value = getData
-      isAlertVisible.value = true
-      //isEditPtkVisible.value = false
-    }
-  })
-}
-const generateUser = async () => {
-  await $api(`/settings/generate-user`, {
-    onResponse({ request, response, options }) {
-      let getData = response._data
-      notif.value = getData
-      isAlertVisible.value = true
-      //isEditPtkVisible.value = false
-    }
-  })
-}
-watch(isAlertVisible, () => {
-  if (!isAlertVisible.value)
-    fetchData()
 })
 </script>
 
@@ -180,42 +147,7 @@ watch(isAlertVisible, () => {
 
         <!-- Actions -->
         <template #item.actions="{ item }">
-          <IconBtn @click="deleteUser(item.id)">
-            <VIcon icon="tabler-trash" />
-          </IconBtn>
-
-          <IconBtn>
-            <VIcon icon="tabler-eye" />
-          </IconBtn>
-
-          <VBtn icon variant="text" color="medium-emphasis">
-            <VIcon icon="tabler-dots-vertical" />
-            <VMenu activator="parent">
-              <VList>
-                <VListItem :to="{ name: 'apps-user-view-id', params: { id: item.id } }">
-                  <template #prepend>
-                    <VIcon icon="tabler-eye" />
-                  </template>
-
-                  <VListItemTitle>View</VListItemTitle>
-                </VListItem>
-
-                <VListItem link>
-                  <template #prepend>
-                    <VIcon icon="tabler-pencil" />
-                  </template>
-                  <VListItemTitle>Edit</VListItemTitle>
-                </VListItem>
-
-                <VListItem @click="deleteUser(item.id)">
-                  <template #prepend>
-                    <VIcon icon="tabler-trash" />
-                  </template>
-                  <VListItemTitle>Delete</VListItemTitle>
-                </VListItem>
-              </VList>
-            </VMenu>
-          </VBtn>
+          <VBtn @click="mappingMapel(item)">Mapping Mapel</VBtn>
         </template>
 
         <template #bottom>
@@ -224,16 +156,32 @@ watch(isAlertVisible, () => {
       </VDataTableServer>
       <!-- SECTION -->
     </VCard>
+    <VDialog v-model="isDialogVisible" scrollable content-class="scrollable-dialog" max-width="500">
+      <DialogCloseBtn @click="isDialogVisible = !isDialogVisible" />
+      <VCard>
+        <VCardItem class="pb-5">
+          <VCardTitle>Pilih Mata Untuk {{ namaSekolah }}</VCardTitle>
+        </VCardItem>
+        <VDivider />
+        <VCardText>
+          <div v-for="mapel in mataPelajaran" :key="mapel.id">
+            <VCheckbox v-model="form.selected" :label="mapel.nama" :value="mapel.id" />
+          </div>
+        </VCardText>
+        <VDivider />
+        <VCardText class="d-flex justify-end flex-wrap gap-3 pt-5 overflow-visible">
+          <VBtn color="secondary" variant="tonal" @click="isDialogVisible = false">
+            Batal
+          </VBtn>
+          <VBtn @click="saveMappingMapel">
+            Simpan
+          </VBtn>
+        </VCardText>
+      </VCard>
+    </VDialog>
     <ShowAlert :color="notif.color" :icon="notif.icon" :title="notif.title" :text="notif.text" :disable-time-out="false"
-      v-model:isSnackbarVisible="isAlertVisible" v-if="notif.color"></ShowAlert>
-    <ConfirmDialog v-model:isDialogVisible="isConfirmDialogVisible"
-      confirmation-question="Apakah Anda yakin ingin menghapus data ini?" :show-notif="false"
-      @confirm="confirmDelete" />
-    <!-- 👉 Add New User -->
-    <!--AddNewUserDrawer
-      v-model:isDrawerOpen="isAddNewUserDrawerVisible"
-      @user-data="addNewUser"
-    /-->
+      v-model:isSnackbarVisible="isAlertVisible" v-model:isSnackbarClicked="isAlertClicked" v-if="notif.color">
+    </ShowAlert>
   </section>
 </template>
 

@@ -30,6 +30,11 @@ const updateOptions = options => {
 // Headers
 const headers = [
   {
+    title: 'nomor urut',
+    key: 'urut',
+    sortable: false,
+  },
+  {
     title: 'pembelajaran',
     key: 'pembelajaran',
     sortable: false,

@@ -37,12 +37,13 @@ class TableController extends Controller
     }
     public function get_sekolah(){
         $data = [
-            'lists' => Sekolah::orderBy(request()->sortBy, request()->orderBy)
+            'lists' => Sekolah::with('mapel')->orderBy(request()->sortBy, request()->orderBy)
             ->when(request()->q, function($query) {
                 $query->where('nama', 'LIKE', '%' . request()->q . '%');
                 $query->orWhere('npsn', 'LIKE', '%' . request()->q . '%');
                 $query->orWhere('alamat', 'LIKE', '%' . request()->q . '%');
             })->paginate(request()->per_page),
+            'mata_pelajaran' => MataPelajaran::orderBy('id')->get(),
         ];
         return response()->json($data);
     }
@@ -69,6 +70,7 @@ class TableController extends Controller
         return response()->json($data);
     }
     public function get_mapel(){
+        $user = auth()->user();
         $data = [
             'lists' => MataPelajaran::orderBy(request()->sortBy, request()->orderBy)
             ->when(request()->q, function($query) {
@@ -253,8 +255,17 @@ class TableController extends Controller
         return response()->json($data);
     }
     public function get_pembelajaran(){
+        $user = auth()->user();
         $data = [
-            'lists' => Pembelajaran::withWhereHas('mata_pelajaran')->withCount('tes')->where(function($query){
+            'lists' => Pembelajaran::withWhereHas('mata_pelajaran', function($query) use ($user){
+                $query->where(function($query) use ($user){
+                    $query->whereHas('sekolah', function($query) use ($user){
+                        if($user->sekolah_id){
+                            $query->where('sekolah_id', $user->sekolah_id);
+                        }
+                    });
+                });
+            })->withCount('tes')->where(function($query){
                 if(auth()->user()->sekolah_id){
                     $query->where('sekolah_id', auth()->user()->sekolah_id);
                 }
@@ -264,7 +275,13 @@ class TableController extends Controller
             })->paginate(request()->per_page),
             'sekolah' => Sekolah::all(),
             'sekolah_id' => auth()->user()->sekolah_id,
-            'mata_pelajaran' => MataPelajaran::all(),
+            'mata_pelajaran' => MataPelajaran::where(function($query) use ($user){
+                $query->whereHas('sekolah', function($query) use ($user){
+                    if($user->sekolah_id){
+                        $query->where('sekolah_id', $user->sekolah_id);
+                    }
+                });
+            })->get(),
         ];
         return response()->json($data);
     }

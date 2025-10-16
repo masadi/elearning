@@ -13,4 +13,8 @@ class Sekolah extends Model
     protected $table = 'sekolah';
 	protected $primaryKey = 'sekolah_id';
     public $guarded = [];
+    public function mapel()
+    {
+        return $this->hasMany(MapelSekolah::class, 'sekolah_id', 'sekolah_id');
+    }
 }

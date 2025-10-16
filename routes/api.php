@@ -56,6 +56,10 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
         Route::post('tes-selesai', [PelatihanController::class, 'tes_selesai']);
     });
     Route::group(['prefix' => 'admin'], function () {
+        Route::group(['prefix' => 'sekolah'], function () {
+            Route::get('/', [LamanController::class, 'get_sekolah']);
+            Route::post('/save-mapping', [LamanController::class, 'save_mapping']);
+        });
         Route::group(['prefix' => 'laman'], function () {
             Route::get('/', [LamanController::class, 'index']);
             Route::get('/galeri/{slug}', [LamanController::class, 'get_galeri']);

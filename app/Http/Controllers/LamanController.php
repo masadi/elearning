@@ -12,6 +12,7 @@ use App\Models\Ptk;
 use App\Models\MataPelajaran;
 use App\Models\Pembelajaran;
 use App\Models\TesFormatif;
+use App\Models\MapelSekolah;
 
 class LamanController extends Controller
 {
@@ -201,12 +202,38 @@ class LamanController extends Controller
             'slide' => Slide::where('sekolah_id', $request->sekolah_id)->orderBy('created_at', 'DESC')->get(),
             'ptk' => Ptk::where('sekolah_id', $request->sekolah_id)->orderBy('urut')->get(),
             'page' => Page::where('sekolah_id', $request->sekolah_id)->get(),
-            'mapel' => MataPelajaran::all(),
-            'pembelajaran' => Pembelajaran::has('mata_pelajaran')->where('sekolah_id', $request->sekolah_id)->get(),
+            'mapel' => MataPelajaran::whereHas('sekolah', function($query) use ($request){
+                $query->where('sekolah_id', $request->sekolah_id);
+            })->get(),
+            'pembelajaran' => Pembelajaran::whereHas('mata_pelajaran', function($query) use ($request){
+                $query->whereHas('sekolah', function($query) use ($request){
+                    $query->where('sekolah_id', $request->sekolah_id);
+                });
+            })->where('sekolah_id', $request->sekolah_id)->get(),
             'tes_formatif' => TesFormatif::with(['jawaban'])->withWhereHas('pembelajaran', function($query) use ($request){
                 $query->has('mata_pelajaran');
                 $query->where('sekolah_id', $request->sekolah_id);
             })->get(),
+        ];
+        return response()->json($data);
+    }
+    public function get_sekolah(){
+        $data = (auth()->user()->sekolah_id) ? Sekolah::find(auth()->user()->sekolah_id)->first() : NULL;
+        return response()->json($data);
+    }
+    public function save_mapping(){
+        foreach(request()->selected as $selected){
+            MapelSekolah::updateOrCreate([
+                'mata_pelajaran_id' => $selected,
+                'sekolah_id' => request()->sekolah_id,
+            ]);
+        }
+        MapelSekolah::where('sekolah_id', request()->sekolah_id)->whereNotIn('mata_pelajaran_id', request()->selected)->delete();
+        $data = [
+            'color' => 'success',
+            'icon' => 'tabler-check',
+            'title' => 'Success!',
+            'text' => 'Mapping Mata Pelajaran berhasil disimpan.',
         ];
         return response()->json($data);
     }

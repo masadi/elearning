@@ -39,7 +39,7 @@ const unggahTugas = sesi_latihan_id => {
   idSesi.value = sesi_latihan_id
   const findSesi = data.value.sesi.find(item => item.sesi_latihan_id === sesi_latihan_id);
   judul_sesi.value = findSesi?.judul;
-  
+
 }
 const absen = (val) => {
   const findSesi = data.value.sesi.find(item => item.sesi_latihan_id === val && item.hadir && parseInt(item.hadir.hadir) === 1);
@@ -50,7 +50,7 @@ const cekTugas = (val) => {
   return (findSesi) ? true : false
 }
 const radioGroup = ref()
-const submitAbsen = async() => {
+const submitAbsen = async () => {
   await $api('/pelatihan/absen', {
     method: 'POST',
     body: {
@@ -66,7 +66,7 @@ const submitAbsen = async() => {
   })
 }
 const fileTugas = ref()
-const submitTugas = async() => {
+const submitTugas = async () => {
   const postData = new FormData();
   postData.append('sesi_latihan_id', idSesi.value);
   postData.append('file_tugas', fileTugas.value);
@@ -82,8 +82,8 @@ const submitTugas = async() => {
   })
 }
 const sesiLatihanId = ref()
-const confirmTes = async(val) => {
-  if(val){
+const confirmTes = async (val) => {
+  if (val) {
     await $api('/pelatihan/tes-selesai', {
       method: 'POST',
       body: {
@@ -97,7 +97,7 @@ const confirmTes = async(val) => {
   }
 }
 const isChecked = ref()
-const submitTes = async(sesi_latihan_id) => {
+const submitTes = async (sesi_latihan_id) => {
   isConfirmDialogVisible.value = true
   sesiLatihanId.value = sesi_latihan_id
 }
@@ -118,8 +118,8 @@ const nextColor = ref('primary')
 const prevDisabled = ref(true)
 const nextDisabled = ref(false)
 watch(soalAktif, () => {
-  if(soalAktif.value){
-    if(soalAktif.value == (countSoal.value - 1)){
+  if (soalAktif.value) {
+    if (soalAktif.value == (countSoal.value - 1)) {
       nextColor.value = 'secondary'
       nextDisabled.value = true
     } else {
@@ -137,15 +137,15 @@ watch(soalAktif, () => {
 })
 const soal = ref()
 const indexTab = ref()
-const changeTab = async(val) => {
+const changeTab = async (val) => {
   let index = val - 1
   indexTab.value = index
-  if(val > 0){
+  if (val > 0) {
     getSoal(index)
   }
 }
 const isBusy = ref()
-const getSoal = async(index, tes_id) => {
+const getSoal = async (index, tes_id) => {
   isBusy.value = true
   await $api('/pelatihan/get-soal', {
     method: 'POST',
@@ -161,7 +161,7 @@ const getSoal = async(index, tes_id) => {
       isBusy.value = false
       isChecked.value = getData.soal?.user_jawaban?.jawaban_id
       jmlSoal.value = getData.jml_soal
-      if(jmlSoal.value === 1){
+      if (jmlSoal.value === 1) {
         nextColor.value = 'secondary'
         nextDisabled.value = true
       }
@@ -190,7 +190,9 @@ const getSoal = async(index, tes_id) => {
           <span class="text-rata">
             <v-row justify="space-between" class="mb-3">
               <v-col cols="4">
-                <a href="javascript:void(0)" @click="showAbsen(sesi.sesi_latihan_id)"><VIcon size="25" icon="tabler-user-scan" /> Kehadiran Sesi {{ sesi.urut }}</a>
+                <a href="javascript:void(0)" @click="showAbsen(sesi.sesi_latihan_id)">
+                  <VIcon size="25" icon="tabler-user-scan" /> Kehadiran Sesi {{ sesi.urut }}
+                </a>
               </v-col>
               <v-col cols="4" class="text-right pe-8">
                 <VIcon :color="absen(sesi.sesi_latihan_id)" size="25" icon="tabler-checkbox" />
@@ -214,13 +216,17 @@ const getSoal = async(index, tes_id) => {
           <template v-if="sesi.tugas.length">
             <VAlert color="warning" icon="tabler-pencil">
               <v-row justify="space-between">
-                  <v-col cols="4">
-                    TUGAS
-                  </v-col>
-                  <v-col cols="4" class="text-right pe-8">
-                    <VBtn :disabled="cekTugas(sesi.sesi_latihan_id)" :color="(cekTugas(sesi.sesi_latihan_id) ? 'secondary' : 'success')" size="small" @click="unggahTugas(sesi.sesi_latihan_id)">Unggah Tugas <VIcon end icon="tabler-cloud-upload" /></VBtn>
-                  </v-col>
-                </v-row>
+                <v-col cols="4">
+                  TUGAS
+                </v-col>
+                <v-col cols="4" class="text-right pe-8">
+                  <VBtn :disabled="cekTugas(sesi.sesi_latihan_id)"
+                    :color="(cekTugas(sesi.sesi_latihan_id) ? 'secondary' : 'success')" size="small"
+                    @click="unggahTugas(sesi.sesi_latihan_id)">Unggah Tugas
+                    <VIcon end icon="tabler-cloud-upload" />
+                  </VBtn>
+                </v-col>
+              </v-row>
             </VAlert>
             <template v-for="tugas in sesi.tugas">
               <h4 class="text-h4 mb-2">{{ tugas.judul }}</h4>
@@ -246,7 +252,8 @@ const getSoal = async(index, tes_id) => {
                   <template v-else>
                     <span class="text-soal" v-html="soal.deskripsi"></span>
                     <VRadioGroup v-model="isChecked">
-                      <VRadio v-for="jawaban in soal.jawaban" :key="jawaban.jawaban_id" :value="jawaban.jawaban_id" :disabled="parseInt(sesi.user_tes?.status)">
+                      <VRadio v-for="jawaban in soal.jawaban" :key="jawaban.jawaban_id" :value="jawaban.jawaban_id"
+                        :disabled="parseInt(sesi.user_tes?.status)">
                         <template #label>
                           <span v-html="jawaban.deskripsi"></span>
                         </template>
@@ -254,16 +261,20 @@ const getSoal = async(index, tes_id) => {
                     </VRadioGroup>
                     <VRow justify="space-between" class="mb-3">
                       <VCol cols="2">
-                        <VBtn @click="prevSoal(sesi.tes.length, soal.tes_id)" :color="prevColor" :disabled="prevDisabled || parseInt(sesi.user_tes?.status)">
+                        <VBtn @click="prevSoal(sesi.tes.length, soal.tes_id)" :color="prevColor"
+                          :disabled="prevDisabled || parseInt(sesi.user_tes?.status)">
                           <VIcon icon="tabler-chevrons-left" /> Prev
                         </VBtn>
                       </VCol>
                       <VCol cols="2" class="text-center" v-if="nextDisabled">
-                        <VBtn @click="submitTes(sesi.sesi_latihan_id)" :disabled="parseInt(sesi.user_tes?.status)">Simpan</VBtn>
+                        <VBtn @click="submitTes(sesi.sesi_latihan_id)" :disabled="parseInt(sesi.user_tes?.status)">
+                          Simpan</VBtn>
                       </VCol>
                       <VCol cols="2" class="text-right">
-                        <VBtn @click="nextSoal(sesi.tes.length, soal.tes_id)" :color="nextColor" :disabled="nextDisabled || parseInt(sesi.user_tes?.status)">
-                          Next <VIcon icon="tabler-chevrons-right" />
+                        <VBtn @click="nextSoal(sesi.tes.length, soal.tes_id)" :color="nextColor"
+                          :disabled="nextDisabled || parseInt(sesi.user_tes?.status)">
+                          Next
+                          <VIcon icon="tabler-chevrons-right" />
                         </VBtn>
                       </VCol>
                     </VRow>
@@ -306,18 +317,31 @@ const getSoal = async(index, tes_id) => {
         </VCardText>
       </VCard>
     </VDialog>
-    <ShowAlert :color="notif.color" :icon="notif.icon" :title="notif.title" :text="notif.text" :disable-time-out="false" v-model:isSnackbarVisible="isAlertVisible" v-if="notif.color"></ShowAlert>
-    <ConfirmDialog
-      v-model:isDialogVisible="isConfirmDialogVisible"
+    <ShowAlert :color="notif.color" :icon="notif.icon" :title="notif.title" :text="notif.text" :disable-time-out="false"
+      v-model:isSnackbarVisible="isAlertVisible" v-if="notif.color"></ShowAlert>
+    <ConfirmDialog v-model:isDialogVisible="isConfirmDialogVisible"
       confirmation-question="Apakah Anda yakin akan mengakhiri Tes Formatif ini?<br>Tes Formatif akan terkunci setelah Anda mengakhiri!"
-      :show-notif="false"
-      @confirm="confirmTes"
-    />
+      :show-notif="false" @confirm="confirmTes" />
   </VCard>
 </template>
 <style lang="scss">
-.text-rata {text-align: justify; line-height: 1.6rem;}
-.text-soal {text-align: justify; line-height: 1.6rem; color: black; font-size: 115%;}
-.v-expansion-panel {border-radius: 0px !important;}
-.v-expansion-panel-text__wrapper {padding: 0px !important;}
+.text-rata {
+  text-align: justify;
+  line-height: 1.6rem;
+}
+
+.text-soal {
+  text-align: justify;
+  line-height: 1.6rem;
+  color: black;
+  font-size: 115%;
+}
+
+.v-expansion-panel {
+  border-radius: 0px !important;
+}
+
+.v-expansion-panel-text__wrapper {
+  padding: 0px !important;
+}
 </style>
