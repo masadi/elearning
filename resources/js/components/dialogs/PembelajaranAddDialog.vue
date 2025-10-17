@@ -25,7 +25,7 @@ const props = defineProps({
     default: null,
   },
 })
-
+const isLoading = ref(false)
 const emit = defineEmits([
   'update:isDialogVisible',
   'notif',
@@ -49,6 +49,7 @@ const items = ref([{
 const onSubmit = async () => {
   refForm.value?.validate().then(async ({ valid }) => {
     if (valid) {
+      isLoading.value = true
       const postData = new FormData();
       postData.append('id', form.value.id ?? '');
       postData.append('sekolah_id', form.value.sekolah_id ?? '');
@@ -73,6 +74,7 @@ const onSubmit = async () => {
 }
 const onReset = () => {
   emit('update:isDialogVisible', false)
+  isLoading.value = false
   form.value = {
     id: null,
     sekolah_id: props.sekolahId,
@@ -90,8 +92,10 @@ const onReset = () => {
   ]
   nextTodoId.value = 1
 }
+const allFoto = ref([])
 watch(props, async () => {
   if (props.isDialogVisible && props.detilData) {
+    allFoto.value = props.detilData?.foto
     form.value = {
       id: props.detilData.pembelajaran_id,
       sekolah_id: props.detilData.sekolah_id,
@@ -112,6 +116,23 @@ const addForm = () => {
     id: nextTodoId.value += 1,
   })
 }
+const delForm = (index, id) => {
+  items.value.splice(index, 1)
+  form.value.foto.splice(id, 1)
+  nextTodoId.value = (items.value.length);
+}
+const delFoto = async (id) => {
+  console.log(id);
+  allFoto.value = allFoto.value.filter(function (obj) {
+    return obj.id !== id;
+  });
+  await $api(`/admin/pembelajaran/delete-foto/${id}`, {
+    method: 'DELETE',
+    onResponse({ request, response, options }) {
+
+    }
+  })
+}
 </script>
 
 <template>
@@ -130,7 +151,7 @@ const addForm = () => {
           </VToolbarTitle>
           <VSpacer />
           <VToolbarItems>
-            <VBtn variant="text" @click="onSubmit">Simpan</VBtn>
+            <VBtn variant="text" @click="onSubmit" :loading="isLoading" :disabled="isLoading">Simpan</VBtn>
           </VToolbarItems>
         </VToolbar>
       </div>
@@ -193,19 +214,34 @@ const addForm = () => {
                 </VCol>
                 <VCol cols="12" md="9">
                   <template v-for="(item, index) in items" :id="item.id">
-                    <div class="mb-2">
+                    <div class="mb-2 d-flex align-center flex-wrap gap-4">
                       <VFileInput accept="image/*" :label="`Gambar ${item.id}`" v-model="form.foto[item.id]"
                         :rules="[requiredValidator]" />
+                      <VBtn color="error" icon="tabler-trash" @click="delForm(index, item.id)" v-if="index > 0"></VBtn>
+                    </div>
+                  </template>
+                  <template v-for="foto in allFoto">
+                    <div class="mb-2 d-flex align-center flex-wrap gap-4">
+                      <v-tooltip bottom>
+                        <template v-slot:activator="{ props }">
+                          <v-btn color="primary" v-bind="props">
+                            {{ foto.foto }}
+                          </v-btn>
+                        </template>
+                        <v-img fluid class="align-end text-white" width="300" :src="`/storage/images/${foto.foto}`" />
+                      </v-tooltip>
+                      <VBtn color="error" icon="tabler-trash" @click="delFoto(foto.id)"></VBtn>
                     </div>
                   </template>
                 </VCol>
-                <!--QuillEditor theme="snow" toolbar="full" v-model:content="form.deskripsi" contentType="html"
-                    :rules="[requiredValidator]" /-->
               </VRow>
             </VCol>
           </VRow>
         </VForm>
       </VCardText>
+      <VOverlay v-model="isLoading" contained persistent scroll-strategy="none" class="align-center justify-center">
+        <VProgressCircular indeterminate />
+      </VOverlay>
     </VCard>
   </VDialog>
 </template>

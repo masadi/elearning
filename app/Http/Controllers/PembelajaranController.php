@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use Illuminate\Http\Request;
 use App\Models\Pembelajaran;
 use App\Models\FotoPembelajaran;
+use Storage;
 
 class PembelajaranController extends Controller
 {
@@ -88,5 +89,12 @@ class PembelajaranController extends Controller
                 ];
             }
         return response()->json($res);
+    }
+    public function delete_foto($id){
+        $foto = FotoPembelajaran::find($id);
+        if($foto){
+            Storage::disk('public')->delete('images/'.$foto->foto);
+            $foto->delete();
+        }
     }
 }

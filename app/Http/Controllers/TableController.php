@@ -257,7 +257,7 @@ class TableController extends Controller
     public function get_pembelajaran(){
         $user = auth()->user();
         $data = [
-            'lists' => Pembelajaran::withWhereHas('mata_pelajaran', function($query) use ($user){
+            'lists' => Pembelajaran::with('foto')->withWhereHas('mata_pelajaran', function($query) use ($user){
                 $query->where(function($query) use ($user){
                     $query->whereHas('sekolah', function($query) use ($user){
                         if($user->sekolah_id){

@@ -76,6 +76,7 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
         Route::group(['prefix' => 'pembelajaran'], function () {
             Route::post('/store', [PembelajaranController::class, 'store']);
             Route::delete('/destroy/{id}', [PembelajaranController::class, 'destroy']);
+            Route::delete('/delete-foto/{id}', [PembelajaranController::class, 'delete_foto']);
         });
         Route::group(['prefix' => 'tes'], function () {
             Route::post('/store', [TesController::class, 'store']);
