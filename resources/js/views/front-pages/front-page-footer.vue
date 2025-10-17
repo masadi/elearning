@@ -1,8 +1,8 @@
 <script setup>
 import footerDarkBg from '@images/front-pages/backgrounds/footer-bg-dark.png'
 import footerLightBg from '@images/front-pages/backgrounds/footer-bg-light.png'
-import appleImg from '@images/front-pages/landing-page/apple-icon.png'
-import googlePlayImg from '@images/front-pages/landing-page/google-play-icon.png'
+import driveIcon from '@images/front-pages/landing-page/drive-icon.png'
+import sourceForge from '@images/front-pages/landing-page/sourceforge-icon.png'
 import { VNodeRenderer } from '@layouts/components/VNodeRenderer'
 import { themeConfig } from '@themeConfig'
 const footerBg = useGenerateImageVariant(footerLightBg, footerDarkBg)
@@ -125,12 +125,12 @@ const demoList = [
 
               <div>
                 <VBtn v-for="(item, index) in [
-                  { image: appleImg, store: 'App Store' },
-                  { image: googlePlayImg, store: 'Google Play' },
-                ]" :key="index" color="#282c3e" height="56" class="mb-4 d-block">
+                  { image: driveIcon, store: 'Google Drive', href: 'https://drive.google.com/file/d/1JroA7voAgXSnykCHYSz2fSG74LJG2TOX/view?usp=sharing' },
+                  { image: sourceForge, store: 'Source Forge', href: 'https://sourceforge.net/projects/e-learning-pkbm/files/eLearning-1.0.0-setup.exe/download' },
+                ]" :key="index" :href="item.href" target="_blank" color="#282c3e" height="56" class="mb-4 d-block">
                   <template #default>
-                    <div class="d-flex align-center gap-x-8 footer-logo-buttons">
-                      <VImg :src="item.image" height="34" width="34" />
+                    <div class="d-flex align-center gap-x-12 footer-logo-buttons">
+                      <VImg :src="item.image" height="40" width="40" class="mt-2" />
                       <div class="d-flex flex-column justify-content-start">
                         <div :class="$vuetify.theme.current.dark ? 'text-body-2' : 'text-white-variant text-body-2'">
                           Download on the
