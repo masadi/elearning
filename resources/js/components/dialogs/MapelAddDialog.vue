@@ -21,8 +21,8 @@ const items = ref([{
 const nextTodoId = ref(2)
 const isFormValid = ref(false)
 const refForm = ref()
-const onSubmit = async() => {
-  refForm.value?.validate().then(async({ valid }) => {
+const onSubmit = async () => {
+  refForm.value?.validate().then(async ({ valid }) => {
     if (valid) {
       const postData = new FormData();
       postData.append('data', 'mapel');
@@ -64,15 +64,8 @@ const delForm = (index) => {
 </script>
 
 <template>
-  <VDialog
-    fullscreen
-    :scrim="false"
-    scrollable
-    content-class="scrollable-dialog"
-    transition="dialog-bottom-transition"
-    :model-value="props.isDialogVisible"
-    @update:model-value="onReset"
-  >
+  <VDialog fullscreen :scrim="false" scrollable content-class="scrollable-dialog" transition="dialog-bottom-transition"
+    :model-value="props.isDialogVisible" @update:model-value="onReset">
     <!-- 👉 Dialog close btn -->
     <!--DialogCloseBtn @click="onReset" /-->
 
@@ -85,7 +78,9 @@ const delForm = (index) => {
           <VToolbarTitle>Tambah Mata Pelajaran</VToolbarTitle>
           <VSpacer />
           <VToolbarItems>
-            <VBtn variant="text" @click="addForm">Tambah Form <VIcon end icon="tabler-copy" /></VBtn>
+            <VBtn variant="text" @click="addForm">Tambah Form
+              <VIcon end icon="tabler-copy" />
+            </VBtn>
             <VBtn variant="text" @click="onSubmit">Simpan</VBtn>
           </VToolbarItems>
         </VToolbar>
@@ -104,7 +99,9 @@ const delForm = (index) => {
               </AppTextField>
             </VCol>
             <VCol md="2">
-              <VBtn color="warning" @click="delForm(index)"><VIcon icon="tabler-x" /> Hapus</VBtn>
+              <VBtn color="warning" @click="delForm(index)">
+                <VIcon icon="tabler-x" /> Hapus
+              </VBtn>
             </VCol>
           </VRow>
         </VForm>

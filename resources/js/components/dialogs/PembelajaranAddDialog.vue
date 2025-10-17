@@ -1,5 +1,4 @@
 <script setup>
-import { QuillEditor } from '@vueup/vue-quill';
 import '@vueup/vue-quill/dist/vue-quill.snow.css';
 import { VForm } from 'vuetify/components/VForm';
 const props = defineProps({
@@ -38,15 +37,31 @@ const form = ref({
   sekolah_id: props.sekolahId,
   mata_pelajaran_id: null,
   judul: null,
-  deskripsi: null,
+  //deskripsi: null,
+  foto: [],
   status: null,
 })
+const nextTodoId = ref(1)
+const items = ref([{
+  id: 1,
+  gambar: null,
+}])
 const onSubmit = async () => {
   refForm.value?.validate().then(async ({ valid }) => {
     if (valid) {
+      const postData = new FormData();
+      postData.append('id', form.value.id ?? '');
+      postData.append('sekolah_id', form.value.sekolah_id ?? '');
+      postData.append('mata_pelajaran_id', form.value.mata_pelajaran_id ?? '');
+      postData.append('judul', form.value.judul ?? '');
+      //postData.append('foto[]', form.value.foto ?? []);
+      items.value.forEach(e => {
+        postData.append(`foto[${e.id}]`, form.value.foto[e.id] ?? '');
+      });
+      postData.append('status', form.value.status ?? '');
       await $api('/admin/pembelajaran/store', {
         method: 'POST',
-        body: form.value,
+        body: postData,
         onResponse({ request, response, options }) {
           let getData = response._data
           onReset()
@@ -63,9 +78,17 @@ const onReset = () => {
     sekolah_id: props.sekolahId,
     mata_pelajaran_id: null,
     judul: null,
-    deskripsi: null,
+    //deskripsi: null,
+    foto: [],
     status: null,
   }
+  items.value = [
+    {
+      id: 1,
+      gambar: null,
+    }
+  ]
+  nextTodoId.value = 1
 }
 watch(props, async () => {
   if (props.isDialogVisible && props.detilData) {
@@ -74,7 +97,8 @@ watch(props, async () => {
       sekolah_id: props.detilData.sekolah_id,
       mata_pelajaran_id: props.detilData.mata_pelajaran_id,
       judul: props.detilData.judul,
-      deskripsi: props.detilData.deskripsi,
+      //deskripsi: props.detilData.deskripsi,
+      foto: [],
       status: props.detilData.status,
     }
   }
@@ -83,6 +107,11 @@ const statusPembelajaran = [
   { title: 'Aktif', value: '1' },
   { title: 'Tidak Aktif', value: '0' },
 ]
+const addForm = () => {
+  items.value.push({
+    id: nextTodoId.value += 1,
+  })
+}
 </script>
 
 <template>
@@ -154,13 +183,24 @@ const statusPembelajaran = [
             </VCol>
             <VCol cols="12">
               <VRow no-gutters>
-                <VCol cols="12" md="3" class="d-flex align-items-center">
-                  <label class="v-label text-body-2 text-high-emphasis" for="deskripsi">Deskripsi Pembelajaran</label>
+                <VCol cols="12" md="3" class="d-flex align-items-center align-start">
+                  <label class="v-label text-body-2 text-high-emphasis" for="deskripsi">
+                    Gambar
+                    <VBtn variant="text" @click="addForm">Tambah Form
+                      <VIcon end icon="tabler-copy" />
+                    </VBtn>
+                  </label>
                 </VCol>
                 <VCol cols="12" md="9">
-                  <QuillEditor theme="snow" toolbar="full" v-model:content="form.deskripsi" contentType="html"
-                    :rules="[requiredValidator]" />
+                  <template v-for="(item, index) in items" :id="item.id">
+                    <div class="mb-2">
+                      <VFileInput accept="image/*" :label="`Gambar ${item.id}`" v-model="form.foto[item.id]"
+                        :rules="[requiredValidator]" />
+                    </div>
+                  </template>
                 </VCol>
+                <!--QuillEditor theme="snow" toolbar="full" v-model:content="form.deskripsi" contentType="html"
+                    :rules="[requiredValidator]" /-->
               </VRow>
             </VCol>
           </VRow>

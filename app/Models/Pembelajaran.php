@@ -22,4 +22,8 @@ class Pembelajaran extends Model
     {
         return $this->hasMany(TesFormatif::class, 'pembelajaran_id', 'pembelajaran_id');
     }
+    public function foto()
+    {
+        return $this->hasMany(FotoPembelajaran::class, 'pembelajaran_id', 'pembelajaran_id');
+    }
 }

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Pembelajaran;
+use App\Models\FotoPembelajaran;
 
 class PembelajaranController extends Controller
 {
@@ -16,6 +17,11 @@ class PembelajaranController extends Controller
             'deskripsi' => 'nullable|string',
             'status' => 'required',
         ]);
+        $gambar = [];
+        foreach(request()->foto as $key => $foto){
+            $upload = $foto->store('images', 'public');
+            $gambar[$key] = basename($upload);
+        }
         if(request()->id){
             $page = Pembelajaran::find(request()->id);
             $page->update([
@@ -31,6 +37,13 @@ class PembelajaranController extends Controller
                 'title' => 'Success!',
                 'text' => 'Pembelajaran berhasil diubah.',
             ];
+            foreach($gambar as $urut => $img){
+                FotoPembelajaran::create([
+                    'pembelajaran_id' => $page->pembelajaran_id,
+                    'foto' => $img,
+                    'urut' => $urut,
+                ]);
+            }
             return response()->json($data);
         } else {
             $page = Pembelajaran::create([
@@ -46,6 +59,13 @@ class PembelajaranController extends Controller
                 'title' => 'Success!',
                 'text' => 'Pembelajaran berhasil ditambahkan.',
             ];
+            foreach($gambar as $urut => $img){
+                FotoPembelajaran::create([
+                    'pembelajaran_id' => $page->pembelajaran_id,
+                    'foto' => $img,
+                    'urut' => $urut,
+                ]);
+            }
             return response()->json($data);
         }
     }

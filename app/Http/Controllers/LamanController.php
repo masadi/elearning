@@ -205,7 +205,7 @@ class LamanController extends Controller
             'mapel' => MataPelajaran::whereHas('sekolah', function($query) use ($request){
                 $query->where('sekolah_id', $request->sekolah_id);
             })->get(),
-            'pembelajaran' => Pembelajaran::whereHas('mata_pelajaran', function($query) use ($request){
+            'pembelajaran' => Pembelajaran::with(['foto'])->whereHas('mata_pelajaran', function($query) use ($request){
                 $query->whereHas('sekolah', function($query) use ($request){
                     $query->where('sekolah_id', $request->sekolah_id);
                 });
