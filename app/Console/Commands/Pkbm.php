@@ -75,7 +75,7 @@ class Pkbm extends Command
                     'name' => $data->nama,
                     'username' => $n,
                     'email' => $n.'@email.com',
-                    'password' => bcrypt($$n),
+                    'password' => bcrypt($n),
                     'avatar' => '/images/avatars/avatar-1.png'
                 ]
             );
