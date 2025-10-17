@@ -218,7 +218,7 @@ class LamanController extends Controller
         return response()->json($data);
     }
     public function get_sekolah(){
-        $data = (auth()->user()->sekolah_id) ? Sekolah::find(auth()->user()->sekolah_id)->first() : NULL;
+        $data = (auth()->user()->sekolah_id) ? Sekolah::find(auth()->user()->sekolah_id) : NULL;
         return response()->json($data);
     }
     public function save_mapping(){
