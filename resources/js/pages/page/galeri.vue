@@ -21,7 +21,7 @@ const getData = async (data) => {
     onResponse({ request, response, options }) {
       let getData = response._data
       isBusy.value = false
-      if (data == 'tentang') {
+      if (data == 'galeri') {
         const chunkSize = 3;
         for (let i = 0; i < getData.length; i += chunkSize) {
           items.value.push(getData.slice(i, i + chunkSize));
