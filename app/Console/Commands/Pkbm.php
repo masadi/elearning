@@ -5,6 +5,8 @@ namespace App\Console\Commands;
 use Illuminate\Console\Command;
 use Illuminate\Support\Facades\Http;
 use App\Models\Sekolah;
+use App\Models\User;
+use App\Models\Role;
 
 class Pkbm extends Command
 {
@@ -44,11 +46,12 @@ class Pkbm extends Command
                 ]
             );
         $npsn = ['P2965775','P9997969','P2970187','P2965937','P9999064','P9996629','P9908815','P9952459','P2965854','P2965547', '69873707'];
+        $role = Role::where('name', 'sekolah')->first();
         foreach ($npsn as $n) {
             $response = Http::get('sync.erapor-smk.net/api/v7/sekolah/'.$n);
             $data = $response->object();
             $data = $data->data;
-            Sekolah::updateOrCreate(
+            $sekolah = Sekolah::updateOrCreate(
                 ['npsn' => $n],
                 [
                     'nama' => $data->nama,
@@ -64,6 +67,21 @@ class Pkbm extends Command
                     'fax' => $data->nomor_fax,
                 ]
             );
+            $user = User::updateOrCreate(
+                [
+                'sekolah_id' => $sekolah->sekolah_d,
+                ],
+                [
+                    'name' => $data->nama,
+                    'username' => $n,
+                    'email' => $n.'@email.com',
+                    'password' => bcrypt($$n),
+                    'avatar' => '/images/avatars/avatar-1.png'
+                ]
+            );
+            if(!$user->hasRole('sekolah')){
+                $user->addRole($role);
+            }
             $this->info('NPSN '.$n.' OK');
         }
     }

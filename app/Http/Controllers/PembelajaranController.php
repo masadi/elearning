@@ -19,9 +19,11 @@ class PembelajaranController extends Controller
             'status' => 'required',
         ]);
         $gambar = [];
-        foreach(request()->foto as $key => $foto){
-            $upload = $foto->store('images', 'public');
-            $gambar[$key] = basename($upload);
+        if(request()->foto){
+            foreach(request()->foto as $key => $foto){
+                $upload = $foto->store('images', 'public');
+                $gambar[$key] = basename($upload);
+            }
         }
         if(request()->id){
             $page = Pembelajaran::find(request()->id);
