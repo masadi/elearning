@@ -199,7 +199,11 @@ class TableController extends Controller
     }
     public function get_program(){
         $data = [
-            'lists' => Program::with('sekolah')->orderBy(request()->sortBy, request()->orderBy)
+            'lists' => Program::where(function($query){
+                if(auth()->user()->sekolah_id){
+                    $query->where('sekolah_id', auth()->user()->sekolah_id);
+                }
+            })->with('sekolah')->orderBy(request()->sortBy, request()->orderBy)
             ->when(request()->q, function($query) {
                 $query->where('nama', 'LIKE', '%' . request()->q . '%');
                 $query->orWhere('deskripsi', 'LIKE', '%' . request()->q . '%');
@@ -245,7 +249,11 @@ class TableController extends Controller
     }
     public function get_slide(){
         $data = [
-            'lists' => Slide::with('sekolah')->orderBy(request()->sortBy, request()->orderBy)
+            'lists' => Slide::where(function($query){
+                if(auth()->user()->sekolah_id){
+                    $query->where('sekolah_id', auth()->user()->sekolah_id);
+                }
+            })->with('sekolah')->orderBy(request()->sortBy, request()->orderBy)
             ->when(request()->q, function($query) {
                 $query->where('content', 'LIKE', '%' . request()->q . '%');
             })->paginate(request()->per_page),
