@@ -69,11 +69,11 @@ class Pkbm extends Command
             );
             $user = User::updateOrCreate(
                 [
-                'sekolah_id' => $sekolah->sekolah_d,
+                    'username' => $n,
                 ],
                 [
                     'name' => $data->nama,
-                    'username' => $n,
+                    'sekolah_id' => $sekolah->sekolah_id,
                     'email' => $n.'@email.com',
                     'password' => bcrypt($n),
                     'avatar' => '/images/avatars/avatar-1.png'
@@ -83,6 +83,8 @@ class Pkbm extends Command
                 $user->addRole($role);
             }
             $this->info('NPSN '.$n.' OK');
+            $this->error('NPSN '.$n.': '.$user->sekolah_id);
+            $this->error('sekolah '.$n.': '.$sekolah->sekolah_id);
         }
     }
 }

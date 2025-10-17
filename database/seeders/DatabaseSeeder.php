@@ -16,21 +16,29 @@ class DatabaseSeeder extends Seeder
     {
         // User::factory(10)->create();
         Artisan::call('app:pkbm');
-        User::factory()->create([
-            'name' => 'Administrator',
+        User::updateOrCreate(
+            [
             'username' => 'administrator',
-            'email' => config('app.email'),
-            'password' => bcrypt('Qwerty123'),
-            'avatar' => '/images/avatars/avatar-1.png'
-        ]);
-        User::factory()->create([
+            ],
+            [
+                'name' => 'Administrator',
+                'email' => config('app.email'),
+                'password' => bcrypt('Qwerty123'),
+                'avatar' => '/images/avatars/avatar-1.png'
+            ]
+        );
+        User::updateOrCreate(
+            [
             'sekolah_id' => '0e8b732a-1324-49f7-b135-126272e01b65',
-            'name' => 'PKBM Demo',
-            'username' => 'sekolah',
-            'email' => 'sekolah@email.com',
-            'password' => bcrypt('Qwerty123'),
-            'avatar' => '/images/avatars/avatar-1.png'
-        ]);
+            ],
+            [
+                'name' => 'PKBM Demo',
+                'username' => 'sekolah',
+                'email' => 'sekolah@email.com',
+                'password' => bcrypt('Qwerty123'),
+                'avatar' => '/images/avatars/avatar-1.png'
+            ]
+        );
         $this->call(LaratrustSeeder::class);
         Artisan::call('app:akses');
     }
