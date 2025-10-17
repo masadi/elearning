@@ -27,7 +27,7 @@ const props = defineProps({
     default: null,
   },
 })
-
+const isLoading = ref(false)
 const emit = defineEmits([
   'update:isDialogVisible',
   'notif',
@@ -47,6 +47,7 @@ const form = ref({
 const onSubmit = async () => {
   refForm.value?.validate().then(async ({ valid }) => {
     if (valid) {
+      isLoading.value = true
       await $api('/admin/laman/store', {
         method: 'POST',
         body: form.value,
@@ -61,6 +62,7 @@ const onSubmit = async () => {
 }
 const onReset = () => {
   emit('update:isDialogVisible', false)
+  isLoading.value = false
   form.value = {
     type: 'galeri',
     id: null,

@@ -26,7 +26,7 @@ const props = defineProps({
     default: null,
   },
 })
-
+const isLoading = ref(false)
 const emit = defineEmits([
   'update:isDialogVisible',
   'notif',
@@ -58,6 +58,7 @@ const kunci = [
 const onSubmit = async () => {
   refForm.value?.validate().then(async ({ valid }) => {
     if (valid) {
+      isLoading.value = true
       await $api('/admin/tes/store', {
         method: 'POST',
         body: form.value,
@@ -72,6 +73,7 @@ const onSubmit = async () => {
 }
 const onReset = () => {
   emit('update:isDialogVisible', false)
+  isLoading.value = false
   form.value = {
     id: null,
     pembelajaran_id: null,

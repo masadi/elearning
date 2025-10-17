@@ -27,7 +27,7 @@ const props = defineProps({
     default: null,
   },
 })
-
+const isLoading = ref(false)
 const emit = defineEmits([
   'update:isDialogVisible',
   'notif',
@@ -45,6 +45,7 @@ const form = ref({
 const onSubmit = async () => {
   refForm.value?.validate().then(async ({ valid }) => {
     if (valid) {
+      isLoading.value = true
       const postData = new FormData();
       postData.append('id', form.value.id);
       postData.append('sekolah_id', form.value.sekolah_id);
@@ -69,6 +70,7 @@ const onSubmit = async () => {
 }
 const onReset = () => {
   emit('update:isDialogVisible', false)
+  isLoading.value = false
   form.value = {
     id: '',
     sekolah_id: null,
