@@ -96,6 +96,9 @@ const allFoto = ref([])
 watch(props, async () => {
   if (props.isDialogVisible && props.detilData) {
     allFoto.value = props.detilData?.foto
+    if (allFoto.value.length) {
+      items.value = []
+    }
     form.value = {
       id: props.detilData.pembelajaran_id,
       sekolah_id: props.detilData.sekolah_id,
@@ -213,13 +216,6 @@ const delFoto = async (id) => {
                   </label>
                 </VCol>
                 <VCol cols="12" md="9">
-                  <template v-for="(item, index) in items" :id="item.id">
-                    <div class="mb-2 d-flex align-center flex-wrap gap-4">
-                      <VFileInput accept="image/*" :label="`Gambar ${item.id}`" v-model="form.foto[item.id]"
-                        :rules="[requiredValidator]" />
-                      <VBtn color="error" icon="tabler-trash" @click="delForm(index, item.id)" v-if="index > 0"></VBtn>
-                    </div>
-                  </template>
                   <template v-for="foto in allFoto">
                     <div class="mb-2 d-flex align-center flex-wrap gap-4">
                       <v-tooltip bottom>
@@ -231,6 +227,13 @@ const delFoto = async (id) => {
                         <v-img fluid class="align-end text-white" width="300" :src="`/storage/images/${foto.foto}`" />
                       </v-tooltip>
                       <VBtn color="error" icon="tabler-trash" @click="delFoto(foto.id)"></VBtn>
+                    </div>
+                  </template>
+                  <template v-for="(item, index) in items" :id="item.id">
+                    <div class="mb-2 d-flex align-center flex-wrap gap-4">
+                      <VFileInput accept="image/*" :label="`Gambar`" v-model="form.foto[item.id]"
+                        :rules="[requiredValidator]" />
+                      <VBtn color="error" icon="tabler-trash" @click="delForm(index, item.id)" v-if="index > 0"></VBtn>
                     </div>
                   </template>
                 </VCol>
