@@ -125,8 +125,8 @@ const demoList = [
 
               <div>
                 <VBtn v-for="(item, index) in [
-                  { image: driveIcon, store: 'Google Drive', href: 'https://drive.google.com/file/d/1JroA7voAgXSnykCHYSz2fSG74LJG2TOX/view?usp=sharing' },
-                  { image: sourceForge, store: 'Source Forge', href: 'https://sourceforge.net/projects/e-learning-pkbm/files/eLearning-1.0.0-setup.exe/download' },
+                  { image: driveIcon, store: 'Google Drive', href: 'https://drive.google.com/file/d/1KD8SAR6SHiGXKRi66wPOtCEmiztnu25t/view?usp=sharing' },
+                  { image: sourceForge, store: 'Source Forge', href: 'https://sourceforge.net/projects/e-learning-pkbm/files/eLearning%20PKBM-1.0.0-setup.exe/download' },
                 ]" :key="index" :href="item.href" target="_blank" color="#282c3e" height="56" class="mb-4 d-block">
                   <template #default>
                     <div class="d-flex align-center gap-x-12 footer-logo-buttons">

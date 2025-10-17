@@ -1,0 +1,1 @@
+import{A as u,E as i,n as f}from"./main-BT-OS6iM.js";const m=(e,a,s,o,r=!1)=>{const n=u(),{global:t}=i();return f(()=>t.name.value==="light"?n.skin==="bordered"&&r?s:e:t.name.value==="dark"?n.skin==="bordered"&&r?o:a:e)};export{m as u};
