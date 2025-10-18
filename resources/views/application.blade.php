@@ -51,6 +51,8 @@
         var app_name = '{{ config('app.name') }}'
         var app_nama = '{{ config('app.nama') }}'
         var app_url = '{{ config('app.url') }}'
+        var link_drive = '{{ config('app.link_drive') }}'
+        var link_sc = '{{ config('app.link_sc') }}'
     </script>
 </body>
 

@@ -16,6 +16,8 @@ return [
     'name' => env('APP_NAME', 'Laravel'),
     'nama' => env('APP_NAMA', 'Laravel'),
     'email' => env('APP_EMAIL', 'admin@domain.com'),
+    'link_drive' => env('APP_DRIVE', 'https://drive.google.com/file/d/17UXL30irOwO0YGovxe8XFD4tGeEkqcI3/view?usp=sharing'),
+    'link_sc' => env('APP_SOURCEFORGE', 'https://sourceforge.net/projects/e-learning-pkbm/files/eLearning-1.0.0-setup.exe/download'),
 
     /*
     |--------------------------------------------------------------------------

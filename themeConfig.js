@@ -12,6 +12,8 @@ export const { themeConfig, layoutConfig } = defineThemeConfig({
     title: app_name,
     name: app_name,
     url: app_url,
+	link_drive: link_drive,
+    link_sc: link_sc,
     logo: h('div', { innerHTML: logo, style: 'line-height:0; color: rgb(var(--v-global-theme-primary))' }),
     contentWidth: ContentWidth.Boxed,
     contentLayoutNav: useCookie('layout').value ?? AppContentLayoutNav.Vertical,
