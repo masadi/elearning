@@ -49,4 +49,8 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
+    public function sekolah()
+    {
+        return $this->belongsTo(Sekolah::class, 'sekolah_id', 'sekolah_id');
+    }
 }

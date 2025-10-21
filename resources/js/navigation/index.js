@@ -125,14 +125,77 @@ export default [{
       },
     ],
   },
-  /*{
-    title: 'Materi',
-    to: 'materi',
-    icon: { icon: 'tabler-checklist' },
-    action: 'create',
-    subject: 'materi-create',
-  },
   {
+    title: 'Buku Induk',
+    icon: {
+      icon: 'tabler-book'
+    },
+    children: [{
+        title: 'Kelompok Mapel',
+        to: 'buku-induk-kelompok-mapel',
+        icon: {
+          icon: 'tabler-hand-finger-right'
+        },
+        action: 'read',
+        subject: 'buku-induk-read',
+      },
+      {
+        title: 'Mata Pelajaran',
+        to: 'buku-induk-mata-pelajaran',
+        icon: {
+          icon: 'tabler-hand-finger-right'
+        },
+        action: 'read',
+        subject: 'buku-induk-read',
+      },
+      {
+        title: 'Peserta Didik',
+        to: 'buku-induk-peserta-didik',
+        icon: {
+          icon: 'tabler-hand-finger-right'
+        },
+        action: 'read',
+        subject: 'buku-induk-read',
+      },
+      {
+        title: 'Rombongan Belajar',
+        to: 'buku-induk-rombongan-belajar',
+        icon: {
+          icon: 'tabler-hand-finger-right'
+        },
+        action: 'read',
+        subject: 'buku-induk-read',
+      },
+      {
+        title: 'Input Nilai',
+        to: 'buku-induk-input-nilai',
+        icon: {
+          icon: 'tabler-hand-finger-right'
+        },
+        action: 'read',
+        subject: 'buku-induk-read',
+      },
+      {
+        title: 'Cetak',
+        to: 'buku-induk-cetak',
+        icon: {
+          icon: 'tabler-hand-finger-right'
+        },
+        action: 'read',
+        subject: 'buku-induk-read',
+      },
+    ],
+  },
+  /*{
+    title: 'Buku Induk',
+    to: 'buku-induk',
+    icon: {
+      icon: 'tabler-book'
+    },
+    action: 'read',
+    subject: 'buku-induk-read',
+  },*/
+  /*{
     title: 'Dokumen',
     to: 'dokumen',
     icon: { icon: 'tabler-checklist' },
