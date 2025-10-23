@@ -11,6 +11,7 @@ use App\Http\Controllers\LamanController;
 use App\Http\Controllers\KontenController;
 use App\Http\Controllers\PembelajaranController;
 use App\Http\Controllers\TesController;
+use App\Http\Controllers\IndukController;
 
 Route::group(['prefix' => 'auth'], function () {
     Route::post('login', [AuthController::class, 'login']);
@@ -82,5 +83,11 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
             Route::post('/store', [TesController::class, 'store']);
             Route::delete('/destroy/{id}', [TesController::class, 'destroy']);
         });
+    });
+    Route::group(['prefix' => 'induk'], function () {
+        Route::get('/', [IndukController::class, 'index']);
+        Route::post('/store', [IndukController::class, 'store']);
+        Route::post('/import', [IndukController::class, 'import']);
+        Route::delete('/destroy/{data}/{id}', [IndukController::class, 'destroy']);
     });
 });

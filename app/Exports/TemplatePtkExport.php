@@ -30,6 +30,13 @@ class TemplatePtkExport implements FromView, WithEvents
             AfterSheet::class    => function(AfterSheet $event) {
                 for ($i = 2; $i < 50; $i++){
                     $this->setList($event, $i, 'E', 'L,P');
+                    $this->setList($event, $i, 'H', 'Islam,Kristen,Katholik,Hindu,Buddha,Kong Hu Chu,Kepercayaan kpd Tuhan YME,Lainnya');
+                    $this->setList($event, $i, 'L', 'Islam,Kristen,Katholik,Hindu,Buddha,Kong Hu Chu,Kepercayaan kpd Tuhan YME,Lainnya');
+                    $this->setList($event, $i, 'M', 'Tidak bekerja,Nelayan,Petani,Peternak,PNS/TNI/Polri,Karyawan Swasta,Pedagang Kecil,Pedagang Besar,Wiraswasta,Wirausaha,Buruh,Pensiunan,Tenaga Kerja Indonesia,Karyawan BUMN,Tidak dapat diterapkan,Sudah Meninggal,Lainnya');
+                    $this->setList($event, $i, 'O', 'Islam,Kristen,Katholik,Hindu,Buddha,Kong Hu Chu,Kepercayaan kpd Tuhan YME,Lainnya');
+                    $this->setList($event, $i, 'P', 'Tidak bekerja,Nelayan,Petani,Peternak,PNS/TNI/Polri,Karyawan Swasta,Pedagang Kecil,Pedagang Besar,Wiraswasta,Wirausaha,Buruh,Pensiunan,Tenaga Kerja Indonesia,Karyawan BUMN,Tidak dapat diterapkan,Sudah Meninggal,Lainnya');
+                    $this->setList($event, $i, 'R', 'Islam,Kristen,Katholik,Hindu,Buddha,Kong Hu Chu,Kepercayaan kpd Tuhan YME,Lainnya');
+                    $this->setList($event, $i, 'S', 'Tidak bekerja,Nelayan,Petani,Peternak,PNS/TNI/Polri,Karyawan Swasta,Pedagang Kecil,Pedagang Besar,Wiraswasta,Wirausaha,Buruh,Pensiunan,Tenaga Kerja Indonesia,Karyawan BUMN,Tidak dapat diterapkan,Sudah Meninggal,Lainnya');
                 }
             },
         ];
@@ -37,6 +44,6 @@ class TemplatePtkExport implements FromView, WithEvents
 
     public function view(): View
     {
-        return view('unduhan.template_ptk');
+        return view('unduhan.template_pd');
     }
 }

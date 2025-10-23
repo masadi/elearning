@@ -8,7 +8,7 @@ use Excel;
 
 class ExportController extends Controller
 {
-    public function template_ptk(){
-        return Excel::download(new TemplatePtkExport, 'template-ptk.xlsx');
+    public function template_pd(){
+        return Excel::download(new TemplatePtkExport, 'template-pd.xlsx');
     }
 }

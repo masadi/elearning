@@ -6,7 +6,8 @@ use Illuminate\Console\Command;
 use App\Models\Permission;
 use App\Models\Role;
 use App\Models\User;
-
+use App\Models\IndukAgama as Agama;
+use App\Models\IndukPekerjaan as Pekerjaan;
 class Induk extends Command
 {
     /**
@@ -48,6 +49,12 @@ class Induk extends Command
                     $user->givePermission($new);
                 }
             }
+        }
+        foreach(['Islam', 'Kristen', 'Katholik', 'Hindu', 'Buddha', 'Kong Hu Chu', 'Kepercayaan kpd Tuhan YME', 'Lainnya'] as $a){
+            Agama::updateOrCreate(['nama' => $a]);
+        }
+        foreach(['Tidak bekerja', 'Nelayan', 'Petani', 'Peternak', 'PNS/TNI/Polri', 'Karyawan Swasta', 'Pedagang Kecil', 'Pedagang Besar', 'Wiraswasta', 'Wirausaha', 'Buruh', 'Pensiunan', 'Tenaga Kerja Indonesia', 'Karyawan BUMN', 'Tidak dapat diterapkan', 'Sudah Meninggal', 'Lainnya'] as $b){
+            Pekerjaan::updateOrCreate(['nama' => $b]);
         }
     }
 }
