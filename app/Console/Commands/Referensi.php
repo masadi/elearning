@@ -3,8 +3,8 @@
 namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
-use App\Models\TahunAjaran;
-use App\Models\Semester;
+use App\Models\IndukTahunAjaran as TahunAjaran;
+use App\Models\IndukSemester as Semester;
 
 class Referensi extends Command
 {
