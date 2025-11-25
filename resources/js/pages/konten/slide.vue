@@ -58,7 +58,7 @@ const {
   query: {
     data: kontenType,
     q: searchQuery,
-    itemsPerPage,
+    per_page: itemsPerPage,
     page,
     sortBy,
     orderBy,

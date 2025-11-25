@@ -52,7 +52,7 @@ const {
     query: {
         data: pageType,
         q: searchQuery,
-        itemsPerPage,
+        per_page: itemsPerPage,
         page,
         sortBy,
         orderBy,

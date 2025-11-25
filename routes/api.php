@@ -89,5 +89,7 @@ Route::group(['middleware' => 'auth:sanctum'], function () {
         Route::post('/store', [IndukController::class, 'store']);
         Route::post('/import', [IndukController::class, 'import']);
         Route::delete('/destroy/{data}/{id}', [IndukController::class, 'destroy']);
+        Route::get('/get-data', [IndukController::class, 'get_data']);
+        Route::post('/get-data', [IndukController::class, 'get_data']);
     });
 });

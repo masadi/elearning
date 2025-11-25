@@ -62,7 +62,7 @@ const {
   query: {
     data: 'ptk',
     q: searchQuery,
-    itemsPerPage,
+    per_page: itemsPerPage,
     page,
     sortBy,
     orderBy,

@@ -107,11 +107,15 @@ const importData = async (val) => {
                 <th>alamat</th>
                 <th>telepon</th>
                 <th>nama_ayah</th>
+                <th>agama_ayah</th>
                 <th>pekerjaan_ayah</th>
                 <th>nama_ibu</th>
+                <th>agama_ibu</th>
                 <th>pekerjaan_ibu</th>
                 <th>nama_wali</th>
+                <th>agama_wali</th>
                 <th>pekerjaan_wali</th>
+                <th>alamat_wali</th>
                 <th>sekolah_asal</th>
                 <th>tanggal_diterima</th>
                 <th>nomor_surat_pindah</th>
@@ -127,8 +131,12 @@ const importData = async (val) => {
                     {{ value }}
                   </template>
                   <template v-else>
-                    <AppTextField v-model="item[key]" :rules="[requiredValidator]" v-if="key != 'nipd'" />
-                    <AppTextField v-model="item[key]" v-else />
+                    <template v-if="key != 'nipd'">
+                      <AppTextField v-model="item[key]" :rules="[requiredValidator]" />
+                    </template>
+                    <template v-else>
+                      <AppTextField v-model="item[key]" />
+                    </template>
                   </template>
                 </td>
               </tr>

@@ -68,7 +68,7 @@ const {
   query: {
     data: 'pembelajaran',
     q: searchQuery,
-    itemsPerPage,
+    per_page: itemsPerPage,
     page,
     sortBy,
     orderBy,

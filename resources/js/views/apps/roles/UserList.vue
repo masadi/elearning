@@ -57,7 +57,7 @@ const {
     data: 'sekolah',
     q: searchQuery,
     role_id: selectedRole,
-    itemsPerPage,
+    per_page: itemsPerPage,
     page,
     sortBy,
     orderBy,

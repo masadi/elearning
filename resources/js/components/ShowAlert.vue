@@ -38,14 +38,14 @@ const closeNotif = () => {
   emit('update:isSnackbarClicked', true)
 }
 watch(props, () => {
-  if(props.isSnackbarVisible){
-    if(props.disableTimeOut){
-      setTimeout(function(){ 
+  if (props.isSnackbarVisible) {
+    if (props.disableTimeOut) {
+      setTimeout(function () {
         emit('update:isSnackbarVisible', false)
       }, 4000);
     }
   }
-  
+
 })
 </script>
 

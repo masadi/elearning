@@ -55,7 +55,7 @@ const {
     query: {
         data: 'kelompok',
         q: searchQuery,
-        itemsPerPage,
+        per_page: itemsPerPage,
         page,
         sortBy,
         orderBy,

@@ -189,6 +189,19 @@ class IndukController extends Controller
         ];
         return response()->json($data);
     }
+    private function get_rombongan_belajar(){
+        $user = auth()->user();
+        $data = [
+            'lists' => RombonganBelajar::withCount(['anggota_rombel', 'pembelajaran'])->where('sekolah_id', $user->sekolah_id)->where('semester_id', semester_id())->orderBy(request()->sortBy, request()->orderBy)
+            ->when(request()->q, function($query) {
+                $query->where('nama', 'LIKE', '%' . request()->q . '%');
+            })->paginate(request()->per_page),
+            'sekolah_id' => $user->sekolah_id,
+            'agama' => Agama::all(),
+            'pekerjaan' => Pekerjaan::all(),
+        ];
+        return response()->json($data);
+    }
     public function import(){
         $file_excel = request()->file_excel->store('files', 'public');
         $data = ['imported_data' => $this->imported_data($file_excel)];
@@ -275,10 +288,10 @@ class IndukController extends Controller
                         'kerja_ayah' => $kerja_ayah?->id,
                         'kerja_ibu' => $kerja_ibu?->id,
                         'agama_ayah' => $agama_ayah?->id,
-                        'agama_ibu' => $agama_ibu->id,
+                        'agama_ibu' => $agama_ibu?->id,
                         'nama_wali' => $item['nama_wali'],
-                        'kerja_wali' => $kerja_wali->id,
-                        'agama_wali' => $agama_wali->id,
+                        'kerja_wali' => $kerja_wali?->id,
+                        'agama_wali' => $agama_wali?->id,
                         'alamat_wali' => $item['alamat_wali'],
                         'sekolah_asal' => $item['sekolah_asal'],
                         'diterima' => $item['tanggal_diterima'],
@@ -331,6 +344,323 @@ class IndukController extends Controller
                 'icon' => 'tabler-xbox-x',
                 'title' => 'Failed!',
                 'text' => 'Data tidak ditemukan.',
+            ];
+        }
+        return response()->json($data);
+    }
+    private function save_rombongan_belajar(){
+        request()->validate([
+            'nama' => 'required',
+            'tingkat' => 'required',
+        ]);
+        $item = new RombonganBelajar;
+        if(request()->id){
+            $item = $item->find(request()->id);
+        }
+        $item->sekolah_id = request()->sekolah_id;
+        $item->semester_id = semester_id();
+        $item->nama = request()->nama;
+        $item->tingkat = request()->tingkat;
+        $item->save();
+        return response()->json([
+            'color' => 'success',
+            'icon' => 'tabler-check',
+            'title' => 'Success!',
+            'text' => 'Data berhasil disimpan.',
+        ]);
+    }
+    public function get_data(){
+        $function = 'get_'.str_replace('-', '_', request()->data);
+        try {
+            return $this->{$function}();
+        } catch (\Throwable $th) {
+            $data = [
+                'color' => 'error',
+                'icon' => 'tabler-xbox-x',
+                'title' => 'Failed!',
+                'text' => $th->getMessage(),
+            ];
+            return response()->json($data);
+        }
+    }
+    private function get_anggota(){
+        $data = PesertaDidik::where(function($query){
+                $query->where('sekolah_id', auth()->user()->sekolah_id);
+                $query->whereHas('anggota_rombel', function($q){
+                    $q->where('rombongan_belajar_id', request()->rombongan_belajar_id);
+                });
+            })->orderBy('nama')->when(request()->q, function($query) {
+                $query->where('nama', 'LIKE', '%' . request()->q . '%');
+            })->paginate(request()->per_page);
+        return response()->json($data);
+    }
+    private function get_non_anggota(){
+        $data = PesertaDidik::where('sekolah_id', auth()->user()->sekolah_id)->whereDoesntHave('anggota_rombel', function($q){
+                $q->whereHas('rombongan_belajar', function($qq){
+                    $qq->where('semester_id', semester_id());
+                });
+            })->orderBy('nama')->when(request()->q, function($query) {
+                $query->where('nama', 'LIKE', '%' . request()->q . '%');
+            })->paginate(request()->per_page);
+        return response()->json($data);
+    }
+    private function save_add_all(){
+        $insert = 0;
+        foreach(request()->ids as $pd_id){
+            $insert++;
+            AnggotaRombel::updateOrCreate(
+                [
+                    'rombongan_belajar_id' => request()->rombongan_belajar_id,
+                    'peserta_didik_id' => $pd_id,
+                ]
+            );
+        }
+        if($insert){
+            $data = [
+                'color' => 'success',
+                'icon' => 'tabler-circle-check',
+                'title' => 'Success!',
+                'text' => 'Anggota Rombel berhasil ditambahkan!',
+            ];
+        } else {
+            $data = [
+                'color' => 'error',
+                'icon' => 'tabler-xbox-x',
+                'title' => 'Failed!',
+                'text' => 'Tidak ada anggota ditambahkan!',
+            ];
+        }
+        return response()->json($data);
+    }
+    private function save_add_anggota(){
+        AnggotaRombel::updateOrCreate(
+            [
+                'rombongan_belajar_id' => request()->rombongan_belajar_id,
+                'peserta_didik_id' => request()->id,
+            ]
+        );
+        $data = [
+                'color' => 'success',
+                'icon' => 'tabler-circle-check',
+                'title' => 'Success!',
+                'text' => 'Anggota Rombel berhasil ditambahkan!',
+            ];
+        return response()->json($data);
+    }
+    private function save_remove_anggota(){
+        $item = AnggotaRombel::where('rombongan_belajar_id', request()->rombongan_belajar_id)
+            ->where('peserta_didik_id', request()->id)
+            ->first();
+        if($item){
+            if($item->delete()){
+                $data = [
+                    'color' => 'success',
+                    'icon' => 'tabler-check',
+                    'title' => 'Success!',
+                    'text' => 'Anggota Rombel berhasil dihapus.',
+                ];
+            } else {
+                $data = [
+                    'color' => 'error',
+                    'icon' => 'tabler-xbox-x',
+                    'title' => 'Failed!',
+                    'text' => 'Anggota Rombel gagal dihapus.',
+                ];
+            }
+        } else {
+            $data = [
+                'color' => 'error',
+                'icon' => 'tabler-xbox-x',
+                'title' => 'Failed!',
+                'text' => 'Data tidak ditemukan.',
+            ];
+        }
+        return response()->json($data);
+    }
+    private function save_remove_all(){
+        $delete = AnggotaRombel::whereIn('peserta_didik_id', request()->ids)
+            ->where('rombongan_belajar_id', request()->rombongan_belajar_id)
+            ->delete();
+        if($delete){
+            $data = [
+                'color' => 'success',
+                'icon' => 'tabler-check',
+                'title' => 'Success!',
+                'text' => 'Anggota Rombel berhasil dihapus.',
+            ];
+        } else {
+            $data = [
+                'color' => 'error',
+                'icon' => 'tabler-xbox-x',
+                'title' => 'Failed!',
+                'text' => 'Anggota Rombel gagal dihapus.',
+            ];
+        }
+        return response()->json($data);
+    }
+    private function get_pembelajaran(){
+        $data = [
+            'pembelajaran' => Pembelajaran::where('rombongan_belajar_id', request()->rombongan_belajar_id)->orderBy('kelompok_id')->orderBy('nomor_urut')->get(),
+            'mata_pelajaran' => MataPelajaran::with(['pembelajaran' => function($query){
+                $query->where('rombongan_belajar_id', request()->rombongan_belajar_id);
+            }])->where('sekolah_id', request()->sekolah_id)->orderBy('id')->get(),
+            'kelompok' => Kelompok::where('sekolah_id', request()->sekolah_id)->orderBy('id')->get(),
+            'rombel' => RombonganBelajar::find(request()->rombongan_belajar_id),
+        ];
+        return response()->json($data);
+    }
+    private function save_pembelajaran(){
+        $insert = 0;
+        foreach(request()->mata_pelajaran_id as $mata_pelajaran_id){
+            $insert++;
+            if(request()->nomor_urut[$mata_pelajaran_id]){
+                Pembelajaran::updateOrCreate(
+                [
+                    'rombongan_belajar_id' => request()->rombongan_belajar_id,
+                    'mata_pelajaran_id' => $mata_pelajaran_id,
+                ],
+                [
+                    'kelompok_id' => request()->kelompok_id[$mata_pelajaran_id],
+                    'nomor_urut' => request()->nomor_urut[$mata_pelajaran_id],
+                ]
+            );
+            }
+        }
+        if($insert){
+            $data = [
+                'color' => 'success',
+                'icon' => 'tabler-circle-check',
+                'title' => 'Success!',
+                'text' => 'Pembelajaran berhasil disimpan!',
+            ];
+        } else {
+            $data = [
+                'color' => 'error',
+                'icon' => 'tabler-xbox-x',
+                'title' => 'Failed!',
+                'text' => 'Tidak ada pembelajaran disimpan!',
+            ];
+        }
+        return response()->json($data);
+    }
+    private function delete_pembelajaran($id){
+        $item = Pembelajaran::find($id);
+        if($item){
+            if($item->delete()){
+                $data = [
+                    'color' => 'success',
+                    'icon' => 'tabler-check',
+                    'title' => 'Success!',
+                    'text' => 'Data berhasil dihapus.',
+                ];
+            } else {
+                $data = [
+                    'color' => 'error',
+                    'icon' => 'tabler-xbox-x',
+                    'title' => 'Failed!',
+                    'text' => 'Data gagal dihapus.',
+                ];
+            }
+        } else {
+            $data = [
+                'color' => 'error',
+                'icon' => 'tabler-xbox-x',
+                'title' => 'Failed!',
+                'text' => 'Data tidak ditemukan.',
+            ];
+        }
+        return response()->json($data);
+    }
+    private function delete_rombongan_belajar($id){
+        $item = RombonganBelajar::find($id);
+        if($item){
+            if($item->delete()){
+                $data = [
+                    'color' => 'success',
+                    'icon' => 'tabler-check',
+                    'title' => 'Success!',
+                    'text' => 'Data berhasil dihapus.',
+                ];
+            } else {
+                $data = [
+                    'color' => 'error',
+                    'icon' => 'tabler-xbox-x',
+                    'title' => 'Failed!',
+                    'text' => 'Data gagal dihapus.',
+                ];
+            }
+        } else {
+            $data = [
+                'color' => 'error',
+                'icon' => 'tabler-xbox-x',
+                'title' => 'Failed!',
+                'text' => 'Data tidak ditemukan.',
+            ];
+        }
+        return response()->json($data);
+    }
+    private function get_nilai(){
+        $data = [
+            'semester' => Semester::orderBy('semester_id', 'DESC')->get(),
+            'sekolah_id' => auth()->user()->sekolah_id,
+            'semester_id' => semester_id(),
+        ];
+        return response()->json($data);
+    }
+    private function get_rombel(){
+        $data = RombonganBelajar::where(function($query){
+            $query->where('tingkat', request()->tingkat);
+            $query->where('sekolah_id', request()->sekolah_id);
+            $query->where('semester_id', request()->semester_id);
+        })->orderBy('nama')->get();
+        return response()->json($data);
+    }
+    public function get_mapel(){
+        $data = Pembelajaran::with('mata_pelajaran')->where(function($query){
+                $query->where('rombongan_belajar_id', request()->rombongan_belajar_id);
+                $query->whereNotNull('kelompok_id');
+                $query->whereNotNull('nomor_urut');
+            })->orderBy('kelompok_id')->orderBy('nomor_urut')->get();
+        return response()->json($data);
+    }
+    public function get_siswa(){
+        $data = PesertaDidik::withWhereHas('anggota_rombel', function($query){
+                $query->where('rombongan_belajar_id', request()->rombongan_belajar_id);
+                $query->with(['nilai' => function($query){
+                    $query->where('pembelajaran_id', request()->pembelajaran_id);
+                }]);
+            })->orderBy('nama')->get();
+        return response()->json($data);
+    }
+    public function save_nilai(){
+        $insert = 0;
+        foreach(request()->nilai as $anggota_rombel_id => $nilai){
+            if($nilai){
+                $insert++;
+                Nilai::updateOrCreate(
+                    [
+                        'anggota_rombel_id' => $anggota_rombel_id,
+                        'pembelajaran_id' => request()->pembelajaran_id,
+                    ],
+                    [
+                        'nilai' => $nilai,
+                    ]
+                );
+            }
+        }
+        if($insert){
+            $data = [
+                'color' => 'success',
+                'icon' => 'tabler-circle-check',
+                'title' => 'Success!',
+                'text' => 'Nilai berhasil ditambahkan!',
+            ];
+        } else {
+            $data = [
+                'color' => 'error',
+                'icon' => 'tabler-xbox-x',
+                'title' => 'Failed!',
+                'text' => 'Tidak ada Nilai ditambahkan!',
             ];
         }
         return response()->json($data);

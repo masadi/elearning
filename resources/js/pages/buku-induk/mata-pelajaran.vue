@@ -59,7 +59,7 @@ const {
     query: {
         data: 'mata-pelajaran',
         q: searchQuery,
-        itemsPerPage,
+        per_page: itemsPerPage,
         page,
         sortBy,
         orderBy,

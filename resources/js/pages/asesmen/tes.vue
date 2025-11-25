@@ -62,7 +62,7 @@ const {
   query: {
     data: 'tes',
     q: searchQuery,
-    itemsPerPage,
+    per_page: itemsPerPage,
     page,
     sortBy,
     orderBy,

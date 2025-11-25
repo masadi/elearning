@@ -21,7 +21,7 @@ const sortBy = ref('tingkat')
 const orderBy = ref('ASC')
 
 const updateOptions = options => {
-  if(options.sortBy.length){
+  if (options.sortBy.length) {
     sortBy.value = options.sortBy[0]?.key
     orderBy.value = options.sortBy[0]?.order
   }
@@ -60,15 +60,15 @@ const {
   query: {
     data: 'rombel',
     q: searchQuery,
-    itemsPerPage,
+    per_page: itemsPerPage,
     page,
     sortBy,
     orderBy,
   },
 }))
-if(getData.value.color){
-    notif.value = getData.value
-    isAlertVisible.value = true
+if (getData.value.color) {
+  notif.value = getData.value
+  isAlertVisible.value = true
 }
 const items = computed(() => getData.value.lists.data)
 const total_item = computed(() => getData.value.lists.total)
@@ -82,8 +82,8 @@ const deleteData = async id => {
   isConfirmDialogVisible.value = true
 }
 const confirmDelete = async (val) => {
-  if(val){
-    await $api(`/referensi/destroy/mapel/${ deletedId.value }`, { 
+  if (val) {
+    await $api(`/referensi/destroy/mapel/${deletedId.value}`, {
       method: 'DELETE',
       onResponse({ request, response, options }) {
         let getData = response._data
@@ -97,13 +97,13 @@ const confirmDelete = async (val) => {
 }
 const isDetilDataVisible = ref(false)
 const detilData = ref()
-const detilDataData = async(val) => {
+const detilDataData = async (val) => {
   isDetilDataVisible.value = true
   detilData.value = val
 }
 watch(isAlertVisible, () => {
   if (!isAlertVisible.value)
-  fetchData()
+    fetchData()
 })
 const updateData = async userData => {
   console.log(userData);
@@ -129,60 +129,46 @@ const updateData = async userData => {
     <VCard>
       <VCardText class="d-flex flex-wrap gap-4">
         <div class="d-flex gap-2 align-center">
-          <AppSelect
-            :model-value="itemsPerPage"
-            :items="[
-              { value: 10, title: '10' },
-              { value: 25, title: '25' },
-              { value: 50, title: '50' },
-              { value: 100, title: '100' },
-              { value: -1, title: 'All' },
-            ]"
-            style="inline-size: 5.5rem;"
-            @update:model-value="itemsPerPage = parseInt($event, 10)"
-          />
+          <AppSelect :model-value="itemsPerPage" :items="[
+            { value: 10, title: '10' },
+            { value: 25, title: '25' },
+            { value: 50, title: '50' },
+            { value: 100, title: '100' },
+            { value: -1, title: 'All' },
+          ]" style="inline-size: 5.5rem;" @update:model-value="itemsPerPage = parseInt($event, 10)" />
         </div>
 
         <VSpacer />
 
         <div class="d-flex align-center flex-wrap gap-4">
           <!-- 👉 Search  -->
-          <AppTextField
-            v-model="searchQuery"
-            placeholder="Cari..."
-            style="inline-size: 15.625rem;"
-          />
-          <VBtn @click="isAddNewData = true">Tambah <VIcon end icon="tabler-cloud-upload" /></VBtn>
+          <AppTextField v-model="searchQuery" placeholder="Cari..." style="inline-size: 15.625rem;" />
+          <VBtn @click="isAddNewData = true">Tambah
+            <VIcon end icon="tabler-cloud-upload" />
+          </VBtn>
         </div>
       </VCardText>
 
       <VDivider />
       <!-- SECTION datatable -->
-      <VDataTableServer
-        v-model:items-per-page="itemsPerPage"
-        v-model:page="page"
-        :items-per-page-options="[
-          { value: 10, title: '10' },
-          { value: 20, title: '20' },
-          { value: 50, title: '50' },
-          { value: -1, title: '$vuetify.dataFooter.itemsPerPageAll' },
-        ]"
-        :items="items"
-        :items-length="total_item"
-        :headers="headers"
-        class="text-no-wrap"
-        @update:options="updateOptions"
-      >
+      <VDataTableServer v-model:items-per-page="itemsPerPage" v-model:page="page" :items-per-page-options="[
+        { value: 10, title: '10' },
+        { value: 20, title: '20' },
+        { value: 50, title: '50' },
+        { value: -1, title: '$vuetify.dataFooter.itemsPerPageAll' },
+      ]" :items="items" :items-length="total_item" :headers="headers" class="text-no-wrap"
+        @update:options="updateOptions">
         <!-- User -->
         <template #item.walas="{ item }">
           <div class="d-flex align-center gap-x-4">
-            <VAvatar size="34" :variant="!item.walas.avatar ? 'tonal' : undefined" :color="!item.walas.avatar ? 'success' : undefined">
+            <VAvatar size="34" :variant="!item.walas.avatar ? 'tonal' : undefined"
+              :color="!item.walas.avatar ? 'success' : undefined">
               <VImg v-if="item.walas.avatar" :src="item.walas.avatar" />
               <span v-else>{{ avatarText(item.walas.name) }}</span>
             </VAvatar>
             <div class="d-flex flex-column">
               <h6 class="text-base">
-                {{item.walas.nama}}
+                {{ item.walas.nama }}
               </h6>
               <div class="text-sm">
                 {{ item.walas.email }}
@@ -194,13 +180,13 @@ const updateData = async userData => {
         <!-- 👉 Role -->
         <template #item.ttl="{ item }">
           {{ item.tempat_lahir }}, {{ new Date(item.tanggal_lahir).toLocaleString('id-ID', {
-          hour12: false,
-          day: 'numeric',
-          month: 'long',
-          year: 'numeric',
-        }) }}
+            hour12: false,
+            day: 'numeric',
+            month: 'long',
+            year: 'numeric',
+          }) }}
         </template>
-        
+
         <!-- Actions -->
         <template #item.actions="{ item }">
           <IconBtn @click="deleteData(item.id)">
@@ -213,11 +199,7 @@ const updateData = async userData => {
         </template>
 
         <template #bottom>
-          <TablePagination
-            v-model:page="page"
-            :items-per-page="itemsPerPage"
-            :total-items="total_item"
-          />
+          <TablePagination v-model:page="page" :items-per-page="itemsPerPage" :total-items="total_item" />
         </template>
       </VDataTableServer>
       <!-- SECTION -->
@@ -225,13 +207,12 @@ const updateData = async userData => {
 
     <!-- 👉 Add New User -->
     <RombelAddDialog v-model:is-dialog-visible="isAddNewData" v-model:sekolah="sekolah" @notif="handleNotif" />
-    <RombelDetilDialog v-model:is-dialog-visible="isDetilDataVisible" v-model:detil-data="detilData" @notif="handleNotif" />
-    <ShowAlert :color="notif.color" :icon="notif.icon" :title="notif.title" :text="notif.text" :disable-time-out="false" v-model:isSnackbarVisible="isAlertVisible" v-if="notif.color"></ShowAlert>
-    <ConfirmDialog
-        v-model:isDialogVisible="isConfirmDialogVisible"
-        confirmation-question="Apakah Anda yakin ingin menghapus data ini?"
-        :show-notif="false"
-        @confirm="confirmDelete"
-      />
+    <RombelDetilDialog v-model:is-dialog-visible="isDetilDataVisible" v-model:detil-data="detilData"
+      @notif="handleNotif" />
+    <ShowAlert :color="notif.color" :icon="notif.icon" :title="notif.title" :text="notif.text" :disable-time-out="false"
+      v-model:isSnackbarVisible="isAlertVisible" v-if="notif.color"></ShowAlert>
+    <ConfirmDialog v-model:isDialogVisible="isConfirmDialogVisible"
+      confirmation-question="Apakah Anda yakin ingin menghapus data ini?" :show-notif="false"
+      @confirm="confirmDelete" />
   </section>
 </template>

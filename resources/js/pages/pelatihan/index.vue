@@ -21,7 +21,7 @@ const sortBy = ref('created_at')
 const orderBy = ref('DESC')
 
 const updateOptions = options => {
-  if(options.sortBy.length){
+  if (options.sortBy.length) {
     sortBy.value = options.sortBy[0]?.key
     orderBy.value = options.sortBy[0]?.order
   }
@@ -72,15 +72,15 @@ const {
   query: {
     data: 'pelatihan',
     q: searchQuery,
-    itemsPerPage,
+    per_page: itemsPerPage,
     page,
     sortBy,
     orderBy,
   },
 }))
-if(getData.value.color){
-    notif.value = getData.value
-    isAlertVisible.value = true
+if (getData.value.color) {
+  notif.value = getData.value
+  isAlertVisible.value = true
 }
 const items = computed(() => getData.value.lists.data)
 const total_item = computed(() => getData.value.lists.total)
@@ -96,8 +96,8 @@ const deleteData = async id => {
   isConfirmDialogVisible.value = true
 }
 const confirmDelete = async (val) => {
-  if(val){
-    await $api(`/referensi/destroy/pelatihan/${ deletedId.value }`, { 
+  if (val) {
+    await $api(`/referensi/destroy/pelatihan/${deletedId.value}`, {
       method: 'DELETE',
       onResponse({ request, response, options }) {
         let getData = response._data
@@ -110,17 +110,17 @@ const confirmDelete = async (val) => {
   }
 }
 const mulaiLatihan = id => {
-  router.push({ name: 'pelatihan-aksi-id', params: {id: id} })
+  router.push({ name: 'pelatihan-aksi-id', params: { id: id } })
 }
-const sesiLatihan = async(val) => {
-  router.push({ name: 'pelatihan-sesi-id', params: {id: val.pelatihan_id} })
+const sesiLatihan = async (val) => {
+  router.push({ name: 'pelatihan-sesi-id', params: { id: val.pelatihan_id } })
 }
-const editData = async(val) => {
+const editData = async (val) => {
   router.push(`/pelatihan/${val}`)
 }
 watch(isAlertVisible, () => {
   if (!isAlertVisible.value)
-  fetchData()
+    fetchData()
 })
 </script>
 
@@ -129,50 +129,35 @@ watch(isAlertVisible, () => {
     <VCard title="Data Pelatihan">
       <VCardText class="d-flex flex-wrap gap-4">
         <div class="d-flex gap-2 align-center">
-          <AppSelect
-            :model-value="itemsPerPage"
-            :items="[
-              { value: 10, title: '10' },
-              { value: 25, title: '25' },
-              { value: 50, title: '50' },
-              { value: 100, title: '100' },
-              { value: -1, title: 'All' },
-            ]"
-            style="inline-size: 5.5rem;"
-            @update:model-value="itemsPerPage = parseInt($event, 10)"
-          />
+          <AppSelect :model-value="itemsPerPage" :items="[
+            { value: 10, title: '10' },
+            { value: 25, title: '25' },
+            { value: 50, title: '50' },
+            { value: 100, title: '100' },
+            { value: -1, title: 'All' },
+          ]" style="inline-size: 5.5rem;" @update:model-value="itemsPerPage = parseInt($event, 10)" />
         </div>
 
         <VSpacer />
 
         <div class="d-flex align-center flex-wrap gap-4">
           <!-- 👉 Search  -->
-          <AppTextField
-            v-model="searchQuery"
-            placeholder="Cari..."
-            style="inline-size: 15.625rem;"
-          />
-          <VBtn @click="isAddNewData" v-if="$can('read', 'referensi-sekolah-read')">Tambah <VIcon end icon="tabler-plus" /></VBtn>
+          <AppTextField v-model="searchQuery" placeholder="Cari..." style="inline-size: 15.625rem;" />
+          <VBtn @click="isAddNewData" v-if="$can('read', 'referensi-sekolah-read')">Tambah
+            <VIcon end icon="tabler-plus" />
+          </VBtn>
         </div>
       </VCardText>
 
       <VDivider />
       <!-- SECTION datatable -->
-      <VDataTableServer
-        v-model:items-per-page="itemsPerPage"
-        v-model:page="page"
-        :items-per-page-options="[
-          { value: 10, title: '10' },
-          { value: 20, title: '20' },
-          { value: 50, title: '50' },
-          { value: -1, title: '$vuetify.dataFooter.itemsPerPageAll' },
-        ]"
-        :items="items"
-        :items-length="total_item"
-        :headers="headers"
-        class="text-no-wrap"
-        @update:options="updateOptions"
-      >
+      <VDataTableServer v-model:items-per-page="itemsPerPage" v-model:page="page" :items-per-page-options="[
+        { value: 10, title: '10' },
+        { value: 20, title: '20' },
+        { value: 50, title: '50' },
+        { value: -1, title: '$vuetify.dataFooter.itemsPerPageAll' },
+      ]" :items="items" :items-length="total_item" :headers="headers" class="text-no-wrap"
+        @update:options="updateOptions">
         <template #item.mapel="{ item }">
           {{ item.pembelajaran?.nama_mata_pelajaran }}
         </template>
@@ -180,7 +165,7 @@ watch(isAlertVisible, () => {
         <template #item.rombel="{ item }">
           {{ item.pembelajaran?.rombongan_belajar?.nama }}
         </template>
-        
+
         <!-- Actions -->
         <template #item.actions="{ item }">
           <template v-if="$can('read', 'referensi-sekolah-read')">
@@ -198,26 +183,22 @@ watch(isAlertVisible, () => {
             </IconBtn>
           </template>
           <template v-else>
-            <VBtn color="success" size="small" @click="mulaiLatihan(item.pelatihan_id)">Mulai <VIcon icon="tabler-chevrons-right" /></VBtn>
+            <VBtn color="success" size="small" @click="mulaiLatihan(item.pelatihan_id)">Mulai
+              <VIcon icon="tabler-chevrons-right" />
+            </VBtn>
           </template>
         </template>
 
         <template #bottom>
-          <TablePagination
-            v-model:page="page"
-            :items-per-page="itemsPerPage"
-            :total-items="total_item"
-          />
+          <TablePagination v-model:page="page" :items-per-page="itemsPerPage" :total-items="total_item" />
         </template>
       </VDataTableServer>
       <!-- SECTION -->
     </VCard>
-    <ShowAlert :color="notif.color" :icon="notif.icon" :title="notif.title" :text="notif.text" :disable-time-out="false" v-model:isSnackbarVisible="isAlertVisible" v-if="notif.color"></ShowAlert>
-    <ConfirmDialog
-        v-model:isDialogVisible="isConfirmDialogVisible"
-        confirmation-question="Apakah Anda yakin ingin menghapus data ini?"
-        :show-notif="false"
-        @confirm="confirmDelete"
-      />
+    <ShowAlert :color="notif.color" :icon="notif.icon" :title="notif.title" :text="notif.text" :disable-time-out="false"
+      v-model:isSnackbarVisible="isAlertVisible" v-if="notif.color"></ShowAlert>
+    <ConfirmDialog v-model:isDialogVisible="isConfirmDialogVisible"
+      confirmation-question="Apakah Anda yakin ingin menghapus data ini?" :show-notif="false"
+      @confirm="confirmDelete" />
   </section>
 </template>
