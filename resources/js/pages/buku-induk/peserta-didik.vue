@@ -129,6 +129,9 @@ const updateData = async userData => {
         }
     })
 }
+const printData = async (item) => {
+    window.open(`/cetak/${item.id}`)
+}
 </script>
 
 <template>
@@ -201,6 +204,9 @@ const updateData = async userData => {
                     </IconBtn>
                     <IconBtn @click="deleteData(item)">
                         <VIcon icon="tabler-trash" />
+                    </IconBtn>
+                    <IconBtn @click="printData(item)">
+                        <VIcon icon="tabler-printer" />
                     </IconBtn>
                 </template>
 

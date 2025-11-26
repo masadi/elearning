@@ -175,33 +175,8 @@ export default [{
         action: 'read',
         subject: 'buku-induk-read',
       },
-      {
-        title: 'Cetak',
-        to: 'buku-induk-cetak',
-        icon: {
-          icon: 'tabler-hand-finger-right'
-        },
-        action: 'read',
-        subject: 'buku-induk-read',
-      },
     ],
   },
-  /*{
-    title: 'Buku Induk',
-    to: 'buku-induk',
-    icon: {
-      icon: 'tabler-book'
-    },
-    action: 'read',
-    subject: 'buku-induk-read',
-  },*/
-  /*{
-    title: 'Dokumen',
-    to: 'dokumen',
-    icon: { icon: 'tabler-checklist' },
-    action: 'create',
-    subject: 'dokumen-create',
-  },*/
   {
     title: 'Profile',
     to: 'profile',

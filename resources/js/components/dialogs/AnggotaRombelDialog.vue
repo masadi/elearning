@@ -13,6 +13,10 @@ const props = defineProps({
     type: String,
     required: true,
   },
+  semesterId: {
+    type: String,
+    required: true,
+  },
 })
 const updateModelValue = val => {
   emit('update:isDialogVisible', val)
@@ -153,6 +157,7 @@ const fetchData = async (data) => {
         nama: (data == 'anggota') ? optionAnggota.value.searchQuery : optionNonAnggota.value.searchQuery,
         per_page: (data == 'anggota') ? optionAnggota.value.itemsPerPage : optionNonAnggota.value.itemsPerPage,
         rombongan_belajar_id: props.rombonganBelajarId,
+        semester_id: props.semesterId,
       }
     }));
     let getData = response.data.value

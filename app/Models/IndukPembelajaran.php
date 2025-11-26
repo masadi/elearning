@@ -14,4 +14,16 @@ class IndukPembelajaran extends Model
     {
         return $this->belongsTo(IndukMataPelajaran::class, 'mata_pelajaran_id');
     }
+    public function rombongan_belajar()
+    {
+        return $this->belongsTo(IndukRombonganBelajar::class, 'rombongan_belajar_id');
+    }
+    public function nilai()
+    {
+        return $this->hasOne(IndukNilai::class, 'pembelajaran_id');
+    }
+    public function kelompok()
+    {
+        return $this->belongsTo(IndukKelompok::class, 'kelompok_id');
+    }
 }

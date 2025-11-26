@@ -18,4 +18,8 @@ class IndukRombonganBelajar extends Model
     {
         return $this->hasMany(IndukPembelajaran::class, 'rombongan_belajar_id', 'id');
     }
+    public function semester()
+    {
+        return $this->belongsTo(IndukSemester::class, 'semester_id', 'semester_id');
+    }
 }

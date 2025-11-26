@@ -11,6 +11,11 @@ const props = defineProps({
     type: String,
     required: true,
   },
+  listSemester: {
+    type: Array,
+    required: false,
+    default: [],
+  },
   detilData: {
     type: Object,
     required: false,
@@ -55,6 +60,7 @@ const onReset = () => {
     data: 'rombongan-belajar',
     id: null,
     sekolah_id: props.sekolahId,
+    semester_id: null,
     nama: null,
     tingkat: null,
   }
@@ -65,6 +71,7 @@ watch(props, async () => {
       data: 'rombongan-belajar',
       id: props.detilData.id,
       sekolah_id: props.detilData.sekolah_id,
+      semester_id: props.detilData.semester_id,
       nama: props.detilData.nama,
       tingkat: props.detilData.tingkat,
     }
@@ -89,6 +96,18 @@ const tingkatKelas = [
       <VForm ref="refForm" v-model="isFormValid" @submit.prevent="onSubmit">
         <VCardText>
           <VRow>
+            <VCol cols="12">
+              <VRow no-gutters>
+                <VCol cols="12" md="3" class="d-flex align-items-center">
+                  <label class="v-label text-body-2 text-high-emphasis" for="semester_id">Semester</label>
+                </VCol>
+                <VCol cols="12" md="9">
+                  <AppSelect id="semester_id" v-model="form.semester_id" :rules="[requiredValidator]"
+                    :items="props.listSemester" item-title="nama" item-value="semester_id"
+                    placeholder="== Pilih Semester ==" />
+                </VCol>
+              </VRow>
+            </VCol>
             <VCol cols="12">
               <VRow no-gutters>
                 <VCol cols="12" md="3" class="d-flex align-items-center">

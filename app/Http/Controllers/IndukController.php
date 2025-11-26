@@ -66,7 +66,7 @@ class IndukController extends Controller
         $data = [
             'lists' => Kelompok::where('sekolah_id', $user->sekolah_id)->orderBy(request()->sortBy, request()->orderBy)
             ->when(request()->q, function($query) {
-                $query->where('nama', 'LIKE', '%' . request()->q . '%');
+                $query->where('nama', 'ILIKE', '%' . request()->q . '%');
             })->paginate(request()->per_page),
             'sekolah_id' => $user->sekolah_id,
         ];
@@ -123,7 +123,7 @@ class IndukController extends Controller
         $data = [
             'lists' => MataPelajaran::where('sekolah_id', $user->sekolah_id)->orderBy(request()->sortBy, request()->orderBy)
             ->when(request()->q, function($query) {
-                $query->where('nama', 'LIKE', '%' . request()->q . '%');
+                $query->where('nama', 'ILIKE', '%' . request()->q . '%');
             })->paginate(request()->per_page),
             'sekolah_id' => $user->sekolah_id,
         ];
@@ -181,7 +181,7 @@ class IndukController extends Controller
         $data = [
             'lists' => PesertaDidik::where('sekolah_id', $user->sekolah_id)->orderBy(request()->sortBy, request()->orderBy)
             ->when(request()->q, function($query) {
-                $query->where('nama', 'LIKE', '%' . request()->q . '%');
+                $query->where('nama', 'ILIKE', '%' . request()->q . '%');
             })->paginate(request()->per_page),
             'sekolah_id' => $user->sekolah_id,
             'agama' => Agama::all(),
@@ -192,13 +192,14 @@ class IndukController extends Controller
     private function get_rombongan_belajar(){
         $user = auth()->user();
         $data = [
-            'lists' => RombonganBelajar::withCount(['anggota_rombel', 'pembelajaran'])->where('sekolah_id', $user->sekolah_id)->where('semester_id', semester_id())->orderBy(request()->sortBy, request()->orderBy)
+            'lists' => RombonganBelajar::with('semester')->withCount(['anggota_rombel', 'pembelajaran'])->where('sekolah_id', $user->sekolah_id)->orderBy(request()->sortBy, request()->orderBy)
             ->when(request()->q, function($query) {
-                $query->where('nama', 'LIKE', '%' . request()->q . '%');
+                $query->where('nama', 'ILIKE', '%' . request()->q . '%');
+            })->when(request()->semester_id, function($query) {
+                $query->where('semester_id', request()->semester_id);
             })->paginate(request()->per_page),
             'sekolah_id' => $user->sekolah_id,
-            'agama' => Agama::all(),
-            'pekerjaan' => Pekerjaan::all(),
+            'semester' => Semester::orderBy('semester_id', 'DESC')->get(),
         ];
         return response()->json($data);
     }
@@ -358,7 +359,7 @@ class IndukController extends Controller
             $item = $item->find(request()->id);
         }
         $item->sekolah_id = request()->sekolah_id;
-        $item->semester_id = semester_id();
+        $item->semester_id = request()->semester_id;
         $item->nama = request()->nama;
         $item->tingkat = request()->tingkat;
         $item->save();
@@ -390,17 +391,17 @@ class IndukController extends Controller
                     $q->where('rombongan_belajar_id', request()->rombongan_belajar_id);
                 });
             })->orderBy('nama')->when(request()->q, function($query) {
-                $query->where('nama', 'LIKE', '%' . request()->q . '%');
+                $query->where('nama', 'ILIKE', '%' . request()->q . '%');
             })->paginate(request()->per_page);
         return response()->json($data);
     }
     private function get_non_anggota(){
         $data = PesertaDidik::where('sekolah_id', auth()->user()->sekolah_id)->whereDoesntHave('anggota_rombel', function($q){
                 $q->whereHas('rombongan_belajar', function($qq){
-                    $qq->where('semester_id', semester_id());
+                    $qq->where('semester_id', request()->semester_id);
                 });
             })->orderBy('nama')->when(request()->q, function($query) {
-                $query->where('nama', 'LIKE', '%' . request()->q . '%');
+                $query->where('nama', 'ILIKE', '%' . request()->q . '%');
             })->paginate(request()->per_page);
         return response()->json($data);
     }
@@ -633,6 +634,7 @@ class IndukController extends Controller
         return response()->json($data);
     }
     public function save_nilai(){
+        $pembelajaran = Pembelajaran::find(request()->pembelajaran_id);
         $insert = 0;
         foreach(request()->nilai as $anggota_rombel_id => $nilai){
             if($nilai){
@@ -643,6 +645,7 @@ class IndukController extends Controller
                         'pembelajaran_id' => request()->pembelajaran_id,
                     ],
                     [
+                        'mata_pelajaran_id' => $pembelajaran->mata_pelajaran_id,
                         'nilai' => $nilai,
                     ]
                 );

@@ -44,7 +44,7 @@ const getRombel = async (val) => {
         method: 'POST',
         body: {
             sekolah_id: sekolahId.value,
-            semester_id: semesterId.value,
+            semester_id: form.value.semester_id,
             tingkat: val,
             data: 'rombel',
         },
@@ -62,7 +62,7 @@ const getMapel = async (val) => {
         method: 'POST',
         body: {
             sekolah_id: sekolahId.value,
-            semester_id: semesterId.value,
+            semester_id: form.value.semester_id,
             rombongan_belajar_id: val,
             data: 'mapel',
         },
@@ -77,7 +77,7 @@ const getSiswa = async (val) => {
         method: 'POST',
         body: {
             sekolah_id: sekolahId.value,
-            semester_id: semesterId.value,
+            semester_id: form.value.semester_id,
             rombongan_belajar_id: form.value.rombongan_belajar_id,
             pembelajaran_id: val,
             data: 'siswa',

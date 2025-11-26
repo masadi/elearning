@@ -13,7 +13,6 @@ const notif = ref({
 })
 const isAlertVisible = ref(false)
 // 👉 Store
-const searchQuery = ref('')
 // Data table options
 const itemsPerPage = ref(10)
 const page = ref(1)
@@ -30,6 +29,10 @@ const updateOptions = options => {
 // Headers
 const headers = [
     {
+        title: 'semester',
+        key: 'semester',
+    },
+    {
         title: 'nama',
         key: 'nama',
     },
@@ -40,10 +43,12 @@ const headers = [
     {
         title: 'anggota rombel',
         key: 'anggota_rombel',
+        sortable: false,
     },
     {
         title: 'pembelajaran',
         key: 'pembelajaran',
+        sortable: false,
     },
     {
         title: 'Actions',
@@ -56,29 +61,66 @@ const handleNotif = (val) => {
     notif.value = val
     isAlertVisible.value = true
 }
-const {
-    data: getData,
-    execute: fetchData,
-} = await useApi(createUrl('/induk', {
-    query: {
-        data: 'rombongan-belajar',
-        q: searchQuery,
-        per_page: itemsPerPage,
-        page,
-        sortBy,
-        orderBy,
-    },
-}))
-if (getData.value.color) {
-    notif.value = getData.value
-    isAlertVisible.value = true
+const semester_id = ref()
+const options = ref({
+    page: 1,
+    itemsPerPage: 10,
+    searchQuery: '',
+    semester_id: null,
+    sortby: 'tingkat',
+    sortbydesc: 'ASC',
+});
+onMounted(async () => {
+    await fetchData();
+});
+watch(options, async () => {
+    await fetchData();
+}, { deep: true });
+watch(
+    () => options.value.searchQuery,
+    () => {
+        options.value.page = 1
+    }
+)
+const updateSortBy = (val) => {
+    options.value.sortby = val[0]?.key
+    options.value.sortbydesc = val[0]?.order
 }
-const items = computed(() => getData.value.lists.data)
-const total_item = computed(() => getData.value.lists.total)
-const sekolahId = computed(() => getData.value.sekolah_id)
-//const sekolah = computed(() => getData.value.sekolah)
+const items = ref([])
+const total_item = ref(0)
+const sekolahId = ref()
+const listSemester = ref()
+const loadingTable = ref(false)
+const fetchData = async () => {
+    loadingTable.value = true
+    items.value = []
+    total_item.value = []
+    sekolahId.value = null
+    listSemester.value = []
+    try {
+        const response = await useApi(createUrl('/induk', {
+            query: {
+                data: 'rombongan-belajar',
+                q: options.value.searchQuery,
+                page: options.value.page,
+                per_page: options.value.itemsPerPage,
+                semester_id: options.value.semester_id,
+                sortBy: options.value.sortby,
+                orderBy: options.value.sortbydesc,
+            },
+        }));
+        let getData = response.data
+        items.value = getData.value.lists.data
+        total_item.value = getData.value.lists.total
+        sekolahId.value = getData.value.sekolah_id
+        listSemester.value = getData.value.semester
+    } catch (error) {
+        console.error(error);
+    } finally {
+        loadingTable.value = false;
+    }
+}
 const isAddNewData = ref(false)
-
 const deletedId = ref()
 const isConfirmDialogVisible = ref()
 const deleteData = async (item) => {
@@ -115,32 +157,13 @@ const addNewData = () => {
 const showAnggota = ref(false)
 const isLoading = ref(false)
 const dialogTitle = ref('')
-const anggotaRombel = ref([])
 const rombonganBelajarId = ref()
 const loadingAnggota = ref([])
-const getAnggota = async (rombongan_belajar_id) => {
-    rombonganBelajarId.value = rombongan_belajar_id
+const semesterId = ref()
+const getAnggota = async (item) => {
+    rombonganBelajarId.value = item.id
+    semesterId.value = item.semester_id
     showAnggota.value = true
-    /*
-    loadingAnggota.value[rombongan_belajar_id] = true
-    isLoading.value = true
-    rombonganBelajarId.value = rombongan_belajar_id
-    showAnggota.value = true
-    await $api('/induk/get-data', {
-        method: 'POST',
-        body: {
-            rombongan_belajar_id: rombonganBelajarId.value,
-            sekolah_id: sekolahId.value,
-            type: 'anggota',
-        },
-        onResponse({ request, response, options }) {
-            let getData = response._data
-            dialogTitle.value = `Anggota Rombel Kelas ${getData.rombel.nama}`
-            anggotaRombel.value = getData.data
-            isLoading.value = false
-            loadingAnggota.value[rombongan_belajar_id] = false
-        }
-    })*/
 }
 const form = ref({
     nama: {},
@@ -153,8 +176,6 @@ const mataPelajaran = ref([])
 const kelompok = ref([])
 const showPembelajaran = ref(false)
 const savePembelajaran = async () => {
-    console.log('savePembelajaran');
-    console.log(form.value);
     const defaultForm = { data: 'pembelajaran', rombongan_belajar_id: rombonganBelajarId.value }
     const mergedForm = { ...defaultForm, ...form.value };
     await $api('/induk/store', {
@@ -195,9 +216,6 @@ const getPembelajaran = async (rombongan_belajar_id) => {
 const reFecthData = async () => {
     getPembelajaran(rombonganBelajarId.value)
 }
-const reFecthAnggota = async () => {
-    getAnggota(rombonganBelajarId.value)
-}
 </script>
 
 <template>
@@ -205,20 +223,23 @@ const reFecthAnggota = async () => {
         <VCard>
             <VCardText class="d-flex flex-wrap gap-4">
                 <div class="d-flex gap-2 align-center">
-                    <AppSelect :model-value="itemsPerPage" :items="[
+                    <AppSelect v-model="options.itemsPerPage" :items="[
                         { value: 10, title: '10' },
                         { value: 25, title: '25' },
                         { value: 50, title: '50' },
                         { value: 100, title: '100' },
                         { value: -1, title: 'All' },
-                    ]" style="inline-size: 5.5rem;" @update:model-value="itemsPerPage = parseInt($event, 10)" />
+                    ]" style="inline-size: 5.5rem;" />
                 </div>
 
                 <VSpacer />
 
                 <div class="d-flex align-center flex-wrap gap-4">
                     <!-- 👉 Search  -->
-                    <AppTextField v-model="searchQuery" placeholder="Cari..." style="inline-size: 15.625rem;" />
+                    <AppTextField v-model="options.searchQuery" placeholder="Cari..." style="inline-size: 15.625rem;" />
+                    <AppSelect v-model="options.semester_id" placeholder="Filter Semester" :items="listSemester"
+                        clearable clear-icon="tabler-x" style="inline-size: 15rem;" item-title="nama"
+                        item-value="semester_id" />
                     <VBtn @click="addNewData">Tambah
                         <VIcon end icon="tabler-plus" />
                     </VBtn>
@@ -233,11 +254,15 @@ const reFecthAnggota = async () => {
                 { value: 50, title: '50' },
                 { value: -1, title: '$vuetify.dataFooter.itemsPerPageAll' },
             ]" :items="items" :items-length="total_item" :headers="headers" class="text-no-wrap"
-                @update:options="updateOptions">
+                @update:options="updateOptions" :loading="loadingTable" loading-text="Loading..."
+                @update:sortBy="updateSortBy">
+                <template #item.semester="{ item }">
+                    {{ item.semester.nama }}
+                </template>
                 <template #item.anggota_rombel="{ item }">
                     <VBadge :content="item.anggota_rombel_count" color="success">
                         <VBtn :loading="loadingAnggota[item.rombongan_belajar_id]"
-                            :disabled="loadingAnggota[item.rombongan_belajar_id]" @click="getAnggota(item.id)"
+                            :disabled="loadingAnggota[item.rombongan_belajar_id]" @click="getAnggota(item)"
                             size="x-small">
                             Anggota Rombel
                         </VBtn>
@@ -261,7 +286,6 @@ const reFecthAnggota = async () => {
                     <IconBtn @click="editData(item)">
                         <VIcon icon="tabler-pencil" />
                     </IconBtn>
-
                 </template>
 
                 <template #bottom>
@@ -273,14 +297,12 @@ const reFecthAnggota = async () => {
 
         <!-- 👉 Add New User -->
         <AddRombelDialog v-model:is-dialog-visible="isAddNewData" @notif="handleNotif" v-model:sekolahId="sekolahId"
-            v-model:detil-data="detilData" />
+            v-model:detil-data="detilData" v-model:listSemester="listSemester" />
         <PembelajaranDialog v-model:isDialogVisible="showPembelajaran" v-model:isLoading="isLoading"
             :dialog-title="dialogTitle" v-model:listData="mataPelajaran" v-model:form="form" :list-kelompok="kelompok"
             @save="savePembelajaran" @refresh="reFecthData" />
-        <!--AnggotaRombelDialog v-model:isDialogVisible="showAnggota" v-model:isLoading="isLoading"
-            :dialog-title="dialogTitle" v-model:listData="anggotaRombel" @refresh="reFecthAnggota" /-->
         <AnggotaRombelDialog v-model:isDialogVisible="showAnggota" :rombongan-belajar-id="rombonganBelajarId"
-            :dialog-title="dialogTitle" @close="fetchData"></AnggotaRombelDialog>
+            :semester-id="semesterId" :dialog-title="dialogTitle" @close="fetchData"></AnggotaRombelDialog>
         <ShowAlert :color="notif.color" :icon="notif.icon" :title="notif.title" :text="notif.text"
             :disable-time-out="false" v-model:isSnackbarVisible="isAlertVisible" v-if="notif.color"></ShowAlert>
         <ConfirmDialog v-model:isDialogVisible="isConfirmDialogVisible"
