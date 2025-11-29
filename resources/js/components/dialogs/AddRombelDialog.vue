@@ -34,11 +34,12 @@ const refForm = ref()
 const form = ref({
   data: 'rombongan-belajar',
   id: null,
-  sekolah_id: props.sekolahId,
+  sekolah_id: null,
   nama: null,
   tingkat: null,
 })
 const onSubmit = async () => {
+  form.value.sekolah_id = props.sekolahId
   refForm.value?.validate().then(async ({ valid }) => {
     if (valid) {
       await $api('/induk/store', {
